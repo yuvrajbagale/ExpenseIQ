@@ -1,0 +1,152 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
+
+export interface NavItem {
+  label: string;
+  route: string;
+  icon: string;
+  exact?: boolean;
+}
+
+const ICON_MAP: Record<string, string> = {
+  dashboard:              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+  swap_horiz:             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>',
+  add_circle:             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  label:                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  pie_chart:              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>',
+  trending_up:            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+  description:            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  flag:                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+  calendar_month:         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  account_balance_wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4C2.9 7 2 7.9 2 9v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>',
+  autorenew:              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  person:                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  settings:               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>',
+};
+
+const DEFAULT_NAV: NavItem[] = [
+  { label: 'Dashboard',       route: '/dashboard',     icon: 'dashboard',              exact: true },
+  { label: 'Transactions',    route: '/transactions',  icon: 'swap_horiz'                           },
+  { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                        },
+  { label: 'Categories',      route: '/categories',    icon: 'label'                                },
+  { label: 'Budget',          route: '/budget',        icon: 'pie_chart'                            },
+  { label: 'Analytics',       route: '/analytics',     icon: 'trending_up'                          },
+  { label: 'Reports',         route: '/reports',       icon: 'description'                          },
+  { label: 'Goals',           route: '/goals',         icon: 'flag'                                 },
+  { label: 'Calendar',        route: '/calendar',      icon: 'calendar_month'                       },
+  { label: 'Wallet Accounts', route: '/accounts',      icon: 'account_balance_wallet'               },
+  { label: 'Recurring',       route: '/recurring',     icon: 'autorenew'                            },
+];
+
+@Component({
+  selector: 'eiq-sidebar',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, CommonModule],
+  template: `
+    <aside class="eiq-sidebar">
+      <div class="eiq-sidebar__brand">
+        <div class="eiq-sidebar__logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 7H4C2.9 7 2 7.9 2 9v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/>
+            <path d="M16 3H8L6 7h12l-2-4z"/>
+          </svg>
+        </div>
+        <span class="eiq-sidebar__name">ExpenseIQ</span>
+      </div>
+
+      <nav class="eiq-sidebar__nav">
+        @for (item of resolvedNavItems; track item.route) {
+          <a [routerLink]="item.route"
+             routerLinkActive="eiq-nav__item--active"
+             [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+             class="eiq-nav__item">
+            <span class="eiq-nav__icon" [innerHTML]="getIcon(item.icon)"></span>
+            <span class="eiq-nav__label">{{ item.label }}</span>
+          </a>
+        }
+      </nav>
+
+      <div class="eiq-sidebar__divider"></div>
+
+      <div class="eiq-sidebar__footer">
+        <a routerLink="/profile" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item">
+          <span class="eiq-nav__icon" [innerHTML]="getIcon('person')"></span>
+          <span class="eiq-nav__label">Profile</span>
+        </a>
+        <a routerLink="/settings" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item">
+          <span class="eiq-nav__icon" [innerHTML]="getIcon('settings')"></span>
+          <span class="eiq-nav__label">Settings</span>
+        </a>
+        <button class="eiq-nav__item eiq-nav__item--danger" (click)="onLogout()">
+          <span class="eiq-nav__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </span>
+          <span class="eiq-nav__label">Logout</span>
+        </button>
+      </div>
+    </aside>
+  `,
+  styles: [`
+    .eiq-sidebar {
+      width: 240px; flex-shrink: 0; position: fixed;
+      top: 0; left: 0; bottom: 0; z-index: 40;
+      background: oklch(0.985 0 0);
+      border-right: 1px solid oklch(0.92 0.004 286.32);
+      box-shadow: 2px 0 8px 0 oklch(0.141 0.005 285.823 / 0.06);
+      display: flex; flex-direction: column; padding: 1rem; gap: 0.125rem;
+      overflow-y: auto;
+    }
+    .eiq-sidebar__brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 0.5rem 1.25rem; margin-bottom: 0.25rem;
+    }
+    .eiq-sidebar__logo {
+      width: 2rem; height: 2rem; background: #2b7fff; border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      svg { width: 1rem; height: 1rem; color: white; }
+    }
+    .eiq-sidebar__name {
+      font-weight: 700; font-size: 1.125rem; letter-spacing: -0.025em;
+      color: oklch(0.141 0.005 285.823);
+    }
+    .eiq-sidebar__nav { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
+    .eiq-nav__item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+      font-size: 0.875rem; font-weight: 500; color: oklch(0.552 0.016 285.938);
+      cursor: pointer; text-decoration: none; transition: all 0.15s;
+      background: none; border: none; width: 100%; text-align: left;
+      &:hover { background: oklch(0.94 0.002 286.32); color: oklch(0.3 0.01 285.823); }
+    }
+    .eiq-nav__item--active { background: #2b7fff !important; color: #eff6ff !important; font-weight: 600; box-shadow: 0 2px 8px rgba(43,127,255,0.3); }
+    .eiq-nav__item--danger { color: oklch(0.577 0.245 27.325); &:hover { background: oklch(0.97 0.02 27); } }
+    .eiq-nav__icon { width: 1rem; height: 1rem; flex-shrink: 0; display: flex; align-items: center; svg { width: 1rem; height: 1rem; } }
+    .eiq-sidebar__divider { border-top: 1px solid oklch(0.92 0.004 286.32); margin: 0.5rem 0; }
+    .eiq-sidebar__footer { display: flex; flex-direction: column; gap: 0.125rem; }
+  `]
+})
+export class SidebarComponent {
+  @Input() navItems: NavItem[] | null = null;
+  @Output() logoutClicked = new EventEmitter<void>();
+
+  constructor(private auth: AuthService) {}
+
+  get resolvedNavItems(): NavItem[] {
+    return this.navItems ?? DEFAULT_NAV;
+  }
+
+  getIcon(name: string): string {
+    return ICON_MAP[name] ?? ICON_MAP['label'];
+  }
+
+  onLogout(): void {
+    this.logoutClicked.emit();
+    this.auth.logout();
+  }
+}
