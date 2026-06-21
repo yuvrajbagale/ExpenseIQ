@@ -96,9 +96,9 @@ const DEFAULT_NAV: NavItem[] = [
     .eiq-sidebar {
       width: 240px; flex-shrink: 0; position: fixed;
       top: 0; left: 0; bottom: 0; z-index: 40;
-      background: oklch(0.985 0 0);
-      border-right: 1px solid oklch(0.92 0.004 286.32);
-      box-shadow: 2px 0 8px 0 oklch(0.141 0.005 285.823 / 0.06);
+      background: var(--eiq-sidebar-bg);
+      border-right: 1px solid var(--eiq-border);
+      box-shadow: 2px 0 8px 0 var(--eiq-overlay);
       display: flex; flex-direction: column; padding: 1rem; gap: 0.125rem;
       overflow-y: auto;
     }
@@ -107,27 +107,27 @@ const DEFAULT_NAV: NavItem[] = [
       padding: 0.75rem 0.5rem 1.25rem; margin-bottom: 0.25rem;
     }
     .eiq-sidebar__logo {
-      width: 2rem; height: 2rem; background: #2b7fff; border-radius: 0.5rem;
+      width: 2rem; height: 2rem; background: var(--eiq-primary); border-radius: 0.5rem;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
       svg { width: 1rem; height: 1rem; color: white; }
     }
     .eiq-sidebar__name {
       font-weight: 700; font-size: 1.125rem; letter-spacing: -0.025em;
-      color: oklch(0.141 0.005 285.823);
+      color: var(--eiq-foreground);
     }
     .eiq-sidebar__nav { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
     .eiq-nav__item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.5rem 0.75rem; border-radius: 0.5rem;
-      font-size: 0.875rem; font-weight: 500; color: oklch(0.552 0.016 285.938);
+      font-size: 0.875rem; font-weight: 500; color: var(--eiq-muted);
       cursor: pointer; text-decoration: none; transition: all 0.15s;
       background: none; border: none; width: 100%; text-align: left;
-      &:hover { background: oklch(0.94 0.002 286.32); color: oklch(0.3 0.01 285.823); }
+      &:hover { background: var(--eiq-hover); color: var(--eiq-foreground); }
     }
-    .eiq-nav__item--active { background: #2b7fff !important; color: #eff6ff !important; font-weight: 600; box-shadow: 0 2px 8px rgba(43,127,255,0.3); }
-    .eiq-nav__item--danger { color: oklch(0.577 0.245 27.325); &:hover { background: oklch(0.97 0.02 27); } }
+    .eiq-nav__item--active { background: var(--eiq-primary) !important; color: #eff6ff !important; font-weight: 600; box-shadow: var(--eiq-shadow-primary); }
+    .eiq-nav__item--danger { color: var(--eiq-red); &:hover { background: var(--eiq-red-10); } }
     .eiq-nav__icon { width: 1rem; height: 1rem; flex-shrink: 0; display: flex; align-items: center; svg { width: 1rem; height: 1rem; } }
-    .eiq-sidebar__divider { border-top: 1px solid oklch(0.92 0.004 286.32); margin: 0.5rem 0; }
+    .eiq-sidebar__divider { border-top: 1px solid var(--eiq-border); margin: 0.5rem 0; }
     .eiq-sidebar__footer { display: flex; flex-direction: column; gap: 0.125rem; }
   `]
 })
