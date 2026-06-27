@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
 import {
   DashboardService,
@@ -8,6 +8,7 @@ import {
   CATEGORY_BREAKDOWN,
 } from "../../core/services/dashboard.service";
 import { TransactionService } from "../../core/services/transaction.service";
+import { ToastService } from "../../core/services/toast.service";
 import {
   SidebarComponent,
   NavItem,
@@ -46,27 +47,21 @@ import { DashboardData } from "../../core/models/dashboard.model";
           <div class="eiq-page-header">
             <div>
               <h1 class="eiq-page-header__title">
-                Good Morning, {{ firstName() }} 👋
+                {{ greeting() }}, {{ firstName() }} 👋
               </h1>
-              <p class="eiq-page-header__subtitle">Wednesday, June 11, 2025</p>
+              <p class="eiq-page-header__subtitle">{{ todayLabel() }}</p>
             </div>
             <div class="eiq-page-header__actions">
-              <button class="eiq-btn eiq-btn--ghost eiq-btn--sm">
-                <span class="material-symbols-outlined" style="font-size:14px"
-                  >add</span
-                >
+              <button class="eiq-btn eiq-btn--primary eiq-btn--sm" (click)="goToAdd()">
+                <span class="material-symbols-outlined" style="font-size:14px">add</span>
                 Add
               </button>
-              <button class="eiq-btn eiq-btn--ghost eiq-btn--sm">
-                <span class="material-symbols-outlined" style="font-size:14px"
-                  >swap_horiz</span
-                >
+              <button class="eiq-btn eiq-btn--ghost eiq-btn--sm" (click)="transfer()">
+                <span class="material-symbols-outlined" style="font-size:14px">swap_horiz</span>
                 Transfer
               </button>
-              <button class="eiq-btn eiq-btn--ghost eiq-btn--sm">
-                <span class="material-symbols-outlined" style="font-size:14px"
-                  >download</span
-                >
+              <button class="eiq-btn eiq-btn--ghost eiq-btn--sm" (click)="exportCsv()">
+                <span class="material-symbols-outlined" style="font-size:14px">download</span>
                 Export
               </button>
             </div>
@@ -76,6 +71,17 @@ import { DashboardData } from "../../core/models/dashboard.model";
             <div class="eiq-loading">
               <div class="eiq-loading__spinner"></div>
               <span>Loading dashboard…</span>
+            </div>
+          } @else if (loadError()) {
+            <div class="eiq-empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p class="eiq-empty-state__title">Couldn't load your dashboard</p>
+              <p class="eiq-empty-state__desc">Something went wrong while fetching your data.</p>
+              <button class="eiq-btn eiq-btn--primary eiq-btn--sm" (click)="reload()">Try again</button>
             </div>
           } @else if (dashboardData()) {
             <!-- KPI Cards -->
@@ -452,10 +458,10 @@ import { DashboardData } from "../../core/models/dashboard.model";
                       <div class="eiq-list-row__right">
                         <p
                           class="eiq-list-row__amount"
-                          [class.eiq-list-row__amount--positive]="txn.amount > 0"
-                          [class.eiq-list-row__amount--negative]="txn.amount < 0"
+                          [class.eiq-list-row__amount--positive]="txn.type === 'income'"
+                          [class.eiq-list-row__amount--negative]="txn.type === 'expense'"
                         >
-                          {{ txn.amount | eiqCurrency }}
+                          {{ signedAmount(txn) | eiqCurrency }}
                         </p>
                         <app-status-badge [status]="txn.status" />
                       </div>
@@ -473,10 +479,32 @@ import { DashboardData } from "../../core/models/dashboard.model";
 export class DashboardComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   private readonly dashboardService = inject(DashboardService);
+  private readonly txnService = inject(TransactionService);
+  private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal(true);
+  loadError = signal(false);
   firstName = computed(() => this.authService.currentUser()?.name?.split(' ')[0] ?? '');
+
+  /** Time-aware greeting based on the user's local hour. */
+  greeting = computed(() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good Morning';
+    if (h < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  });
+
+  /** Human-readable current date. */
+  todayLabel = computed(() =>
+    new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  );
 
   readonly navItems: NavItem[] = [
     { label: "Dashboard", route: "/dashboard", icon: "dashboard" },
@@ -536,15 +564,74 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  private loadDashboard(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.dashboardService.loadDashboard().subscribe({
       next: (data) => {
         this.dashboardData.set(data);
         this.isLoading.set(false);
       },
+      error: () => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+      },
     });
+  }
+
+  reload(): void {
+    this.loadDashboard();
+  }
+
+  goToAdd(): void {
+    this.router.navigate(['/transactions/add']);
+  }
+
+  transfer(): void {
+    this.router.navigate(['/accounts']);
+    this.toast.info('Open Wallet Accounts to transfer between accounts.');
+  }
+
+  exportCsv(): void {
+    const txns = this.txnService.filteredTransactions();
+    if (!txns.length) {
+      this.toast.warning('No transactions to export yet.');
+      return;
+    }
+    const header = ['Date', 'Type', 'Category', 'Description', 'Amount', 'Method', 'Status'];
+    const body = txns.map((t) => [
+      new Date(t.date).toISOString().slice(0, 10),
+      t.type,
+      t.category,
+      `"${t.description.replace(/"/g, '""')}"`,
+      t.amount.toString(),
+      t.paymentMethod,
+      t.status,
+    ]);
+    const csv = [header, ...body].map((r) => r.join(',')).join('\n');
+    this.triggerDownload(csv, 'expenseiq-transactions.csv', 'text/csv');
+    this.toast.success('Transactions exported as CSV.');
+  }
+
+  private triggerDownload(content: string, filename: string, type: string): void {
+    const blob = new Blob([content], { type: `${type};charset=utf-8;` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   logout(): void {
     this.authService.logout();
+  }
+
+  /** Returns a signed magnitude: positive for income, negative for expense. */
+  signedAmount(txn: Transaction): number {
+    return txn.type === 'expense' ? -Math.abs(txn.amount) : Math.abs(txn.amount);
   }
 }

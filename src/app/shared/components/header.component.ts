@@ -8,6 +8,7 @@ import {
   computed,
   HostListener,
   ElementRef,
+  Renderer2,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -30,6 +31,17 @@ interface AppNotification {
   imports: [CommonModule],
   template: `
     <header class="app-header">
+      <button
+        type="button"
+        class="eiq-menu-btn"
+        aria-label="Open navigation menu"
+        (click)="toggleMobileNav()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
       <div class="header-search">
         <span class="search-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -459,6 +471,7 @@ export class HeaderComponent {
   readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
 
   readonly showNotifications = signal(false);
   readonly showUserMenu = signal(false);
@@ -560,5 +573,20 @@ export class HeaderComponent {
   private closeMenus(): void {
     this.showNotifications.set(false);
     this.showUserMenu.set(false);
+  }
+
+  /** Mobile sidebar overlay: toggles the off-canvas navigation. */
+  toggleMobileNav(): void {
+    const body = document.body;
+    if (body.classList.contains('eiq-nav-open')) {
+      this.renderer.removeClass(body, 'eiq-nav-open');
+    } else {
+      this.renderer.addClass(body, 'eiq-nav-open');
+    }
+  }
+
+  /** Close the mobile sidebar (called by the scrim in the sidebar component). */
+  closeMobileNav(): void {
+    this.renderer.removeClass(document.body, 'eiq-nav-open');
   }
 }

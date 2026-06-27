@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TransactionService } from '../../core/services/transaction.service';
@@ -91,11 +92,11 @@ import { Transaction } from '../../core/interfaces/transaction.interface';
                       <td class="eiq-txn-td eiq-txn-td--check">
                         <input type="checkbox" class="eiq-checkbox" [checked]="selectedIds().has(txn.id)" (change)="toggleSelect(txn.id)" />
                       </td>
-                      <td class="eiq-txn-td eiq-txn-td--mono">{{ String(i + 1).padStart(3,'0') }}</td>
+                      <td class="eiq-txn-td eiq-txn-td--mono">{{ padIndex(i) }}</td>
                       <td class="eiq-txn-td">
                         <div class="eiq-cat-cell">
                           <div class="eiq-cat-icon" [class]="'eiq-cat-icon--' + getCategoryColor(txn.category)">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [innerHTML]="getCategoryIcon(txn.category)"></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="getCategoryIcon(txn.category)"></svg>
                           </div>
                           <span class="eiq-cat-name">{{ txn.category }}</span>
                         </div>
@@ -107,7 +108,7 @@ import { Transaction } from '../../core/interfaces/transaction.interface';
                       </td>
                       <td class="eiq-txn-td eiq-txn-td--right">
                         <span [class]="txn.type === 'income' ? 'eiq-amount eiq-amount--pos' : 'eiq-amount eiq-amount--neg'">
-                          {{ txn.amount | eiqCurrency }}
+                          {{ signedAmount(txn) | eiqCurrency }}
                         </span>
                       </td>
                       <td class="eiq-txn-td"><app-status-badge [status]="txn.status" /></td>
@@ -133,10 +134,10 @@ import { Transaction } from '../../core/interfaces/transaction.interface';
             <div class="eiq-pagination">
               <div class="eiq-pagination__info">
                 <span>Rows per page:</span>
-                <select class="eiq-select eiq-select--xs" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-                  <option [value]="10">10</option>
-                  <option [value]="25">25</option>
-                  <option [value]="50">50</option>
+                <select class="eiq-select eiq-select--xs" [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+                  <option [ngValue]="10">10</option>
+                  <option [ngValue]="25">25</option>
+                  <option [ngValue]="50">50</option>
                 </select>
                 <span>Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ filteredTxns().length }} transactions</span>
               </div>
@@ -163,14 +164,14 @@ import { Transaction } from '../../core/interfaces/transaction.interface';
 export class TransactionsComponent {
   protected readonly authService = inject(AuthService);
   protected readonly txnService  = inject(TransactionService);
-  protected readonly String = String;
+  private readonly sanitizer     = inject(DomSanitizer);
 
   searchQuery   = '';
   selectedType   = 'all';
   selectedStatus = 'all';
-  pageSize = 10;
-  currentPage = signal(1);
-  selectedIds = signal<Set<string>>(new Set());
+  readonly pageSize = signal(10);
+  readonly currentPage = signal(1);
+  readonly selectedIds = signal<Set<string>>(new Set());
 
   readonly navItems: NavItem[] = [
     { label: 'Dashboard',        route: '/dashboard',       icon: 'dashboard', exact: true },
@@ -193,13 +194,13 @@ export class TransactionsComponent {
     return list;
   });
 
-  readonly totalPages  = computed(() => Math.max(1, Math.ceil(this.filteredTxns().length / this.pageSize)));
-  readonly rangeStart  = computed(() => (this.currentPage() - 1) * this.pageSize + 1);
-  readonly rangeEnd    = computed(() => Math.min(this.currentPage() * this.pageSize, this.filteredTxns().length));
+  readonly totalPages  = computed(() => Math.max(1, Math.ceil(this.filteredTxns().length / this.pageSize())));
+  readonly rangeStart  = computed(() => Math.min((this.currentPage() - 1) * this.pageSize() + 1, this.filteredTxns().length || 1));
+  readonly rangeEnd    = computed(() => Math.min(this.currentPage() * this.pageSize(), this.filteredTxns().length));
 
   readonly paginatedTxns = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize;
-    return this.filteredTxns().slice(start, start + this.pageSize);
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filteredTxns().slice(start, start + this.pageSize());
   });
 
   readonly pageNumbers = computed(() => {
@@ -218,27 +219,43 @@ export class TransactionsComponent {
   applyFilters(): void { this.currentPage.set(1); }
   clearFilters(): void { this.searchQuery=''; this.selectedType='all'; this.selectedStatus='all'; this.txnService.updateFilters({ search: '' }); this.currentPage.set(1); }
   setPage(p: number): void { if (p >= 1 && p <= this.totalPages()) this.currentPage.set(p); }
-  onPageSizeChange(): void { this.currentPage.set(1); }
+  onPageSizeChange(size: number): void { this.pageSize.set(Number(size) || 10); this.currentPage.set(1); }
   toggleSelect(id: string): void { const s = new Set(this.selectedIds()); s.has(id) ? s.delete(id) : s.add(id); this.selectedIds.set(s); }
   toggleSelectAll(e: Event): void { const ck = (e.target as HTMLInputElement).checked; this.selectedIds.set(ck ? new Set(this.filteredTxns().map(t => t.id)) : new Set()); }
   deleteTransaction(id: string): void { if (confirm('Delete this transaction?')) this.txnService.deleteTransaction(id); }
+
+  /** Zero-padded row index for display (1-based). */
+  padIndex(i: number): string { return String(i + 1).padStart(3, '0'); }
+
+  /** Signed amount: negative for expenses, positive for income. */
+  signedAmount(txn: Transaction): number {
+    return txn.type === 'expense' ? -Math.abs(txn.amount) : Math.abs(txn.amount);
+  }
 
   getCategoryColor(cat: string): string {
     const map: Record<string, string> = { Salary:'blue', Food:'orange', Utilities:'blue', Transport:'blue', Entertainment:'yellow', Health:'teal', Freelance:'green', Housing:'blue', Fitness:'yellow' };
     return map[cat] ?? 'blue';
   }
-  getCategoryIcon(cat: string): string {
-    const icons: Record<string,string> = {
-      Salary:        '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
-      Food:          '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
-      Utilities:     '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-      Transport:     '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
-      Entertainment: '<polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>',
-      Health:        '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
-      Freelance:     '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
-      Housing:       '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
-      Fitness:       '<path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>',
-    };
-    return icons[cat] ?? '<circle cx="12" cy="12" r="10"/>';
+
+  private readonly iconCache = new Map<string, SafeHtml>();
+  getCategoryIcon(cat: string): SafeHtml {
+    const cached = this.iconCache.get(cat);
+    if (cached) return cached;
+    const raw = CATEGORY_ICON_MARKUP[cat] ?? '<circle cx="12" cy="12" r="10"/>';
+    const safe = this.sanitizer.bypassSecurityTrustHtml(raw);
+    this.iconCache.set(cat, safe);
+    return safe;
   }
 }
+
+const CATEGORY_ICON_MARKUP: Record<string, string> = {
+  Salary:        '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  Food:          '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+  Utilities:     '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  Transport:     '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+  Entertainment: '<polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>',
+  Health:        '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  Freelance:     '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  Housing:       '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  Fitness:       '<path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>',
+};

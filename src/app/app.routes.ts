@@ -40,6 +40,18 @@ export const routes: Routes = [
       import('./features/analytics/analytics.component').then(m => m.AnalyticsComponent),
   },
   {
+    path: 'reports',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/reports/reports.component').then(m => m.ReportsComponent),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then(m => m.ProfileComponent),
+  },
+  {
     path: 'budget',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -50,6 +62,36 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/settings/settings.component').then(m => m.SettingsComponent),
+  },
+  {
+    path: 'categories',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/categories/categories.component').then(m => m.CategoriesComponent),
+  },
+  {
+    path: 'goals',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/goals/goals.component').then(m => m.GoalsComponent),
+  },
+  {
+    path: 'calendar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/calendar/calendar.component').then(m => m.CalendarComponent),
+  },
+  {
+    path: 'accounts',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/wallets/wallets.component').then(m => m.WalletsComponent),
+  },
+  {
+    path: 'recurring',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/recurring/recurring.component').then(m => m.RecurringComponent),
   },
   { path: '**', redirectTo: 'dashboard' },
 ];

@@ -61,7 +61,8 @@ const DEFAULT_NAV: NavItem[] = [
           <a [routerLink]="item.route"
              routerLinkActive="eiq-nav__item--active"
              [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-             class="eiq-nav__item">
+             class="eiq-nav__item"
+             (click)="closeMobileNav()">
             <span class="eiq-nav__icon" [innerHTML]="getIcon(item.icon)"></span>
             <span class="eiq-nav__label">{{ item.label }}</span>
           </a>
@@ -71,11 +72,11 @@ const DEFAULT_NAV: NavItem[] = [
       <div class="eiq-sidebar__divider"></div>
 
       <div class="eiq-sidebar__footer">
-        <a routerLink="/profile" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item">
+        <a routerLink="/profile" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item" (click)="closeMobileNav()">
           <span class="eiq-nav__icon" [innerHTML]="getIcon('person')"></span>
           <span class="eiq-nav__label">Profile</span>
         </a>
-        <a routerLink="/settings" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item">
+        <a routerLink="/settings" routerLinkActive="eiq-nav__item--active" class="eiq-nav__item" (click)="closeMobileNav()">
           <span class="eiq-nav__icon" [innerHTML]="getIcon('settings')"></span>
           <span class="eiq-nav__label">Settings</span>
         </a>
@@ -91,6 +92,8 @@ const DEFAULT_NAV: NavItem[] = [
         </button>
       </div>
     </aside>
+    <!-- Mobile scrim: closes the off-canvas sidebar when tapped -->
+    <button type="button" class="eiq-scrim" aria-label="Close navigation" (click)="closeMobileNav()"></button>
   `,
   styles: [`
     .eiq-sidebar {
@@ -148,5 +151,10 @@ export class SidebarComponent {
   onLogout(): void {
     this.logoutClicked.emit();
     this.auth.logout();
+  }
+
+  /** Closes the mobile off-canvas sidebar (no-op on desktop). */
+  closeMobileNav(): void {
+    document.body.classList.remove('eiq-nav-open');
   }
 }
