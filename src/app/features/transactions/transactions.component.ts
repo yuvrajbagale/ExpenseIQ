@@ -222,7 +222,12 @@ export class TransactionsComponent {
   onPageSizeChange(size: number): void { this.pageSize.set(Number(size) || 10); this.currentPage.set(1); }
   toggleSelect(id: string): void { const s = new Set(this.selectedIds()); s.has(id) ? s.delete(id) : s.add(id); this.selectedIds.set(s); }
   toggleSelectAll(e: Event): void { const ck = (e.target as HTMLInputElement).checked; this.selectedIds.set(ck ? new Set(this.filteredTxns().map(t => t.id)) : new Set()); }
-  deleteTransaction(id: string): void { if (confirm('Delete this transaction?')) this.txnService.deleteTransaction(id); }
+  deleteTransaction(id: string): void {
+    if (!confirm('Delete this transaction?')) return;
+    this.txnService.deleteTransaction(id).subscribe({
+      error: () => alert('Unable to delete transaction. Please make sure the backend is running.'),
+    });
+  }
 
   /** Zero-padded row index for display (1-based). */
   padIndex(i: number): string { return String(i + 1).padStart(3, '0'); }

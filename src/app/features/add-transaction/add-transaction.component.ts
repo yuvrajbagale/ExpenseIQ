@@ -494,10 +494,9 @@ export class AddTransactionComponent {
     this.isRecurring.set(false);
   }
 
-  async saveTransaction(): Promise<void> {
+  saveTransaction(): void {
     if (!this.amount || this.amount <= 0) return;
     this.isSaving.set(true);
-    await new Promise(r => setTimeout(r, 600));
     this.txnService.addTransaction({
       type: this.txnType(), category: this.category || 'Food',
       description: this.description || 'New transaction',
@@ -506,8 +505,15 @@ export class AddTransactionComponent {
       tags: this.tags(), location: this.location,
       isRecurring: this.isRecurring(),
       recurringFrequency: this.isRecurring() ? this.recurringFreq : undefined,
+    }).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.router.navigate(['/transactions']);
+      },
+      error: () => {
+        this.isSaving.set(false);
+        alert('Unable to save transaction. Please make sure the backend is running.');
+      },
     });
-    this.isSaving.set(false);
-    this.router.navigate(['/transactions']);
   }
 }

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.expenseiq.com/v1',
+  apiUrl: 'http://localhost:5000/api',
   appName: 'ExpenseIQ',
   version: '1.0.0',
 };

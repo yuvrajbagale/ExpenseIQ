@@ -9,6 +9,9 @@ dist/
 .angular/
 out-tsc/
 
+# Local backend data
+backend/data.json
+
 # Environment (add your own)
 src/environments/environment.local.ts
 

@@ -1,27 +1,34 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, signal } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../interfaces/api.interface';
 import { Transaction, TransactionFilters, TransactionPagination } from '../interfaces/transaction.interface';
 import { TransactionModel } from '../models/transaction.model';
 
-const MOCK_TRANSACTIONS: Transaction[] = [
-  { id:'001', type:'income', category:'Salary', description:'Salary Deposit', amount:5200, date:new Date('2025-06-10'), paymentMethod:'bank', status:'completed', tags:['income','salary'], isRecurring:true, recurringFrequency:'monthly' },
-  { id:'002', type:'expense', category:'Food', description:'Grocery Store', amount:84.50, date:new Date('2025-06-11'), paymentMethod:'cash', status:'completed', tags:['food','groceries'], isRecurring:false },
-  { id:'003', type:'expense', category:'Utilities', description:'Electricity Bill', amount:120, date:new Date('2025-06-09'), paymentMethod:'upi', status:'completed', tags:['utilities','bills'], isRecurring:true, recurringFrequency:'monthly' },
-  { id:'004', type:'expense', category:'Transport', description:'Uber Ride', amount:18.75, date:new Date('2025-06-09'), paymentMethod:'card', status:'completed', tags:['transport'], isRecurring:false },
-  { id:'005', type:'expense', category:'Utilities', description:'Electricity bill — June', amount:65, date:new Date('2025-06-28'), paymentMethod:'upi', status:'completed', tags:['utilities'], isRecurring:false },
-  { id:'006', type:'expense', category:'Entertainment', description:'Netflix subscription', amount:15.99, date:new Date('2025-06-25'), paymentMethod:'card', status:'completed', tags:['entertainment','subscription'], isRecurring:true, recurringFrequency:'monthly' },
-  { id:'007', type:'expense', category:'Health', description:'Pharmacy — vitamins', amount:34.50, date:new Date('2025-06-22'), paymentMethod:'cash', status:'completed', tags:['health'], isRecurring:false },
-  { id:'008', type:'income', category:'Freelance', description:'Freelance Payment', amount:1200, date:new Date('2025-06-15'), paymentMethod:'bank', status:'completed', tags:['income','freelance'], isRecurring:false },
-  { id:'009', type:'expense', category:'Housing', description:'Monthly apartment rent', amount:1200, date:new Date('2025-06-01'), paymentMethod:'bank', status:'completed', tags:['housing','rent'], isRecurring:true, recurringFrequency:'monthly' },
-  { id:'010', type:'expense', category:'Fitness', description:'Gym membership — monthly', amount:49, date:new Date('2025-05-31'), paymentMethod:'card', status:'pending', tags:['fitness','health'], isRecurring:true, recurringFrequency:'monthly' },
-];
-
 @Injectable({ providedIn: 'root' })
 export class TransactionService {
-  private readonly _transactions = signal<Transaction[]>(MOCK_TRANSACTIONS.map(t => new TransactionModel(t)));
+  private readonly apiUrl = `${environment.apiUrl}/transactions`;
+  private readonly _transactions = signal<Transaction[]>([]);
   private readonly _filters = signal<TransactionFilters>({
-    search: '', type: 'all', status: 'all', dateFrom: null, dateTo: null, categories: [], paymentMethods: [],
+    search: '',
+    type: 'all',
+    status: 'all',
+    dateFrom: null,
+    dateTo: null,
+    categories: [],
+    paymentMethods: [],
   });
-  private readonly _pagination = signal<TransactionPagination>({ page: 1, pageSize: 10, total: 0, totalPages: 0 });
+  private readonly _pagination = signal<TransactionPagination>({
+    page: 1,
+    pageSize: 10,
+    total: 0,
+    totalPages: 0,
+  });
+
+  readonly isLoading = signal(false);
+  readonly error = signal<string | null>(null);
 
   readonly filters = computed(() => this._filters());
   readonly pagination = computed(() => this._pagination());
@@ -54,6 +61,10 @@ export class TransactionService {
     return { income, expense, balance: income - expense };
   });
 
+  constructor(private http: HttpClient) {
+    this.loadTransactions().subscribe({ error: () => undefined });
+  }
+
   updateFilters(partial: Partial<TransactionFilters>): void {
     this._filters.update(f => ({ ...f, ...partial }));
     this._pagination.update(p => ({ ...p, page: 1 }));
@@ -63,12 +74,85 @@ export class TransactionService {
     this._pagination.update(p => ({ ...p, page }));
   }
 
-  addTransaction(tx: Partial<Transaction>): void {
-    const model = new TransactionModel(tx);
-    this._transactions.update(list => [model, ...list]);
+  loadTransactions(): Observable<Transaction[]> {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    return this.http.get<ApiResponse<Transaction[]>>(this.apiUrl).pipe(
+      map(response => (response.data ?? []).map(t => new TransactionModel(t))),
+      tap(transactions => {
+        this._transactions.set(transactions);
+        this.syncPagination(transactions.length);
+        this.isLoading.set(false);
+      }),
+      catchError(err => {
+        this.isLoading.set(false);
+        this.error.set(this.getErrorMessage(err, 'Unable to load transactions.'));
+        return throwError(() => err);
+      })
+    );
   }
 
-  deleteTransaction(id: string): void {
-    this._transactions.update(list => list.filter(t => t.id !== id));
+  addTransaction(tx: Partial<Transaction>): Observable<Transaction> {
+    return this.http.post<ApiResponse<Transaction>>(this.apiUrl, this.toPayload(tx)).pipe(
+      map(response => new TransactionModel(response.data)),
+      tap(model => {
+        this._transactions.update(list => [model, ...list]);
+        this.syncPagination(this._transactions().length);
+      }),
+      catchError(err => {
+        this.error.set(this.getErrorMessage(err, 'Unable to save transaction.'));
+        return throwError(() => err);
+      })
+    );
+  }
+
+  deleteTransaction(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<{ id: string }>>(`${this.apiUrl}/${encodeURIComponent(id)}`).pipe(
+      tap(() => {
+        this._transactions.update(list => list.filter(t => t.id !== id));
+        this.syncPagination(this._transactions().length);
+      }),
+      map(() => void 0),
+      catchError(err => {
+        this.error.set(this.getErrorMessage(err, 'Unable to delete transaction.'));
+        return throwError(() => err);
+      })
+    );
+  }
+
+  private toPayload(tx: Partial<Transaction>): Record<string, unknown> {
+    const model = new TransactionModel(tx);
+    return {
+      ...model,
+      date: model.date.toISOString(),
+    };
+  }
+
+  private syncPagination(total: number): void {
+    this._pagination.update(p => ({
+      ...p,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / p.pageSize)),
+    }));
+  }
+
+  private getErrorMessage(err: unknown, fallback: string): string {
+    const maybeHttpError = err as {
+      error?: { message?: string } | string;
+      message?: string;
+    };
+    const apiError = maybeHttpError?.error;
+
+    if (typeof apiError === 'string') {
+      return apiError;
+    }
+    if (apiError && typeof apiError === 'object' && apiError.message) {
+      return apiError.message;
+    }
+    if (maybeHttpError?.message) {
+      return maybeHttpError.message;
+    }
+    return fallback;
   }
 }
