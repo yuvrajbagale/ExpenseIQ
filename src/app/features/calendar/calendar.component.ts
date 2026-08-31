@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CalendarService } from '../../core/services/calendar.service';
@@ -92,7 +92,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
 
               <div class="eiq-card">
                 <h3 class="cal-sidebar__title">Selected Day Detail</h3>
-                <p class="cal-sidebar__date">June {{ cal.selectedDay() }}, 2025</p>
+                <p class="cal-sidebar__date">June {{ cal.selectedDay() }}, {{ currentYear }}</p>
                 <div class="cal-day-detail-list">
                   @for (txn of cal.selectedDayTransactions(); track txn.title) {
                     <div class="cal-day-detail">
@@ -153,14 +153,15 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .cal-day {
       min-height: 80px; border: 1px solid var(--eiq-border); border-radius: 0.5rem; background: var(--eiq-surface);
       display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 6px;
-      cursor: pointer; text-align: left; transition: all 0.15s;
-      &:hover { border-color: var(--eiq-primary-40); }
+      cursor: pointer; text-align: left; transition: background 150ms ease, border-color 150ms ease;
+      &:hover { border-color: var(--eiq-primary-40); background: var(--eiq-hover); }
     }
     .cal-day--out { opacity: 0.4; }
-    .cal-day--today { border-color: var(--eiq-primary); }
+    .cal-day--today { background: var(--eiq-primary); border-color: var(--eiq-primary); color: #fff; }
+    .cal-day--today .cal-day__num { color: #fff; }
     .cal-day--selected { box-shadow: 0 0 0 2px var(--eiq-primary); border-color: var(--eiq-primary); }
     .cal-day__num { font-size: 0.75rem; font-weight: 600; color: var(--eiq-foreground); }
-    .cal-day__entry { font-size: 0.5625rem; line-height: 1.2; border-radius: 4px; padding: 1px 4px; width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    .cal-day__entry { font-size: 0.625rem; line-height: 1.2; border-radius: 4px; padding: 1px 4px; width: 100%; overflow: hidden; text-overflow: ellipsis; }
     .cal-day__entry--income  { background: var(--eiq-green-12); color: var(--eiq-green); }
     .cal-day__entry--expense { background: var(--eiq-red-10);   color: var(--eiq-red); }
     .cal-day__entry--due     { background: var(--eiq-amber-15); color: var(--eiq-amber); }
@@ -189,11 +190,16 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .cal-bill-row__amount { color: var(--eiq-foreground); font-weight: 700; text-align: right; }
   `]
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly cal = inject(CalendarService);
   protected readonly Math = Math;
+  protected readonly currentYear = new Date().getFullYear();
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.cal.loadCalendar().subscribe();
+  }
 
   goTo(path: string): void { this.router.navigate([path]); }
 }

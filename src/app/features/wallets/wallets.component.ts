@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { WalletsService } from '../../core/services/wallets.service';
@@ -137,7 +137,8 @@ import { HeaderComponent } from '../../shared/components/header.component';
   `,
   styles: [`
     .wallet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .wallet-card { border-radius: 1rem; padding: 1.25rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; min-height: 180px; }
+    .wallet-card { border-radius: 1rem; padding: 1.25rem; color: white; display: flex; flex-direction: column; gap: 0.5rem; min-height: 180px; transition: transform 150ms ease, box-shadow 150ms ease; }
+    .wallet-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     .wallet-card__top { display: flex; justify-content: space-between; align-items: center; }
     .wallet-card__name { font-size: 0.8125rem; font-weight: 700; }
     .wallet-card__kind { font-size: 0.625rem; background: rgba(255,255,255,0.2); border-radius: 9999px; padding: 2px 8px; }
@@ -145,15 +146,20 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .wallet-card__balance { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0; }
     .wallet-card__flow { display: flex; flex-direction: column; gap: 2px; font-size: 0.6875rem; opacity: 0.85; }
     .wallet-card__actions { display: flex; gap: 0.375rem; margin-top: 0.5rem; }
-    .wallet-card__btn { flex: 1; height: 1.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.15); border: none; cursor: pointer; }
+    .wallet-card__btn { flex: 1; height: 1.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.2); border: none; cursor: pointer; transition: background 150ms ease; }
+    .wallet-card__btn:hover { background: rgba(255,255,255,0.3); }
     .transfer-card { margin-top: 1rem; }
   `]
 })
-export class WalletsComponent {
+export class WalletsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly wallets = inject(WalletsService);
   protected readonly Math = Math;
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.wallets.loadAccounts().subscribe();
+  }
 
   kindLabel(kind: string): string {
     return { bank: 'Bank Account', credit: 'Credit Card', cash: 'Cash', upi: 'UPI/Digital' }[kind] ?? kind;

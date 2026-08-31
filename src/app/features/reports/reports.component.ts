@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 
 @Component({
@@ -78,24 +79,16 @@ import { HeaderComponent } from '../../shared/components/header.component';
     </div>
   `,
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly analytics = inject(AnalyticsService);
   private readonly router = inject(Router);
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',  exact: true },
-    { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'               },
-    { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                },
-    { label: 'Categories',      route: '/categories',       icon: 'label'                     },
-    { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                 },
-    { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                },
-    { label: 'Reports',         route: '/reports',          icon: 'description'                },
-    { label: 'Goals',           route: '/goals',            icon: 'flag'                       },
-    { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'             },
-    { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'     },
-    { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                  },
-  ];
+  readonly navItems = NAV_ITEMS;
+
+  ngOnInit(): void {
+    this.analytics.loadAnalytics().subscribe();
+  }
 
   goTo(path: string): void {
     this.router.navigate([path]);

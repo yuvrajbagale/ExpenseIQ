@@ -1,0 +1,219 @@
+<!-- ═══ NAV ═══════════════════════════════════════════════════════════ -->
+<nav #nav class="ld-nav">
+  <div class="ld-nav__inner">
+    <a class="ld-nav__brand" (click)="goToAuth('login')">
+      <span class="ld-nav__logo">◆</span>
+      <span class="ld-nav__wordmark">ExpenseIQ</span>
+    </a>
+    <div class="ld-nav__links">
+      <a class="ld-nav__link" href="#features">Features</a>
+      <a class="ld-nav__link" href="#pricing">Pricing</a>
+      <a class="ld-nav__link" (click)="goToAuth('login')">Log in</a>
+      <button class="ld-btn ld-btn--primary ld-btn--sm" (click)="goToAuth('signup')">
+        Start free trial
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
+<section class="ld-hero">
+  <canvas #heroCanvas class="ld-hero__canvas" aria-hidden="true"></canvas>
+  <div class="ld-hero__inner">
+    <div class="ld-hero__badge">
+      <span class="ld-hero__badge-dot"></span>
+      Now with AI-powered receipt scanning
+    </div>
+    <h1 class="ld-hero__title">
+      Track every dollar.<br>
+      <span class="ld-hero__title-accent">Control your finances.</span>
+    </h1>
+    <p class="ld-hero__sub">
+      ExpenseIQ captures receipts, categorizes spending, and shows you exactly where your money goes — so you can make smarter financial decisions.
+    </p>
+    <div class="ld-hero__ctas">
+      <button class="ld-btn ld-btn--primary ld-btn--lg" (click)="goToAuth('signup')">
+        Get started free
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+      <button class="ld-btn ld-btn--ghost ld-btn--lg" (click)="goToAuth('login')">
+        See live demo
+      </button>
+    </div>
+    <div class="ld-hero__trust">
+      <div class="ld-hero__trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Bank-level security
+      </div>
+      <div class="ld-hero__trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        256-bit encryption
+      </div>
+      <div class="ld-hero__trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        No credit card required
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOCIAL PROOF BAR ══════════════════════════════════════════════ -->
+<section class="ld-proof">
+  <div class="ld-proof__inner">
+    <p class="ld-proof__label">Trusted by</p>
+    <div class="ld-proof__stats">
+      <span class="ld-proof__stat"><strong>12,400+</strong> active users</span>
+      <span class="ld-proof__sep">·</span>
+      <span class="ld-proof__stat"><strong>$2.1M</strong> tracked monthly</span>
+      <span class="ld-proof__sep">·</span>
+      <span class="ld-proof__stat"><strong>99.9%</strong> uptime</span>
+      <span class="ld-proof__sep">·</span>
+      <span class="ld-proof__stat"><strong>4.9/5</strong> user rating</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ══════════════════════════════════════════════════ -->
+<section class="ld-steps" id="how-it-works">
+  <div class="ld-steps__inner">
+    <div class="ld-section-header ld-reveal">
+      <span class="ld-section-tag">How it works</span>
+      <h2 class="ld-section-title">Three simple steps to financial clarity</h2>
+      <p class="ld-section-sub">No spreadsheets. No manual entry. No guesswork.</p>
+    </div>
+    <div class="ld-steps__grid">
+      <div class="ld-step ld-reveal" *ngFor="let step of steps; let i = index">
+        <div class="ld-step__num">{{ step.n }}</div>
+        <div class="ld-step__bar" aria-hidden="true"></div>
+        <h3 class="ld-step__title">{{ step.title }}</h3>
+        <p class="ld-step__copy">{{ step.copy }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ══════════════════════════════════════════════════════ -->
+<section class="ld-features" id="features">
+  <div class="ld-features__inner">
+    <div class="ld-section-header ld-reveal">
+      <span class="ld-section-tag">Features</span>
+      <h2 class="ld-section-title">Everything you need to manage spending</h2>
+      <p class="ld-section-sub">Built for individuals and teams who take their finances seriously.</p>
+    </div>
+    <div class="ld-features__grid">
+      <div class="ld-feature ld-reveal" *ngFor="let f of features">
+        <div class="ld-feature__icon">
+          <ng-container [ngSwitch]="f.icon">
+            <svg *ngSwitchCase="'scan'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+            <svg *ngSwitchCase="'brain'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <svg *ngSwitchCase="'bell'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <svg *ngSwitchCase="'bank'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 10v11"/><path d="M12 10v11"/><path d="M16 10v11"/></svg>
+            <svg *ngSwitchCase="'team'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <svg *ngSwitchCase="'chart'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <svg *ngSwitchDefault width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
+          </ng-container>
+        </div>
+        <h3 class="ld-feature__title">{{ f.title }}</h3>
+        <p class="ld-feature__copy">{{ f.copy }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECURITY ══════════════════════════════════════════════════════ -->
+<section class="ld-security">
+  <div class="ld-security__inner ld-reveal">
+    <div class="ld-security__content">
+      <span class="ld-section-tag">Security</span>
+      <h2 class="ld-section-title">Your data is protected at every layer</h2>
+      <p class="ld-security__copy">
+        We use the same encryption standards as major banks. Your financial data is encrypted in transit and at rest — we never have access to your plain-text information.
+      </p>
+      <div class="ld-security__badges">
+        <div class="ld-security__badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div>
+            <strong>SOC 2 Compliant</strong>
+            <span>Audited annually</span>
+          </div>
+        </div>
+        <div class="ld-security__badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <div>
+            <strong>AES-256 Encryption</strong>
+            <span>Data at rest</span>
+          </div>
+        </div>
+        <div class="ld-security__badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <strong>Read-only Access</strong>
+            <span>We never move money</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══════════════════════════════════════════════════════ -->
+<section class="ld-pricing" id="pricing">
+  <div class="ld-pricing__inner">
+    <div class="ld-section-header ld-reveal">
+      <span class="ld-section-tag">Pricing</span>
+      <h2 class="ld-section-title">Simple, transparent pricing</h2>
+      <p class="ld-section-sub">Start free. Upgrade when you need more.</p>
+    </div>
+    <div class="ld-pricing__grid">
+      <div class="ld-tier" *ngFor="let tier of pricing" [class.ld-tier--featured]="tier.featured">
+        <div class="ld-tier__badge" *ngIf="tier.featured">Most popular</div>
+        <h3 class="ld-tier__name">{{ tier.name }}</h3>
+        <div class="ld-tier__price">
+          <span class="ld-tier__amount">{{ tier.price }}</span>
+          <span class="ld-tier__cadence">{{ tier.cadence }}</span>
+        </div>
+        <p class="ld-tier__copy">{{ tier.copy }}</p>
+        <ul class="ld-tier__perks">
+          <li *ngFor="let perk of tier.perks">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ perk }}
+          </li>
+        </ul>
+        <button class="ld-btn ld-btn--full" [class.ld-btn--primary]="tier.featured" [class.ld-btn--outline]="!tier.featured" (click)="goToAuth('signup')">
+          {{ tier.featured ? 'Start free trial' : 'Get started' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═════════════════════════════════════════════════════ -->
+<section class="ld-cta">
+  <div class="ld-cta__inner ld-reveal">
+    <h2 class="ld-cta__title">Take control of your finances today</h2>
+    <p class="ld-cta__sub">Join 12,400+ users who stopped guessing and started knowing.</p>
+    <button class="ld-btn ld-btn--primary ld-btn--xl" (click)="goToAuth('signup')">
+      Create your free account
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer class="ld-footer">
+  <div class="ld-footer__inner">
+    <div class="ld-footer__left">
+      <div class="ld-footer__brand">
+        <span class="ld-nav__logo">◆</span>
+        <span class="ld-nav__wordmark">ExpenseIQ</span>
+      </div>
+      <p class="ld-footer__copy">&copy; 2025 ExpenseIQ. All rights reserved.</p>
+    </div>
+    <div class="ld-footer__links">
+      <a class="ld-footer__link" (click)="goToAuth('login')">Privacy Policy</a>
+      <a class="ld-footer__link" (click)="goToAuth('login')">Terms of Service</a>
+      <a class="ld-footer__link" (click)="goToAuth('login')">Security</a>
+      <a class="ld-footer__link" (click)="goToAuth('login')">Contact</a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,64 @@
+<div class="auth">
+
+  <!-- Left: ledger side panel -->
+  <div class="side" #side>
+    <div class="side__inner">
+      <div class="wordmark">Expense<span>IQ</span></div>
+      <blockquote>
+        "I finally know where the money goes before the statement tells me."
+        <cite>— an actual ledger line, tidied up</cite>
+      </blockquote>
+
+      <div class="side__ledger">
+        <div class="row"><span>Groceries</span><span class="amt">$412.30</span></div>
+        <div class="row"><span>Transport</span><span class="amt">$96.40</span></div>
+        <div class="row"><span>Dining</span><span class="amt">$188.10</span></div>
+        <div class="row row--total"><span>Total this month</span><span class="amt">$2,480.10</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form panel -->
+  <div class="panel" #panel>
+    <div class="panel__inner">
+      <a routerLink="/" class="back">← Back to ExpenseIQ</a>
+
+      <div class="toggle">
+        <button [class.active]="mode === 'login'" (click)="switchMode('login')">Log in</button>
+        <button [class.active]="mode === 'signup'" (click)="switchMode('signup')">Sign up</button>
+      </div>
+
+      <h1>{{ mode === 'login' ? 'Welcome back' : 'Open your ledger' }}</h1>
+      <p class="sub">{{ mode === 'login' ? 'Log in to see this month\'s numbers.' : 'Takes about 30 seconds. No card required.' }}</p>
+
+      <form (ngSubmit)="submit()">
+        <label *ngIf="mode === 'signup'">
+          Full name
+          <input type="text" name="name" [(ngModel)]="name" placeholder="Jordan Rao" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" [(ngModel)]="email" placeholder="you@company.com" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" [(ngModel)]="password" placeholder="••••••••" required />
+        </label>
+
+        <button type="submit" class="btn btn--brass btn--full" [disabled]="submitting">
+          {{ submitting ? 'Opening your dashboard…' : (mode === 'login' ? 'Log in' : 'Create account') }}
+        </button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+      <button class="btn btn--outline btn--full" (click)="submit()">Continue with Google</button>
+
+      <p class="switch">
+        <ng-container *ngIf="mode === 'login'">New here? <a (click)="switchMode('signup')">Create an account</a></ng-container>
+        <ng-container *ngIf="mode === 'signup'">Already have an account? <a (click)="switchMode('login')">Log in</a></ng-container>
+      </p>
+    </div>
+  </div>
+
+</div>

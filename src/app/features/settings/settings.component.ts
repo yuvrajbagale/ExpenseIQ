@@ -2,8 +2,16 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { SettingsGeneralTabComponent } from './tabs/general-tab.component';
+import { SettingsNotificationsTabComponent } from './tabs/notifications-tab.component';
+import { SettingsSecurityTabComponent } from './tabs/security-tab.component';
+import { SettingsAppearanceTabComponent } from './tabs/appearance-tab.component';
+import { SettingsCurrencyTabComponent } from './tabs/currency-tab.component';
+import { SettingsDataTabComponent } from './tabs/data-tab.component';
+import { SettingsIntegrationsTabComponent } from './tabs/integrations-tab.component';
 
 type SettingsTab =
   | 'general'
@@ -20,37 +28,20 @@ interface NavTab {
   icon: string;
 }
 
-interface ToggleRow {
-  key: string;
-  label: string;
-  description: string;
-  value: boolean;
-}
-
-interface LoginEntry {
-  device: string;
-  location: string;
-  time: string;
-  current: boolean;
-}
-
-interface Integration {
-  name: string;
-  icon: string;
-  description: string;
-  connected: boolean;
-}
-
-interface Accent {
-  id: string;
-  label: string;
-  color: string;
-}
-
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [
+    SidebarComponent,
+    HeaderComponent,
+    SettingsGeneralTabComponent,
+    SettingsNotificationsTabComponent,
+    SettingsSecurityTabComponent,
+    SettingsAppearanceTabComponent,
+    SettingsCurrencyTabComponent,
+    SettingsDataTabComponent,
+    SettingsIntegrationsTabComponent,
+  ],
   template: `
     <div class="eiq-app">
       <eiq-sidebar [navItems]="navItems" (logoutClicked)="onLogout()" />
@@ -112,394 +103,37 @@ interface Accent {
 
               <!-- ════ GENERAL ════ -->
               @if (activeTab() === 'general') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">General Settings</h3>
-                      <p class="eiq-card__subtitle">Basic application preferences</p>
-                    </div>
-                  </div>
-                  <div class="settings-form">
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="appName">App Name</label>
-                      <input id="appName" class="settings-input" type="text" [value]="general.appName()" (input)="general.appName.set(inputValue($event))" />
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="dashView">Default Dashboard View</label>
-                      <select id="dashView" class="settings-select" [value]="general.dashboardView()" (change)="general.dashboardView.set(inputValue($event))">
-                        <option value="Overview">Overview</option>
-                        <option value="Transactions">Transactions</option>
-                        <option value="Analytics">Analytics</option>
-                        <option value="Budget">Budget</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="dateFormat">Date Format</label>
-                      <select id="dateFormat" class="settings-select" [value]="general.dateFormat()" (change)="general.dateFormat.set(inputValue($event))">
-                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="timezone">Time Zone</label>
-                      <select id="timezone" class="settings-select" [value]="general.timezone()" (change)="general.timezone.set(inputValue($event))">
-                        <option value="UTC-5 Eastern">UTC-5 Eastern</option>
-                        <option value="UTC-0 UTC">UTC-0 UTC</option>
-                        <option value="UTC+1 Central European">UTC+1 Central European</option>
-                        <option value="UTC+5:30 India">UTC+5:30 India</option>
-                      </select>
-                    </div>
-                    <div class="settings-field settings-field--full">
-                      <span class="settings-field__label">Week Starts On</span>
-                      <div class="seg-group">
-                        <button type="button" class="seg-btn" [class.seg-btn--active]="general.weekStart() === 'Sunday'" (click)="general.weekStart.set('Sunday')">Sunday</button>
-                        <button type="button" class="seg-btn" [class.seg-btn--active]="general.weekStart() === 'Monday'" (click)="general.weekStart.set('Monday')">Monday</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Preferences</h3>
-                      <p class="eiq-card__subtitle">Application behavior options</p>
-                    </div>
-                  </div>
-                  <div class="toggle-list">
-                    @for (row of generalToggles(); track row.key) {
-                      <div class="toggle-row">
-                        <div class="toggle-row__body">
-                          <p class="toggle-row__label">{{ row.label }}</p>
-                          <p class="toggle-row__desc">{{ row.description }}</p>
-                        </div>
-                        <button
-                          type="button"
-                          class="toggle-switch"
-                          [class.toggle-switch--on]="row.value"
-                          [attr.aria-label]="row.label"
-                          (click)="toggleRow(generalToggles, row.key)"></button>
-                      </div>
-                    }
-                  </div>
-                </div>
+                <eiq-settings-general />
               }
 
               <!-- ════ NOTIFICATIONS ════ -->
               @if (activeTab() === 'notifications') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Notification Preferences</h3>
-                      <p class="eiq-card__subtitle">Control how and when we contact you</p>
-                    </div>
-                  </div>
-                  <div class="toggle-list">
-                    @for (row of notificationToggles(); track row.key) {
-                      <div class="toggle-row">
-                        <div class="toggle-row__body">
-                          <p class="toggle-row__label">{{ row.label }}</p>
-                          <p class="toggle-row__desc">{{ row.description }}</p>
-                        </div>
-                        <button
-                          type="button"
-                          class="toggle-switch"
-                          [class.toggle-switch--on]="row.value"
-                          [attr.aria-label]="row.label"
-                          (click)="toggleRow(notificationToggles, row.key)"></button>
-                      </div>
-                    }
-                  </div>
-                </div>
+                <eiq-settings-notifications />
               }
 
               <!-- ════ SECURITY ════ -->
               @if (activeTab() === 'security') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Security & Privacy</h3>
-                      <p class="eiq-card__subtitle">Manage your password and account security</p>
-                    </div>
-                  </div>
-                  <div class="settings-form">
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="curPwd">Current Password</label>
-                      <input id="curPwd" class="settings-input" type="password" placeholder="••••••••" />
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="newPwd">New Password</label>
-                      <input id="newPwd" class="settings-input" type="password" placeholder="••••••••" />
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="confPwd">Confirm Password</label>
-                      <input id="confPwd" class="settings-input" type="password" placeholder="••••••••" />
-                    </div>
-                  </div>
-                  <div class="toggle-list toggle-list--bordered">
-                    <div class="toggle-row">
-                      <div class="toggle-row__body">
-                        <p class="toggle-row__label">
-                          Two-Factor Authentication
-                          <span class="settings-badge settings-badge--warning">Recommended</span>
-                        </p>
-                        <p class="toggle-row__desc">Add an extra layer of security to your account</p>
-                      </div>
-                      <button
-                        type="button"
-                        class="toggle-switch"
-                        [class.toggle-switch--on]="security.twoFactor()"
-                        (click)="security.twoFactor.set(!security.twoFactor())"
-                        aria-label="Two-Factor Authentication"></button>
-                    </div>
-                  </div>
-                  <div class="settings-actions">
-                    <button type="button" class="eiq-btn eiq-btn--primary eiq-btn--sm">Update Password</button>
-                  </div>
-                </div>
-
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Login Activity</h3>
-                      <p class="eiq-card__subtitle">Recent sign-in activity on your account</p>
-                    </div>
-                  </div>
-                  <ul class="login-list">
-                    @for (entry of loginActivity(); track entry.device + entry.time) {
-                      <li class="login-item">
-                        <div class="login-item__icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                            <line x1="8" y1="21" x2="16" y2="21" />
-                            <line x1="12" y1="17" x2="12" y2="21" />
-                          </svg>
-                        </div>
-                        <div class="login-item__body">
-                          <p class="login-item__device">{{ entry.device }}</p>
-                          <p class="login-item__meta">{{ entry.location }} · {{ entry.time }}</p>
-                        </div>
-                        @if (entry.current) {
-                          <span class="login-item__status login-item__status--current">Current</span>
-                        } @else {
-                          <span class="login-item__status login-item__status--muted">Signed in</span>
-                        }
-                      </li>
-                    }
-                  </ul>
-                </div>
-
-                <div class="eiq-card settings-danger">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title settings-danger__title">Delete Account</h3>
-                      <p class="eiq-card__subtitle">Permanently remove your account and data</p>
-                    </div>
-                    <button type="button" class="settings-danger__btn" (click)="confirmDelete()">Delete Account</button>
-                  </div>
-                </div>
+                <eiq-settings-security (accountDeleted)="confirmDelete()" />
               }
 
               <!-- ════ APPEARANCE ════ -->
               @if (activeTab() === 'appearance') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Appearance</h3>
-                      <p class="eiq-card__subtitle">Customize how ExpenseIQ looks</p>
-                    </div>
-                  </div>
-                  <div class="settings-section-row">
-                    <span class="settings-field__label">Theme</span>
-                    <div class="seg-group">
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.themeChoice() === 'light'" (click)="setThemeChoice('light')">Light</button>
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.themeChoice() === 'dark'" (click)="setThemeChoice('dark')">Dark</button>
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.themeChoice() === 'system'" (click)="setThemeChoice('system')">System</button>
-                    </div>
-                  </div>
-                  <div class="settings-section-row">
-                    <span class="settings-field__label">Accent Color</span>
-                    <div class="accent-row">
-                      @for (acc of accentColors; track acc.id) {
-                        <button
-                          type="button"
-                          class="accent-dot"
-                          [class.accent-dot--active]="appearance.accent() === acc.id"
-                          [style.background]="acc.color"
-                          [attr.aria-label]="acc.label"
-                          (click)="appearance.accent.set(acc.id)"></button>
-                      }
-                    </div>
-                  </div>
-                  <div class="settings-section-row">
-                    <span class="settings-field__label">Font Size</span>
-                    <div class="seg-group">
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.fontSize() === 'small'" (click)="appearance.fontSize.set('small')">Small</button>
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.fontSize() === 'medium'" (click)="appearance.fontSize.set('medium')">Medium</button>
-                      <button type="button" class="seg-btn" [class.seg-btn--active]="appearance.fontSize() === 'large'" (click)="appearance.fontSize.set('large')">Large</button>
-                    </div>
-                  </div>
-                  <div class="toggle-list toggle-list--bordered">
-                    @for (row of appearanceToggles(); track row.key) {
-                      <div class="toggle-row">
-                        <div class="toggle-row__body">
-                          <p class="toggle-row__label">{{ row.label }}</p>
-                          <p class="toggle-row__desc">{{ row.description }}</p>
-                        </div>
-                        <button
-                          type="button"
-                          class="toggle-switch"
-                          [class.toggle-switch--on]="row.value"
-                          [attr.aria-label]="row.label"
-                          (click)="toggleRow(appearanceToggles, row.key)"></button>
-                      </div>
-                    }
-                  </div>
-                </div>
+                <eiq-settings-appearance (themeChanged)="onThemeChanged($event)" />
               }
 
               <!-- ════ CURRENCY & LANGUAGE ════ -->
               @if (activeTab() === 'currency') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Currency & Language</h3>
-                      <p class="eiq-card__subtitle">Regional and formatting preferences</p>
-                    </div>
-                  </div>
-                  <div class="settings-form">
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="primCur">Primary Currency</label>
-                      <select id="primCur" class="settings-select" [value]="currency.primary()" (change)="currency.primary.set(inputValue($event))">
-                        <option value="USD $">USD $</option>
-                        <option value="EUR €">EUR €</option>
-                        <option value="GBP £">GBP £</option>
-                        <option value="INR ₹">INR ₹</option>
-                        <option value="JPY ¥">JPY ¥</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="secCur">Secondary Currency</label>
-                      <select id="secCur" class="settings-select" [value]="currency.secondary()" (change)="currency.secondary.set(inputValue($event))">
-                        <option value="EUR €">EUR €</option>
-                        <option value="USD $">USD $</option>
-                        <option value="GBP £">GBP £</option>
-                        <option value="None">None</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="language">Language</label>
-                      <select id="language" class="settings-select" [value]="currency.language()" (change)="currency.language.set(inputValue($event))">
-                        <option value="English">English</option>
-                        <option value="Español">Español</option>
-                        <option value="Français">Français</option>
-                        <option value="Deutsch">Deutsch</option>
-                        <option value="हिन्दी">हिन्दी</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="numFormat">Number Format</label>
-                      <select id="numFormat" class="settings-select" [value]="currency.numberFormat()" (change)="currency.numberFormat.set(inputValue($event))">
-                        <option value="1,234.56">1,234.56</option>
-                        <option value="1.234,56">1.234,56</option>
-                        <option value="1 234.56">1 234.56</option>
-                      </select>
-                    </div>
-                    <div class="settings-field">
-                      <label class="settings-field__label" for="tz">Timezone</label>
-                      <select id="tz" class="settings-select" [value]="currency.timezone()" (change)="currency.timezone.set(inputValue($event))">
-                        <option value="America/New_York">America/New_York</option>
-                        <option value="Europe/London">Europe/London</option>
-                        <option value="Asia/Kolkata">Asia/Kolkata</option>
-                        <option value="Asia/Tokyo">Asia/Tokyo</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                <eiq-settings-currency />
               }
 
               <!-- ════ DATA & EXPORT ════ -->
               @if (activeTab() === 'data') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Data & Export</h3>
-                      <p class="eiq-card__subtitle">Manage your data and exports</p>
-                    </div>
-                  </div>
-
-                  <div class="data-block">
-                    <p class="data-block__label">Export Data</p>
-                    <p class="data-block__desc">Download your financial data in your preferred format</p>
-                    <div class="data-actions">
-                      <button type="button" class="data-link" (click)="exportData('csv')">Export as CSV</button>
-                      <button type="button" class="data-link" (click)="exportData('pdf')">Export as PDF</button>
-                      <button type="button" class="data-link" (click)="exportData('excel')">Export as Excel</button>
-                    </div>
-                  </div>
-
-                  <div class="data-block">
-                    <p class="data-block__label">Data Backup</p>
-                    <p class="data-block__desc">Last backup: {{ lastBackup }}</p>
-                    <button type="button" class="eiq-btn eiq-btn--primary eiq-btn--sm" (click)="backupNow()">Backup Now</button>
-                  </div>
-
-                  <div class="data-block">
-                    <p class="data-block__label">Import Data</p>
-                    <div class="data-dropzone">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                      </svg>
-                      <span>Drop CSV file here or click to browse</span>
-                    </div>
-                  </div>
-
-                  <div class="data-block">
-                    <p class="data-block__label">Data Retention</p>
-                    <div class="data-retention">
-                      <select class="settings-select settings-select--sm" [value]="data.retention()" (change)="data.retention.set(inputValue($event))">
-                        <option value="Keep all data">Keep all data</option>
-                        <option value="Keep 1 year">Keep 1 year</option>
-                        <option value="Keep 2 years">Keep 2 years</option>
-                      </select>
-                      <button type="button" class="data-link data-link--muted" (click)="clearCache()">Clear Cache</button>
-                    </div>
-                  </div>
-                </div>
+                <eiq-settings-data />
               }
 
               <!-- ════ INTEGRATIONS ════ -->
               @if (activeTab() === 'integrations') {
-                <div class="eiq-card">
-                  <div class="eiq-card__header">
-                    <div>
-                      <h3 class="eiq-card__title">Integrations</h3>
-                      <p class="eiq-card__subtitle">Connect ExpenseIQ with your favorite services</p>
-                    </div>
-                  </div>
-                  <ul class="integrations-list">
-                    @for (int of integrations(); track int.name) {
-                      <li class="integration">
-                        <div class="integration__icon">{{ int.icon }}</div>
-                        <div class="integration__body">
-                          <p class="integration__name">{{ int.name }}</p>
-                          <p class="integration__desc">{{ int.description }}</p>
-                        </div>
-                        <span class="integration__status" [class.integration__status--active]="int.connected">
-                          {{ int.connected ? 'Active' : 'Not Connected' }}
-                        </span>
-                        @if (int.connected) {
-                          <button type="button" class="integration__btn integration__btn--muted" (click)="toggleIntegration(int.name)">Disconnect</button>
-                        } @else {
-                          <button type="button" class="integration__btn integration__btn--primary" (click)="toggleIntegration(int.name)">Connect</button>
-                        }
-                      </li>
-                    }
-                  </ul>
-                </div>
+                <eiq-settings-integrations />
               }
             </div>
           </div>
@@ -920,19 +554,7 @@ export class SettingsComponent {
   readonly activeTab = signal<SettingsTab>('general');
   readonly saved = signal(false);
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',  exact: true },
-    { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'               },
-    { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                },
-    { label: 'Categories',      route: '/categories',       icon: 'label'                     },
-    { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                 },
-    { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                },
-    { label: 'Reports',         route: '/reports',          icon: 'description'                },
-    { label: 'Goals',           route: '/goals',            icon: 'flag'                       },
-    { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'             },
-    { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'     },
-    { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                  },
-  ];
+  readonly navItems = NAV_ITEMS;
 
   readonly tabs: NavTab[] = [
     { id: 'general',       label: 'General',            icon: 'general' },
@@ -944,127 +566,9 @@ export class SettingsComponent {
     { id: 'integrations',  label: 'Integrations',       icon: 'integrations' },
   ];
 
-  readonly accentColors: Accent[] = [
-    { id: 'blue',   label: 'Blue',   color: '#2b7fff' },
-    { id: 'purple', label: 'Purple', color: '#8b5cf6' },
-    { id: 'green',  label: 'Green',  color: '#22c55e' },
-    { id: 'orange', label: 'Orange', color: '#f97316' },
-    { id: 'red',    label: 'Red',    color: '#ef4444' },
-    { id: 'pink',   label: 'Pink',   color: '#ec4899' },
-  ];
-
-  // ── General ──
-  readonly general = {
-    appName: signal('ExpenseIQ'),
-    dashboardView: signal('Overview'),
-    dateFormat: signal('MM/DD/YYYY'),
-    timezone: signal('UTC-5 Eastern'),
-    weekStart: signal<'Sunday' | 'Monday'>('Sunday'),
-  };
-
-  readonly generalToggles = signal<ToggleRow[]>([
-    { key: 'autoSave',       label: 'Auto-save',            description: 'Automatically save changes', value: true  },
-    { key: 'onboardingTips', label: 'Show Onboarding Tips', description: 'Display helpful tips on startup', value: false },
-  ]);
-
-  // ── Notifications ──
-  readonly notificationToggles = signal<ToggleRow[]>([
-    { key: 'email',    label: 'Email Notifications',  description: 'Receive updates and alerts by email', value: true  },
-    { key: 'push',     label: 'Push Notifications',   description: 'Get instant mobile notifications', value: true  },
-    { key: 'budget',   label: 'Budget Alerts',        description: 'Warn when budgets are close to limits', value: true  },
-    { key: 'bill',     label: 'Bill Reminders',       description: 'Remind before recurring bills are due', value: true  },
-    { key: 'weekly',   label: 'Weekly Summary Email', description: 'A weekly snapshot of your finances', value: true  },
-    { key: 'monthly',  label: 'Monthly Report Email', description: 'Receive a monthly financial report', value: false },
-    { key: 'txnAlert', label: 'Transaction Alerts',   description: 'Notify when a transaction is added', value: true  },
-  ]);
-
-  // ── Security ──
-  readonly security = {
-    twoFactor: signal(false),
-  };
-
-  readonly loginActivity = signal<LoginEntry[]>([
-    { device: 'MacBook Pro', location: 'New York, US',  time: 'Today, 9:42 AM',         current: true  },
-    { device: 'iPhone 15',   location: 'Boston, US',    time: 'Yesterday, 6:18 PM',     current: false },
-    { device: 'Chrome',      location: 'Chicago, US',   time: 'Jun 18, 2025 · 2:05 PM', current: false },
-  ]);
-
-  // ── Appearance ──
-  readonly appearance = {
-    themeChoice: signal<'light' | 'dark' | 'system'>('light'),
-    accent: signal('blue'),
-    fontSize: signal<'small' | 'medium' | 'large'>('medium'),
-  };
-
-  readonly appearanceToggles = signal<ToggleRow[]>([
-    { key: 'compact',          label: 'Compact Mode',                  description: 'Reduce spacing and padding', value: false },
-    { key: 'sidebarCollapsed', label: 'Sidebar Collapsed by Default',  description: 'Collapse the sidebar on load', value: false },
-  ]);
-
-  // ── Currency ──
-  readonly currency = {
-    primary: signal('USD $'),
-    secondary: signal('EUR €'),
-    language: signal('English'),
-    numberFormat: signal('1,234.56'),
-    timezone: signal('America/New_York'),
-  };
-
-  // ── Data ──
-  readonly data = {
-    retention: signal('Keep all data'),
-  };
-  readonly lastBackup = 'Jun 10, 2025';
-
-  // ── Integrations ──
-  readonly integrations = signal<Integration[]>([
-    { name: 'Google Drive',    icon: '📁', description: 'Backup and sync files to Drive',     connected: true  },
-    { name: 'Dropbox',         icon: '📦', description: 'Store exports and backups securely',  connected: false },
-    { name: 'Plaid Bank Sync', icon: '🏦', description: 'Connect bank accounts for live sync', connected: true  },
-    { name: 'Zapier',          icon: '⚡', description: 'Automate workflows and notifications', connected: false },
-  ]);
-
-  // ── Theme ──
-  setThemeChoice(choice: 'light' | 'dark' | 'system'): void {
-    this.appearance.themeChoice.set(choice);
+  onThemeChanged(choice: 'light' | 'dark' | 'system'): void {
     const effective: ThemeMode = choice === 'system' ? 'light' : choice;
     this.theme.setTheme(effective);
-  }
-
-  /** Generic toggle for any ToggleRow signal list. */
-  toggleRow(list: typeof this.generalToggles, key: string): void {
-    list.update((rows) =>
-      rows.map((r) => (r.key === key ? { ...r, value: !r.value } : r))
-    );
-  }
-
-  toggleIntegration(name: string): void {
-    this.integrations.update((list) =>
-      list.map((i) => (i.name === name ? { ...i, connected: !i.connected } : i))
-    );
-  }
-
-  /** Extracts the string value from an input/select change event. */
-  inputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLSelectElement).value;
-  }
-
-  exportData(format: string): void {
-    const blob = new Blob([`ExpenseIQ export (${format.toUpperCase()})\n`], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `expenseiq-export.${format}`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  backupNow(): void {
-    // Placeholder for a real backup trigger.
-  }
-
-  clearCache(): void {
-    // Placeholder for a real cache clear.
   }
 
   confirmDelete(): void {

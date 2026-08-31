@@ -1,13 +1,28 @@
 import { Routes } from '@angular/router';
-import { authGuard, publicGuard } from './core/guards/auth.guard';
+import { authGuard, publicGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: '',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/landing/landing.component').then(m => m.LandingComponent),
+  },
+  {
+    path: 'landing',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
   {
     path: 'auth',
     canActivate: [publicGuard],
     loadChildren: () =>
       import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES),
+  },
+  {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./features/auth/auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent),
   },
   {
     path: 'dashboard',

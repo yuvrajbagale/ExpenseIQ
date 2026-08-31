@@ -1,4 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../interfaces/api.interface';
 
 export interface CalendarEntry {
   label: string;
@@ -29,82 +34,85 @@ export interface UpcomingBill {
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-function buildJune2025(): CalendarDay[] {
-  const days: CalendarDay[] = [];
-  // Leading days from May
-  for (let d = 26; d <= 31; d++) days.push({ date: d, inMonth: false, entries: [] });
-
-  const entryMap: Record<number, CalendarEntry[]> = {
-    1:  [{ label: 'Food',   amount: -84.50, type: 'expense' }],
-    2:  [{ label: 'Rent Due', amount: 0, type: 'due' }],
-    3:  [{ label: 'Uber',   amount: -18.75, type: 'expense' }],
-    4:  [{ label: 'Salary', amount: 5200,   type: 'income'  }],
-    5:  [{ label: 'Bill',   amount: -65.00, type: 'expense' }],
-    7:  [{ label: 'Health', amount: -22.75, type: 'expense' }],
-    8:  [{ label: 'Insurance', amount: 0, type: 'due' }],
-    9:  [{ label: 'Netflix', amount: -15.99, type: 'expense' }],
-    10: [{ label: 'Rent',   amount: -85.49, type: 'expense' }],
-    11: [
-      { label: 'Lunch',  amount: -24.50, type: 'expense' },
-      { label: 'Refund', amount: 240,    type: 'income'  },
-      { label: '+1 more', amount: 0, type: 'due' },
-    ],
-    12: [{ label: 'Gym Membership', amount: -49.00, type: 'expense' }],
-    15: [{ label: 'Shopping', amount: -69.49, type: 'expense' }],
-    18: [{ label: 'Utilities', amount: -85.00, type: 'expense' }],
-    19: [{ label: 'Fitness',   amount: -49.00, type: 'expense' }],
-    21: [{ label: 'Internet',  amount: 0, type: 'due' }],
-    22: [{ label: 'Salary',    amount: 5200, type: 'income' }],
-  };
-
-  for (let d = 1; d <= 30; d++) {
-    days.push({
-      date: d,
-      inMonth: true,
-      isToday: d === 11,
-      isSelected: d === 11,
-      entries: entryMap[d] ?? [],
-    });
-  }
-  return days;
-}
-
-const DAY_TRANSACTIONS: Record<number, DayTransaction[]> = {
-  11: [
-    { title: 'Lunch at Café Bistro',     amount: -24.50, type: 'expense', method: 'Card payment'  },
-    { title: 'Refund received',          amount: 240.00, type: 'income',  method: 'Bank transfer' },
-    { title: 'Electricity bill reminder', amount: 0,      type: 'due',     method: 'UPI payment'   },
-  ],
-};
-
-const UPCOMING_BILLS: UpcomingBill[] = [
-  { name: 'Electricity Bill', amount: 120, dueDate: 'Jun 18' },
-  { name: 'Internet Bill',    amount: 59,  dueDate: 'Jun 21' },
-  { name: 'Gym Membership',   amount: 49,  dueDate: 'Jun 14' },
-  { name: 'Rent',             amount: 1200, dueDate: 'Jul 1' },
-];
-
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
-  private readonly _selectedDay = signal(11);
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/calendar`;
+
+  private readonly _selectedDay = signal(new Date().getDate());
   private readonly _view = signal<'month' | 'week'>('month');
-  private readonly _monthLabel = signal('June 2025');
+  private readonly _monthLabel = signal('');
+  private readonly _entryMap = signal<Record<string, CalendarEntry[]>>({});
+  private readonly _monthSummary = signal({ totalIncome: 0, totalExpenses: 0, netBalance: 0 });
 
   readonly selectedDay = computed(() => this._selectedDay());
   readonly view = computed(() => this._view());
   readonly monthLabel = computed(() => this._monthLabel());
   readonly weekdays = computed(() => WEEKDAYS);
+  readonly monthSummary = computed(() => this._monthSummary());
 
-  readonly days = computed(() => buildJune2025());
+  readonly days = computed(() => {
+    const em = this._entryMap();
+    const now = new Date();
+    const today = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const firstDayOfWeek = (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7;
 
-  readonly monthSummary = computed(() => ({
-    totalIncome: 5200.00,
-    totalExpenses: 3180.50,
-    netBalance: 2019.50,
-  }));
+    const result: CalendarDay[] = [];
+    for (let d = firstDayOfWeek; d > 0; d--) {
+      const prevMonthDays = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+      result.push({ date: prevMonthDays - d + 1, inMonth: false, entries: [] });
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = String(d);
+      result.push({
+        date: d,
+        inMonth: true,
+        isToday: d === today,
+        isSelected: d === this._selectedDay(),
+        entries: em[key] ?? [],
+      });
+    }
+    return result;
+  });
 
-  readonly selectedDayTransactions = computed(() => DAY_TRANSACTIONS[this._selectedDay()] ?? []);
-  readonly upcomingBills = computed(() => UPCOMING_BILLS);
+  readonly selectedDayTransactions = computed(() => {
+    const key = String(this._selectedDay());
+    const em = this._entryMap();
+    return (em[key] ?? []).map(e => ({
+      title: e.label,
+      amount: e.amount,
+      type: e.type,
+      method: e.type === 'income' ? 'Bank transfer' : 'Card payment',
+    }));
+  });
+
+  readonly upcomingBills = computed(() => {
+    const em = this._entryMap();
+    const bills: UpcomingBill[] = [];
+    Object.entries(em).forEach(([day, entries]) => {
+      entries.forEach(e => {
+        if (e.type === 'due' || e.type === 'expense') {
+          bills.push({ name: e.label, amount: Math.abs(e.amount), dueDate: `Day ${day}` });
+        }
+      });
+    });
+    return bills.slice(0, 5);
+  });
+
+  loadCalendar(month?: number): Observable<void> {
+    const params: any = {};
+    if (month !== undefined) params.month = month;
+    return this.http.get<ApiResponse<any>>(this.apiUrl, { withCredentials: true, params }).pipe(
+      map(response => {
+        const d = response.data;
+        this._monthLabel.set(d.month);
+        this._entryMap.set(d.entryMap);
+        this._monthSummary.set(d.summary);
+      }),
+      catchError(() => of(undefined))
+    );
+  }
 
   selectDay(date: number): void { this._selectedDay.set(date); }
   setView(view: 'month' | 'week'): void { this._view.set(view); }

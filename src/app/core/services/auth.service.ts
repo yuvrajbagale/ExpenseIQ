@@ -6,7 +6,17 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../interfaces/api.interface';
 import { AuthState, LoginCredentials, User } from '../interfaces/user.interface';
+import { CsrfService } from './csrf.service';
 
+/**
+ * Authentication service with dual-mode token support:
+ *
+ * 1. HttpOnly cookies (preferred, secure) — backend sets access_token cookie
+ * 2. Bearer token in localStorage (backward compatible fallback)
+ *
+ * When the backend is fully upgraded, localStorage storage can be removed
+ * and only HttpOnly cookies will be used.
+ */
 const TOKEN_KEY = 'eq_token';
 const USER_KEY = 'eq_user';
 
@@ -17,6 +27,7 @@ type ApiUser = Partial<Omit<User, 'createdAt'>> & {
 interface LoginApiData {
   user: ApiUser;
   token: string;
+  csrfToken?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -33,12 +44,21 @@ export class AuthService {
   readonly token = computed(() => this._state().token);
   readonly isAuthenticated = computed(() => this._state().isAuthenticated);
   readonly isLoading = computed(() => this._state().isLoading);
-  readonly error = computed(() => this._state().error);
 
-  readonly currentUser = computed(() => this._state().user);
+  /** Canonical error signal. Use this (not a duplicate) to read auth errors. */
   readonly authError = computed(() => this._state().error);
 
-  constructor(private router: Router, private http: HttpClient) {
+  /**
+   * Alias for user signal — used by HeaderComponent and other consumers.
+   * Kept for backward compatibility; both resolve to the same computed value.
+   */
+  readonly currentUser = computed(() => this._state().user);
+
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private csrf: CsrfService,
+  ) {
     this.restoreSession();
   }
 
@@ -62,6 +82,9 @@ export class AuthService {
         token,
         isAuthenticated: true,
       }));
+
+      // Fetch CSRF token for authenticated session
+      this.csrf.fetchToken();
     } catch {
       this.clearStorage();
     }
@@ -70,10 +93,55 @@ export class AuthService {
   login(credentials: LoginCredentials): Observable<void> {
     this._state.update((s) => ({ ...s, isLoading: true, error: null }));
 
-    return this.http.post<ApiResponse<LoginApiData>>(`${environment.apiUrl}/auth/login`, credentials).pipe(
+    return this.http.post<ApiResponse<LoginApiData>>(`${environment.apiUrl}/auth/login`, credentials, {
+      withCredentials: true,
+    }).pipe(
       tap((response) => {
         if (!response.success || !response.data?.token || !response.data?.user) {
           throw new Error(response.message || 'Login failed.');
+        }
+
+        const user = this.normalizeUser(response.data.user, credentials.email);
+        const token = response.data.token;
+
+        // Store in localStorage for backward compatibility
+        this.writeStorage(TOKEN_KEY, token);
+        this.writeStorage(USER_KEY, JSON.stringify(user));
+
+        this._state.update((s) => ({
+          ...s,
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        }));
+
+        // Fetch CSRF token for state-changing requests
+        this.csrf.fetchToken();
+
+        this.router.navigate(['/dashboard']);
+      }),
+      map(() => void 0),
+      catchError((err) => {
+        this._state.update((s) => ({
+          ...s,
+          isLoading: false,
+          error: this.getErrorMessage(err, 'Login failed.'),
+        }));
+        return throwError(() => err);
+      })
+    );
+  }
+
+  register(credentials: LoginCredentials): Observable<void> {
+    this._state.update((s) => ({ ...s, isLoading: true, error: null }));
+
+    return this.http.post<ApiResponse<LoginApiData>>(`${environment.apiUrl}/auth/register`, credentials, {
+      withCredentials: true,
+    }).pipe(
+      tap((response) => {
+        if (!response.success || !response.data?.token || !response.data?.user) {
+          throw new Error(response.message || 'Registration failed.');
         }
 
         const user = this.normalizeUser(response.data.user, credentials.email);
@@ -89,6 +157,8 @@ export class AuthService {
           isAuthenticated: true,
           isLoading: false,
         }));
+
+        this.csrf.fetchToken();
         this.router.navigate(['/dashboard']);
       }),
       map(() => void 0),
@@ -96,7 +166,7 @@ export class AuthService {
         this._state.update((s) => ({
           ...s,
           isLoading: false,
-          error: this.getErrorMessage(err, 'Login failed.'),
+          error: this.getErrorMessage(err, 'Registration failed.'),
         }));
         return throwError(() => err);
       })
@@ -105,6 +175,7 @@ export class AuthService {
 
   logout(): void {
     this.clearStorage();
+    this.csrf.clear();
     this._state.set({
       user: null,
       token: null,
@@ -112,6 +183,12 @@ export class AuthService {
       isLoading: false,
       error: null,
     });
+
+    // Notify backend to clear HttpOnly cookies
+    this.http.post(`${environment.apiUrl}/auth/logout`, {}, { withCredentials: true }).subscribe({
+      error: () => { /* ignore — cookies will expire */ },
+    });
+
     this.router.navigate(['/auth/login']);
   }
 

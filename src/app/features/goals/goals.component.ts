@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { GoalsService } from '../../core/services/goals.service';
@@ -96,7 +96,8 @@ import { HeaderComponent } from '../../shared/components/header.component';
   `,
   styles: [`
     .goals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .goal-card { display: flex; flex-direction: column; gap: 0.5rem; }
+    .goal-card { display: flex; flex-direction: column; gap: 0.5rem; transition: transform 200ms ease, box-shadow 200ms ease; }
+    .goal-card:hover { transform: translateY(-2px); box-shadow: var(--eiq-shadow-md); }
     .goal-card__top { display: flex; justify-content: space-between; align-items: flex-start; }
     .goal-card__icon { width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
     .goal-card__name { font-size: 0.9375rem; font-weight: 700; color: var(--eiq-foreground); margin: 0; }
@@ -108,10 +109,14 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .goal-card__actions { display: flex; justify-content: flex-end; gap: 0.25rem; margin-top: 0.25rem; }
   `]
 })
-export class GoalsComponent {
+export class GoalsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly goals = inject(GoalsService);
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.goals.loadGoals().subscribe();
+  }
 
   statusLabel(status: string): string {
     return { 'on-track': 'On Track', behind: 'Behind', completed: 'Completed' }[status] ?? status;

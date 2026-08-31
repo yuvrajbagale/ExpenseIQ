@@ -2,13 +2,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { NAV_ITEMS, NavItem } from '../constants/nav-items';
 
-export interface NavItem {
-  label: string;
-  route: string;
-  icon: string;
-  exact?: boolean;
-}
+export type { NavItem } from '../constants/nav-items';
 
 const ICON_MAP: Record<string, string> = {
   dashboard:              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
@@ -25,20 +21,6 @@ const ICON_MAP: Record<string, string> = {
   person:                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
   settings:               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>',
 };
-
-const DEFAULT_NAV: NavItem[] = [
-  { label: 'Dashboard',       route: '/dashboard',     icon: 'dashboard',              exact: true },
-  { label: 'Transactions',    route: '/transactions',  icon: 'swap_horiz'                           },
-  { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                        },
-  { label: 'Categories',      route: '/categories',    icon: 'label'                                },
-  { label: 'Budget',          route: '/budget',        icon: 'pie_chart'                            },
-  { label: 'Analytics',       route: '/analytics',     icon: 'trending_up'                          },
-  { label: 'Reports',         route: '/reports',       icon: 'description'                          },
-  { label: 'Goals',           route: '/goals',         icon: 'flag'                                 },
-  { label: 'Calendar',        route: '/calendar',      icon: 'calendar_month'                       },
-  { label: 'Wallet Accounts', route: '/accounts',      icon: 'account_balance_wallet'               },
-  { label: 'Recurring',       route: '/recurring',     icon: 'autorenew'                            },
-];
 
 @Component({
   selector: 'eiq-sidebar',
@@ -112,7 +94,7 @@ const DEFAULT_NAV: NavItem[] = [
     .eiq-sidebar__logo {
       width: 2rem; height: 2rem; background: var(--eiq-primary); border-radius: 0.5rem;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      svg { width: 1rem; height: 1rem; color: white; }
+      svg { width: 1rem; height: 1rem; color: #fff; }
     }
     .eiq-sidebar__name {
       font-weight: 700; font-size: 1.125rem; letter-spacing: -0.025em;
@@ -123,11 +105,12 @@ const DEFAULT_NAV: NavItem[] = [
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.5rem 0.75rem; border-radius: 0.5rem;
       font-size: 0.875rem; font-weight: 500; color: var(--eiq-muted);
-      cursor: pointer; text-decoration: none; transition: all 0.15s;
+      cursor: pointer; text-decoration: none; transition: background 150ms ease, color 150ms ease;
       background: none; border: none; width: 100%; text-align: left;
       &:hover { background: var(--eiq-hover); color: var(--eiq-foreground); }
+      &:focus-visible { outline: 2px solid var(--eiq-primary); outline-offset: -2px; }
     }
-    .eiq-nav__item--active { background: var(--eiq-primary) !important; color: #eff6ff !important; font-weight: 600; box-shadow: var(--eiq-shadow-primary); }
+    .eiq-nav__item--active { background: var(--eiq-primary) !important; color: #fff !important; font-weight: 600; box-shadow: var(--eiq-shadow-primary); }
     .eiq-nav__item--danger { color: var(--eiq-red); &:hover { background: var(--eiq-red-10); } }
     .eiq-nav__icon { width: 1rem; height: 1rem; flex-shrink: 0; display: flex; align-items: center; svg { width: 1rem; height: 1rem; } }
     .eiq-sidebar__divider { border-top: 1px solid var(--eiq-border); margin: 0.5rem 0; }
@@ -141,7 +124,7 @@ export class SidebarComponent {
   constructor(private auth: AuthService) {}
 
   get resolvedNavItems(): NavItem[] {
-    return this.navItems ?? DEFAULT_NAV;
+    return this.navItems ?? NAV_ITEMS;
   }
 
   getIcon(name: string): string {

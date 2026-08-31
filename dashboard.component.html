@@ -1,0 +1,103 @@
+<div class="dash">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="wordmark">Expense<span>IQ</span></div>
+    <nav class="sidebar__nav">
+      <a class="active">Overview</a>
+      <a>Transactions</a>
+      <a>Budgets</a>
+      <a>Reports</a>
+      <a>Settings</a>
+    </nav>
+    <a routerLink="/" class="sidebar__logout">← Back to site</a>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div>
+        <h1>Overview</h1>
+        <p>Here's how {{ userName.split(' ')[0] }}'s money moved this month.</p>
+      </div>
+      <div class="topbar__user">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ userName }}</span>
+      </div>
+    </header>
+
+    <!-- Stat cards -->
+    <section class="stat-grid" #cardGrid>
+      <div class="stat-card" *ngFor="let s of stats; let i = index">
+        <p class="stat-card__label">{{ s.label }}</p>
+        <p class="stat-card__value" #statValue>{{ s.prefix }}0</p>
+        <p class="stat-card__trend" [class.good]="s.positive">{{ s.trend }}</p>
+      </div>
+    </section>
+
+    <!-- Charts row -->
+    <section class="charts-row">
+
+      <div class="card trend-card">
+        <div class="card__head">
+          <h3>Spend trend</h3>
+          <span class="card__sub">Last 6 months</span>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-chart__col" *ngFor="let t of trend">
+            <div class="bar-chart__bar" [style.height.%]="t.value"></div>
+            <span>{{ t.month }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card donut-card">
+        <div class="card__head">
+          <h3>By category</h3>
+          <span class="card__sub">This month</span>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" [style.background]="donutGradient"></div>
+          <ul class="legend">
+            <li *ngFor="let c of categories">
+              <span class="dot" [style.background]="c.color"></span>
+              <span class="legend__name">{{ c.name }}</span>
+              <span class="legend__amt">${{ c.amount.toFixed(2) }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Insight callout -->
+    <section class="insight">
+      <span class="insight__mark">IQ</span>
+      <p><strong>Dining is up 22% this month.</strong> You've spent $288.40 across 14 visits — mostly on weekday afternoons. At this pace you'll pass your monthly dining budget by Sept 4.</p>
+    </section>
+
+    <!-- Transactions -->
+    <section class="card txn-card">
+      <div class="card__head">
+        <h3>Recent transactions</h3>
+        <span class="card__sub">Last 7 days</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Merchant</th><th>Category</th><th>Date</th><th class="right">Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions">
+            <td class="merchant"><span class="chip">{{ tx.initials }}</span>{{ tx.merchant }}</td>
+            <td><span class="tag">{{ tx.category }}</span></td>
+            <td class="muted">{{ tx.date }}</td>
+            <td class="right amount" [class.positive]="tx.positive">{{ tx.amount }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>

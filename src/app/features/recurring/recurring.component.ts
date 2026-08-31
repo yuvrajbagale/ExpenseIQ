@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
@@ -205,6 +205,8 @@ import { HeaderComponent } from '../../shared/components/header.component';
   styles: [`
     .renewals-list { display: flex; flex-direction: column; gap: 0.625rem; margin-top: 0.75rem; }
     .renewal-row { display: grid; grid-template-columns: 8px 1fr auto auto; gap: 0.5rem; align-items: center; font-size: 0.75rem; }
+    :host .eiq-txn-row { transition: background-color 200ms ease; }
+    :host .eiq-txn-row:hover { background-color: var(--eiq-muted-bg, rgba(0, 0, 0, 0.03)); }
     .renewal-row__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--eiq-border); }
     .renewal-row__dot--soon { background: var(--eiq-amber); }
     .renewal-row__name { color: var(--eiq-foreground); font-weight: 500; }
@@ -213,10 +215,14 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .renewals-total { border-top: 1px solid var(--eiq-border); padding-top: 0.5rem; margin-top: 0.25rem; font-weight: 700; }
   `]
 })
-export class RecurringComponent {
+export class RecurringComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly recurring = inject(RecurringService);
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.recurring.loadRecurring().subscribe();
+  }
 
   categoryOptions = computed(() => Array.from(new Set(this.recurring.filteredItems().map(i => i.category))));
 

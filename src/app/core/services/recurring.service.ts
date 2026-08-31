@@ -1,4 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../interfaces/api.interface';
 
 export type RecurringFrequency = 'monthly' | 'yearly' | 'weekly';
 export type RecurringStatus = 'active' | 'paused';
@@ -21,37 +26,12 @@ export interface RecurringExpense {
 export interface UpcomingRenewal { name: string; amount: number; dueDate: string; dueSoon: boolean; }
 export interface RecurringCategorySlice { category: string; amount: number; color: string; }
 
-const RECURRING: RecurringExpense[] = [
-  { id: 'netflix',   name: 'Netflix',          icon: '🎬', iconBg: '#fee2e2', iconColor: '#ef4444', category: 'Entertainment', amount: 15.99,  frequency: 'monthly', nextDue: 'Jun 15', dueSoon: true,  payment: 'Card', status: 'active' },
-  { id: 'internet',  name: 'Internet Bill',    icon: '📶', iconBg: '#dbeafe', iconColor: '#2b7fff', category: 'Utilities',     amount: 59.00,   frequency: 'monthly', nextDue: 'Jun 18', dueSoon: true,  payment: 'Bank', status: 'active' },
-  { id: 'rent',      name: 'Rent',             icon: '🏠', iconBg: '#fef3c7', iconColor: '#d97706', category: 'Housing',       amount: 1200.00, frequency: 'monthly', nextDue: 'Jul 01', dueSoon: false, payment: 'Bank', status: 'active' },
-  { id: 'gym',       name: 'Gym Membership',   icon: '💪', iconBg: '#dcfce7', iconColor: '#16a34a', category: 'Health',        amount: 49.00,   frequency: 'monthly', nextDue: 'Jun 14', dueSoon: true,  payment: 'Card', status: 'active' },
-  { id: 'spotify',   name: 'Spotify',          icon: '🎵', iconBg: '#fee2e2', iconColor: '#ef4444', category: 'Entertainment', amount: 9.99,    frequency: 'monthly', nextDue: 'Jun 22', dueSoon: false, payment: 'Card', status: 'paused' },
-  { id: 'insurance', name: 'Insurance Premium', icon: '🛡️', iconBg: '#dbeafe', iconColor: '#2b7fff', category: 'Insurance',     amount: 240.00,  frequency: 'yearly',  nextDue: 'Dec 01', dueSoon: false, payment: 'Bank', status: 'active' },
-  { id: 'electric',  name: 'Electricity',      icon: '⚡', iconBg: '#fef3c7', iconColor: '#d97706', category: 'Utilities',     amount: 120.00,  frequency: 'monthly', nextDue: 'Jun 28', dueSoon: false, payment: 'UPI',  status: 'active' },
-  { id: 'coursera',  name: 'Coursera Plus',    icon: '🎓', iconBg: '#dcfce7', iconColor: '#16a34a', category: 'Education',     amount: 59.00,   frequency: 'yearly',  nextDue: 'Sep 10', dueSoon: false, payment: 'Card', status: 'active' },
-];
-
-const UPCOMING_RENEWALS: UpcomingRenewal[] = [
-  { name: 'Gym Membership', amount: 49.00, dueDate: 'Jun 14', dueSoon: true },
-  { name: 'Netflix',        amount: 15.99, dueDate: 'Jun 15', dueSoon: true },
-  { name: 'Internet Bill',  amount: 59.00, dueDate: 'Jun 18', dueSoon: true },
-  { name: 'Spotify',        amount: 9.99,  dueDate: 'Jun 22', dueSoon: false },
-  { name: 'Electricity',    amount: 120.00, dueDate: 'Jun 28', dueSoon: false },
-];
-
-const CATEGORY_SLICES: RecurringCategorySlice[] = [
-  { category: 'Housing',       amount: 1200, color: '#ef4444' },
-  { category: 'Insurance',     amount: 240,  color: '#2b7fff' },
-  { category: 'Utilities',     amount: 179,  color: '#16a34a' },
-  { category: 'Education',     amount: 59,   color: '#9333ea' },
-  { category: 'Health',        amount: 49,   color: '#06b6d4' },
-  { category: 'Entertainment', amount: 26,   color: '#eab308' },
-];
-
 @Injectable({ providedIn: 'root' })
 export class RecurringService {
-  private readonly _items = signal<RecurringExpense[]>(RECURRING);
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/recurring`;
+
+  private readonly _items = signal<RecurringExpense[]>([]);
   private readonly _search = signal('');
   private readonly _frequencyFilter = signal<'all' | RecurringFrequency>('all');
   private readonly _categoryFilter = signal<'all' | string>('all');
@@ -85,8 +65,31 @@ export class RecurringService {
     );
   });
 
-  readonly upcomingRenewals = computed(() => UPCOMING_RENEWALS);
-  readonly categorySlices   = computed(() => CATEGORY_SLICES);
+  readonly upcomingRenewals = computed(() => {
+    return this._items()
+      .filter(r => r.status === 'active')
+      .sort((a, b) => a.nextDue.localeCompare(b.nextDue))
+      .slice(0, 5)
+      .map(r => ({ name: r.name, amount: r.amount, dueDate: r.nextDue, dueSoon: r.dueSoon }));
+  });
+
+  readonly categorySlices = computed(() => {
+    const cats: Record<string, number> = {};
+    this._items().filter(r => r.status === 'active').forEach(r => {
+      cats[r.category] = (cats[r.category] || 0) + r.amount;
+    });
+    const colors: Record<string, string> = { Housing: '#ef4444', Utilities: '#2b7fff', Entertainment: '#eab308', Health: '#16a34a', Education: '#9333ea', Insurance: '#06b6d4' };
+    return Object.entries(cats).map(([category, amount]) => ({ category, amount, color: colors[category] || '#6b7280' }));
+  });
+
+  loadRecurring(): Observable<void> {
+    return this.http.get<ApiResponse<any>>(this.apiUrl, { withCredentials: true }).pipe(
+      map(response => {
+        this._items.set(response.data.items);
+      }),
+      catchError(() => of(undefined))
+    );
+  }
 
   setSearch(q: string): void { this._search.set(q); }
   setFrequencyFilter(f: 'all' | RecurringFrequency): void { this._frequencyFilter.set(f); }

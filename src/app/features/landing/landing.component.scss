@@ -1,0 +1,684 @@
+/* =====================================================
+   ExpenseIQ — Fintech Landing Page
+   Trust · Clarity · Product · Professional
+   ===================================================== */
+
+/* ─── Tokens ─────────────────────────────────────────────────────────── */
+$bg:        #0b0f1a;
+$surface:   #111827;
+$surface-2: #1a2236;
+$border:    rgba(255, 255, 255, 0.06);
+$border-h:  rgba(255, 255, 255, 0.1);
+$text:      #e2e8f0;
+$text-h:    #f8fafc;
+$muted:     #94a3b8;
+$primary:   #3b82f6;
+$primary-h: #60a5fa;
+$primary-bg: rgba(59, 130, 246, 0.08);
+$primary-bd: rgba(59, 130, 246, 0.2);
+$green:     #34d399;
+$red:       #f87171;
+$radius:    0.5rem;
+$max-w:     1120px;
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────── */
+.ld-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &--sm   { padding: 0.5rem 1rem; font-size: 0.8125rem; }
+  &--lg   { padding: 0.75rem 1.5rem; font-size: 0.9375rem; }
+  &--xl   { padding: 0.875rem 1.75rem; font-size: 1rem; }
+  &--full { width: 100%; justify-content: center; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba($primary, 0.3);
+    &:hover {
+      background: $primary-h;
+      box-shadow: 0 4px 14px rgba($primary, 0.4);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $text;
+    border: 1px solid $border-h;
+    &:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); }
+  }
+
+  &--outline {
+    background: transparent;
+    color: $text;
+    border: 1px solid $border-h;
+    &:hover { border-color: $primary; color: $primary; }
+  }
+}
+
+/* ─── NAV ────────────────────────────────────────────────────────────── */
+.ld-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0.875rem 0;
+  background: rgba($bg, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid $border;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  &__logo {
+    color: $primary;
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+
+  &__wordmark {
+    color: $text-h;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  &__link {
+    color: $muted;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+    &:hover { color: $text; }
+  }
+}
+
+/* ─── HERO ───────────────────────────────────────────────────────────── */
+.ld-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 2rem 5rem;
+  overflow: hidden;
+
+  &__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    text-align: center;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: $primary-h;
+    background: $primary-bg;
+    border: 1px solid $primary-bd;
+    border-radius: 9999px;
+    padding: 0.375rem 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  &__badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $primary;
+    animation: pulse 2s infinite;
+  }
+
+  &__title {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: clamp(2.5rem, 5.5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: $text-h;
+    margin: 0 0 1.25rem;
+  }
+
+  &__title-accent {
+    color: $primary-h;
+  }
+
+  &__sub {
+    font-size: 1.125rem;
+    color: $muted;
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+
+  &__ctas {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+
+  &__trust {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: $muted;
+
+    svg { color: $green; }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── SHARED SECTION ─────────────────────────────────────────────────── */
+.ld-section-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $primary;
+  margin-bottom: 0.75rem;
+}
+
+.ld-section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.ld-section-title {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: $text-h;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.ld-section-sub {
+  color: $muted;
+  font-size: 1rem;
+  margin: 0;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── SOCIAL PROOF BAR ───────────────────────────────────────────────── */
+.ld-proof {
+  border-top: 1px solid $border;
+  border-bottom: 1px solid $border;
+  padding: 1.25rem 2rem;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  &__label {
+    font-size: 0.8125rem;
+    color: $muted;
+    margin: 0;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &__stat {
+    font-size: 0.875rem;
+    color: $muted;
+
+    strong { color: $text-h; font-weight: 600; }
+  }
+
+  &__sep {
+    color: rgba(255,255,255,0.15);
+  }
+}
+
+/* ─── STEPS ──────────────────────────────────────────────────────────── */
+.ld-steps {
+  padding: 6rem 2rem;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+.ld-step {
+  text-align: center;
+  padding: 2rem 1.5rem;
+
+  &__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: $primary-bg;
+    border: 1px solid $primary-bd;
+    color: $primary-h;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+
+  &__bar {
+    width: 32px;
+    height: 2px;
+    background: $primary-bd;
+    margin: 0 auto 1.25rem;
+    border-radius: 1px;
+  }
+
+  &__title {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: $text-h;
+    margin: 0 0 0.5rem;
+  }
+
+  &__copy {
+    color: $muted;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+/* ─── FEATURES ───────────────────────────────────────────────────────── */
+.ld-features {
+  padding: 6rem 2rem;
+  background: $surface;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.ld-feature {
+  padding: 1.75rem;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  transition: border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: $border-h;
+    transform: translateY(-2px);
+  }
+
+  &__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $primary-bg;
+    border: 1px solid $primary-bd;
+    border-radius: 0.375rem;
+    color: $primary;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $text-h;
+    margin: 0 0 0.375rem;
+  }
+
+  &__copy {
+    color: $muted;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+/* ─── SECURITY ───────────────────────────────────────────────────────── */
+.ld-security {
+  padding: 6rem 2rem;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: 0.75rem;
+    padding: 3.5rem;
+  }
+
+  &__content {
+    max-width: 600px;
+  }
+
+  &__copy {
+    color: $muted;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0 0 2rem;
+  }
+
+  &__badges {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: $bg;
+    border: 1px solid $border;
+    border-radius: $radius;
+
+    svg { color: $green; flex-shrink: 0; }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+
+    strong {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: $text-h;
+    }
+
+    span {
+      font-size: 0.8125rem;
+      color: $muted;
+    }
+  }
+}
+
+/* ─── PRICING ────────────────────────────────────────────────────────── */
+.ld-pricing {
+  padding: 6rem 2rem;
+  background: $surface;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+}
+
+.ld-tier {
+  position: relative;
+  padding: 2rem;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 0.75rem;
+  text-align: left;
+  transition: border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: $border-h;
+    transform: translateY(-2px);
+  }
+
+  &--featured {
+    border-color: rgba($primary, 0.3);
+    background: linear-gradient(180deg, rgba($primary, 0.04) 0%, $bg 100%);
+
+    &:hover { border-color: rgba($primary, 0.5); }
+  }
+
+  &__badge {
+    position: absolute;
+    top: -0.625rem;
+    left: 1.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    background: $primary;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+  }
+
+  &__name {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text;
+    margin: 0 0 0.75rem;
+  }
+
+  &__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__amount {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: $text-h;
+    letter-spacing: -0.02em;
+  }
+
+  &__cadence {
+    font-size: 0.875rem;
+    color: $muted;
+  }
+
+  &__copy {
+    color: $muted;
+    font-size: 0.875rem;
+    margin: 0 0 1.25rem;
+  }
+
+  &__perks {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: $text;
+      padding: 0.375rem 0;
+
+      svg { color: $green; flex-shrink: 0; }
+    }
+  }
+}
+
+/* ─── FINAL CTA ──────────────────────────────────────────────────────── */
+.ld-cta {
+  padding: 6rem 2rem;
+  text-align: center;
+
+  &__inner {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: $text-h;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub {
+    color: $muted;
+    font-size: 1rem;
+    margin: 0 0 2rem;
+  }
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────── */
+.ld-footer {
+  border-top: 1px solid $border;
+  padding: 2rem;
+
+  &__inner {
+    max-width: $max-w;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  &__link {
+    color: $muted;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    &:hover { color: $text; }
+  }
+
+  &__copy {
+    color: rgba($muted, 0.6);
+    font-size: 0.8125rem;
+    margin: 0;
+  }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ld-nav__links { gap: 1rem; }
+  .ld-nav__link { display: none; }
+  .ld-hero { padding: 6rem 1.25rem 3rem; min-height: auto; }
+  .ld-hero__title { font-size: 2rem; }
+  .ld-hero__trust { flex-direction: column; align-items: center; gap: 0.5rem; }
+  .ld-proof__inner { flex-direction: column; gap: 0.5rem; }
+  .ld-steps__grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+  .ld-features__grid { grid-template-columns: 1fr; }
+  .ld-security__inner { padding: 2rem; }
+  .ld-pricing__grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+  .ld-footer__inner { flex-direction: column; text-align: center; }
+  .ld-footer__left { flex-direction: column; gap: 0.5rem; }
+  .ld-footer__links { justify-content: center; flex-wrap: wrap; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ld-features__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { BudgetService, BudgetStatus } from '../../core/services/budget.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 
 @Component({
@@ -49,7 +50,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <p class="eiq-kpi-card__value">\${{ budget.totals().totalBudget.toLocaleString() }}</p>
               <p class="eiq-kpi-card__caption">{{ budget.month() }}</p>
               <div class="eiq-progress-bar eiq-progress-bar--thin">
-                <div class="eiq-progress-bar__fill" style="background:#2b7fff" [style.width.%]="budget.totals().percentUsed"></div>
+                <div class="eiq-progress-bar__fill" style="background:var(--eiq-primary)" [style.width.%]="budget.totals().percentUsed"></div>
               </div>
               <p class="eiq-kpi-card__footnote">\${{ budget.totals().totalSpent.toLocaleString() }} spent of \${{ budget.totals().totalBudget.toLocaleString() }}</p>
             </div>
@@ -88,9 +89,9 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 <p class="eiq-card__subtitle">Track spending across all categories for {{ budget.month() }}</p>
               </div>
               <div class="eiq-status-legend">
-                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:#16a34a"></span>On Track</span>
-                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:#eab308"></span>Warning</span>
-                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:#ef4444"></span>Overspent</span>
+                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:var(--eiq-green)"></span>On Track</span>
+                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:var(--eiq-amber)"></span>Warning</span>
+                <span class="eiq-status-legend__item"><span class="eiq-status-legend__dot" style="background:var(--eiq-red)"></span>Overspent</span>
               </div>
             </div>
 
@@ -181,28 +182,20 @@ import { HeaderComponent } from '../../shared/components/header.component';
     </div>
   `,
 })
-export class BudgetComponent {
+export class BudgetComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly budget      = inject(BudgetService);
   protected readonly Math        = Math;
   private   readonly router      = inject(Router);
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',  exact: true },
-    { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'               },
-    { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                },
-    { label: 'Categories',      route: '/categories',       icon: 'label'                     },
-    { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                 },
-    { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                },
-    { label: 'Reports',         route: '/reports',          icon: 'description'                },
-    { label: 'Goals',           route: '/goals',            icon: 'flag'                       },
-    { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'             },
-    { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'     },
-    { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                  },
-  ];
+  readonly navItems = NAV_ITEMS;
+
+  ngOnInit(): void {
+    this.budget.loadBudget().subscribe();
+  }
 
   progressColor(status: BudgetStatus): string {
-    return { 'on-track': '#16a34a', warning: '#eab308', overspent: '#ef4444' }[status];
+    return { 'on-track': 'var(--eiq-green)', warning: 'var(--eiq-amber)', overspent: 'var(--eiq-red)' }[status];
   }
 
   statusLabel(status: BudgetStatus): string {

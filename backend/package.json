@@ -1,0 +1,14 @@
+{
+  "name": "expenseiq-backend",
+  "version": "1.0.0",
+  "description": "ExpenseIQ API server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3"
+  }
+}

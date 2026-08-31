@@ -1,4 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../interfaces/api.interface';
 
 export type CategoryType = 'expense' | 'income';
 
@@ -27,29 +32,15 @@ export interface CategorySpendRow {
   color: string;
 }
 
-const CATEGORIES: CategoryCard[] = [
-  { id: 'food',          name: 'Food & Dining',  icon: '🍔', iconBg: '#fee2e2', iconColor: '#ef4444', type: 'expense', transactions: 48, totalSpent: 1240, budgetUsage: 78  },
-  { id: 'transport',     name: 'Transport',      icon: '🚗', iconBg: '#dbeafe', iconColor: '#2b7fff', type: 'expense', transactions: 31, totalSpent: 620,  budgetUsage: 62  },
-  { id: 'salary',        name: 'Salary',         icon: '💼', iconBg: '#dcfce7', iconColor: '#16a34a', type: 'income',  transactions: 6,  totalSpent: 5200, budgetUsage: 80  },
-  { id: 'shopping',      name: 'Shopping',       icon: '🛍️', iconBg: '#f3e8ff', iconColor: '#9333ea', type: 'expense', transactions: 22, totalSpent: 980,  budgetUsage: 82  },
-  { id: 'health',        name: 'Health',         icon: '💊', iconBg: '#cffafe', iconColor: '#06b6d4', type: 'expense', transactions: 14, totalSpent: 420,  budgetUsage: 60  },
-  { id: 'entertainment', name: 'Entertainment',  icon: '🎬', iconBg: '#fee2e2', iconColor: '#ef4444', type: 'expense', transactions: 18, totalSpent: 310,  budgetUsage: 103 },
-];
-
-const SPENDING_OVERVIEW: CategorySpendRow[] = [
-  { name: 'Food & Dining', amount: 1240, percentage: 100, color: '#f59e0b' },
-  { name: 'Shopping',      amount: 980,  percentage: 79,  color: '#9333ea' },
-  { name: 'Transport',     amount: 620,  percentage: 50,  color: '#2b7fff' },
-  { name: 'Entertainment', amount: 310,  percentage: 25,  color: '#ef4444' },
-  { name: 'Health',        amount: 420,  percentage: 34,  color: '#06b6d4' },
-  { name: 'Utilities',     amount: 520,  percentage: 42,  color: '#16a34a' },
-];
-
 @Injectable({ providedIn: 'root' })
 export class CategoriesService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/categories`;
+
   private readonly _search = signal('');
   private readonly _typeFilter = signal<'all' | CategoryType>('all');
-  private readonly _categories = signal<CategoryCard[]>(CATEGORIES);
+  private readonly _categories = signal<CategoryCard[]>([]);
+  private readonly _spendingOverview = signal<CategorySpendRow[]>([]);
 
   readonly search = computed(() => this._search());
   readonly typeFilter = computed(() => this._typeFilter());
@@ -72,7 +63,29 @@ export class CategoriesService {
     );
   });
 
-  readonly spendingOverview = computed(() => SPENDING_OVERVIEW);
+  readonly spendingOverview = computed(() => this._spendingOverview());
+
+  loadCategories(): Observable<void> {
+    return this.http.get<ApiResponse<any>>(this.apiUrl, { withCredentials: true }).pipe(
+      map(response => {
+        const cats = response.data.categories;
+        this._categories.set(cats);
+        const maxSpent = Math.max(...cats.map((c: CategoryCard) => c.totalSpent));
+        this._spendingOverview.set(
+          cats
+            .filter((c: CategoryCard) => c.type === 'expense')
+            .sort((a: CategoryCard, b: CategoryCard) => b.totalSpent - a.totalSpent)
+            .map((c: CategoryCard) => ({
+              name: c.name,
+              amount: c.totalSpent,
+              percentage: maxSpent > 0 ? Math.round((c.totalSpent / maxSpent) * 100) : 0,
+              color: c.iconColor,
+            }))
+        );
+      }),
+      catchError(() => of(undefined))
+    );
+  }
 
   setSearch(q: string): void { this._search.set(q); }
   setTypeFilter(type: 'all' | CategoryType): void { this._typeFilter.set(type); }

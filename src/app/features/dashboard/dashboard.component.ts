@@ -1,21 +1,17 @@
 import { Component, OnInit, inject, signal, computed } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
-import {
-  DashboardService,
-  MONTHLY_CHART,
-  WEEKLY_SPENDING,
-  CATEGORY_BREAKDOWN,
-} from "../../core/services/dashboard.service";
+import { DashboardService } from "../../core/services/dashboard.service";
 import { TransactionService } from "../../core/services/transaction.service";
 import { ToastService } from "../../core/services/toast.service";
 import {
   SidebarComponent,
-  NavItem,
 } from "../../shared/components/sidebar.component";
+import { NAV_ITEMS } from "../../shared/constants/nav-items";
 import { HeaderComponent } from "../../shared/components/header.component";
 import { StatusBadgeComponent } from "../../shared/components/status-badge.component";
 import { EiqCurrencyPipe } from "../../shared/pipes/eiq-currency.pipe";
+import { KpiCardComponent } from "../../shared/components/kpi-card.component";
 import { Transaction } from "../../core/models/transaction.model";
 import { DashboardData } from "../../core/models/dashboard.model";
 
@@ -28,6 +24,7 @@ import { DashboardData } from "../../core/models/dashboard.model";
     HeaderComponent,
     StatusBadgeComponent,
     EiqCurrencyPipe,
+    KpiCardComponent,
   ],
   template: `
     <div class="eiq-app">
@@ -86,200 +83,45 @@ import { DashboardData } from "../../core/models/dashboard.model";
           } @else if (dashboardData()) {
             <!-- KPI Cards -->
             <div class="eiq-kpi-grid">
-              <div class="eiq-kpi-card">
-                <div class="eiq-kpi-card__header">
-                  <div class="eiq-kpi-card__icon eiq-kpi-card__icon--blue">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M20 7H4C2.9 7 2 7.9 2 9V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V9C22 7.9 21.1 7 20 7Z"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M16 3H8L6 7H18L16 3Z"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <span class="eiq-kpi-card__trend eiq-kpi-card__trend--up">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 6L13.5 15.5L8.5 10.5L1 18"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    +{{ dashboardData()!.summary.balanceChangePercent }}%
-                  </span>
-                </div>
-                <p class="eiq-kpi-card__label">Current Balance</p>
-                <p class="eiq-kpi-card__value">
-                  {{
-                    dashboardData()!.summary.totalBalance | eiqCurrency: false
-                  }}
-                </p>
-              </div>
+              <eiq-kpi-card
+                label="Current Balance"
+                [value]="(dashboardData()!.summary.totalBalance | eiqCurrency: false) ?? ''"
+                icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 7H4C2.9 7 2 7.9 2 9V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V9C22 7.9 21.1 7 20 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 3H8L6 7H18L16 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                color="blue"
+                [trendPercent]="dashboardData()!.summary.balanceChangePercent"
+                trendDirection="up" />
 
-              <div class="eiq-kpi-card">
-                <div class="eiq-kpi-card__header">
-                  <div class="eiq-kpi-card__icon eiq-kpi-card__icon--green">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 6L13.5 15.5L8.5 10.5L1 18"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M17 6H23V12"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <span class="eiq-kpi-card__trend eiq-kpi-card__trend--up">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 6L13.5 15.5L8.5 10.5L1 18"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    +{{ dashboardData()!.summary.incomeChangePercent }}%
-                  </span>
-                </div>
-                <p class="eiq-kpi-card__label">Monthly Income</p>
-                <p class="eiq-kpi-card__value">
-                  {{
-                    dashboardData()!.summary.monthlyIncome | eiqCurrency: false
-                  }}
-                </p>
-              </div>
+              <eiq-kpi-card
+                label="Monthly Income"
+                [value]="(dashboardData()!.summary.monthlyIncome | eiqCurrency: false) ?? ''"
+                icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M23 6L13.5 15.5L8.5 10.5L1 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 6H23V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                color="green"
+                [trendPercent]="dashboardData()!.summary.incomeChangePercent"
+                trendDirection="up" />
 
-              <div class="eiq-kpi-card">
-                <div class="eiq-kpi-card__header">
-                  <div class="eiq-kpi-card__icon eiq-kpi-card__icon--red">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 18L13.5 8.5L8.5 13.5L1 6"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M17 18H23V12"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <span class="eiq-kpi-card__trend eiq-kpi-card__trend--down">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 6L13.5 15.5L8.5 10.5L1 18"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    +{{ dashboardData()!.summary.expenseChangePercent }}%
-                  </span>
-                </div>
-                <p class="eiq-kpi-card__label">Monthly Expense</p>
-                <p class="eiq-kpi-card__value">
-                  {{
-                    dashboardData()!.summary.monthlyExpense | eiqCurrency: false
-                  }}
-                </p>
-              </div>
+              <eiq-kpi-card
+                label="Monthly Expense"
+                [value]="(dashboardData()!.summary.monthlyExpense | eiqCurrency: false) ?? ''"
+                icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M23 18L13.5 8.5L8.5 13.5L1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 18H23V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                color="red"
+                [trendPercent]="dashboardData()!.summary.expenseChangePercent"
+                trendDirection="down" />
 
-              <div class="eiq-kpi-card">
-                <div class="eiq-kpi-card__header">
-                  <div class="eiq-kpi-card__icon eiq-kpi-card__icon--purple">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M19 5c-1.5 0-2.8 1.4-3 2-3.5 1.4-4 3.3-4 4.8V14a1 1 0 001 1h4a1 1 0 001-1v-3c0-1.1.9-2 2-2h1a2 2 0 002 2v4a2 2 0 01-2 2h-1v1a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1h-4a2 2 0 01-2-2v-1H6a2 2 0 01-2-2V7a2 2 0 012-2h1a2 2 0 012 2V6"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <span class="eiq-kpi-card__trend eiq-kpi-card__trend--up">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 6L13.5 15.5L8.5 10.5L1 18"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    +{{ dashboardData()!.summary.savingsChangePercent }}%
-                  </span>
-                </div>
-                <p class="eiq-kpi-card__label">Savings</p>
-                <p class="eiq-kpi-card__value">
-                  {{ dashboardData()!.summary.savings | eiqCurrency: false }}
-                </p>
-              </div>
+              <eiq-kpi-card
+                label="Savings"
+                [value]="(dashboardData()!.summary.savings | eiqCurrency: false) ?? ''"
+                icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5 1.4-4 3.3-4 4.8V14a1 1 0 001 1h4a1 1 0 001-1v-3c0-1.1.9-2 2-2h1a2 2 0 002 2v4a2 2 0 01-2 2h-1v1a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1h-4a2 2 0 01-2-2v-1H6a2 2 0 01-2-2V7a2 2 0 012-2h1a2 2 0 012 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                color="purple"
+                [trendPercent]="dashboardData()!.summary.savingsChangePercent"
+                trendDirection="up" />
 
-              <div class="eiq-kpi-card">
-                <div class="eiq-kpi-card__header">
-                  <div class="eiq-kpi-card__icon eiq-kpi-card__icon--amber">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      />
-                      <path
-                        d="M12 6v6l4 2"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </div>
-                  <span class="eiq-kpi-card__trend eiq-kpi-card__trend--down">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M23 18L13.5 8.5L8.5 13.5L1 6"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    {{ dashboardData()!.summary.budgetChangePercent }}%
-                  </span>
-                </div>
-                <p class="eiq-kpi-card__label">Budget Remaining</p>
-                <p class="eiq-kpi-card__value">
-                  {{
-                    dashboardData()!.summary.budgetRemaining
-                      | eiqCurrency: false
-                  }}
-                </p>
-              </div>
+              <eiq-kpi-card
+                label="Budget Remaining"
+                [value]="(dashboardData()!.summary.budgetRemaining | eiqCurrency: false) ?? ''"
+                icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+                color="amber"
+                [trendPercent]="dashboardData()!.summary.budgetChangePercent"
+                trendDirection="down" />
             </div>
 
             <!-- Charts Row -->
@@ -307,7 +149,7 @@ import { DashboardData } from "../../core/models/dashboard.model";
                   </div>
                 </div>
                 <div class="eiq-bar-chart">
-                  @for (d of monthlyChart; track d.month) {
+                  @for (d of monthlyChart(); track d.month) {
                     <div class="eiq-bar-chart__group">
                       <div class="eiq-bar-chart__bars">
                         <div
@@ -370,7 +212,7 @@ import { DashboardData } from "../../core/models/dashboard.model";
                     />
                   </svg>
                   <div class="eiq-area-chart__labels">
-                    @for (d of weeklySpending; track d.day) {
+                    @for (d of weeklySpending(); track d.day) {
                       <span>{{ d.day }}</span>
                     }
                   </div>
@@ -389,7 +231,7 @@ import { DashboardData } from "../../core/models/dashboard.model";
                   </div>
                 </div>
                 <div class="eiq-categories">
-                  @for (cat of categoryBreakdown; track cat.category) {
+                  @for (cat of categoryBreakdown(); track cat.category) {
                     <div class="eiq-category-row">
                       <div class="eiq-category-row__info">
                         <div
@@ -506,39 +348,18 @@ export class DashboardComponent implements OnInit {
     })
   );
 
-  readonly navItems: NavItem[] = [
-    { label: "Dashboard", route: "/dashboard", icon: "dashboard" },
-    { label: "Transactions", route: "/transactions", icon: "swap_horiz" },
-    {
-      label: "Add Transaction",
-      route: "/transactions/add",
-      icon: "add_circle",
-    },
-    { label: "Categories", route: "/categories", icon: "label" },
-    { label: "Budget", route: "/budget", icon: "pie_chart" },
-    { label: "Analytics", route: "/analytics", icon: "trending_up" },
-    { label: "Reports", route: "/reports", icon: "description" },
-    { label: "Goals", route: "/goals", icon: "flag" },
-    { label: "Calendar", route: "/calendar", icon: "calendar_month" },
-    {
-      label: "Wallet Accounts",
-      route: "/accounts",
-      icon: "account_balance_wallet",
-    },
-    { label: "Recurring", route: "/recurring", icon: "autorenew" },
-  ];
+  readonly navItems = NAV_ITEMS;
 
-  readonly monthlyChart = MONTHLY_CHART;
-  readonly weeklySpending = WEEKLY_SPENDING;
-  readonly categoryBreakdown = CATEGORY_BREAKDOWN;
+  readonly monthlyChart = computed(() => this.dashboardData()?.monthlyChart ?? []);
+  readonly weeklySpending = computed(() => this.dashboardData()?.weeklySpending ?? []);
+  readonly categoryBreakdown = computed(() => this.dashboardData()?.categoryBreakdown ?? []);
 
   // Computed SVG paths for weekly area chart
   get weeklyLinePath(): string {
-    const data = this.weeklySpending;
+    const data = this.weeklySpending();
+    if (!data.length) return '';
     const max = Math.max(...data.map((d) => d.spending));
-    const w = 420,
-      h = 160,
-      pad = 10;
+    const w = 420, h = 160, pad = 10;
     const pts = data.map((d, i) => {
       const x = pad + (i / (data.length - 1)) * (w - pad * 2);
       const y = h - pad - (d.spending / max) * (h - pad * 2);
@@ -548,11 +369,10 @@ export class DashboardComponent implements OnInit {
   }
 
   get weeklyAreaPath(): string {
-    const data = this.weeklySpending;
+    const data = this.weeklySpending();
+    if (!data.length) return '';
     const max = Math.max(...data.map((d) => d.spending));
-    const w = 420,
-      h = 160,
-      pad = 10;
+    const w = 420, h = 160, pad = 10;
     const pts = data.map((d, i) => {
       const x = pad + (i / (data.length - 1)) * (w - pad * 2);
       const y = h - pad - (d.spending / max) * (h - pad * 2);

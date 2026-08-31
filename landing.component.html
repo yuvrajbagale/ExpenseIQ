@@ -1,0 +1,153 @@
+<div class="page">
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="nav__inner">
+      <div class="wordmark">Expense<span>IQ</span></div>
+      <nav class="nav__links">
+        <a href="#how">How it works</a>
+        <a href="#features">Product</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="btn btn--ghost" (click)="goToAuth('login')">Log in</button>
+        <button class="btn btn--brass" (click)="goToAuth('signup')">Get started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__inner">
+      <p class="eyebrow" #heroEyebrow>The ledger, made intelligent</p>
+      <h1 class="hero__headline" #heroHeadline>
+        <span class="word">Every</span> <span class="word">rupee,</span> <span class="word">accounted</span> <span class="word">for</span> <span class="word">—</span> <span class="word">automatically.</span>
+      </h1>
+      <p class="hero__sub" #heroSub>
+        ExpenseIQ reads your receipts and bank feeds, files every transaction under the right
+        category, and tells you in plain language where your money actually went.
+      </p>
+      <div class="hero__ctas" #heroCtas>
+        <button class="btn btn--brass btn--lg" (click)="goToAuth('signup')">Start free — no card needed</button>
+        <button class="btn btn--outline btn--lg" (click)="goToAuth('login')">Explore the dashboard</button>
+      </div>
+    </div>
+
+    <!-- Signature element: live ledger ticker -->
+    <div class="ticker" #heroTicker>
+      <div class="ticker__rail">
+        <span class="ticker__entry" *ngFor="let e of tickerLoop">
+          <span class="ticker__merchant">{{ e.merchant }}</span>
+          <span class="ticker__amount" [class.positive]="e.positive">{{ e.positive ? '+' : '−' }}{{ e.amount }}</span>
+          <span class="ticker__arrow">→</span>
+          <span class="ticker__tag">{{ e.category }}</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="rule-divider" id="how"></section>
+  <section class="steps">
+    <div class="section-inner">
+      <p class="section-label">A three-step ledger</p>
+      <div class="steps__grid">
+        <div class="step" *ngFor="let s of steps">
+          <span class="step__n">{{ s.n }}</span>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.copy }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="rule-divider"></section>
+  <section class="features" id="features">
+    <div class="section-inner">
+      <p class="section-label">What's inside</p>
+      <h2 class="section-title">Built to run in the background of your money</h2>
+      <div class="features__grid">
+        <div class="feature-card" *ngFor="let f of features">
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.copy }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard preview -->
+  <section class="rule-divider"></section>
+  <section class="preview">
+    <div class="section-inner preview__inner">
+      <div class="preview__copy">
+        <p class="section-label">The dashboard</p>
+        <h2 class="section-title">One page. Every number that matters.</h2>
+        <p class="preview__text">Spend by category, trend over time, and the transactions behind
+          them — laid out like a ledger you'd actually want to read.</p>
+        <button class="btn btn--brass" (click)="goToAuth('signup')">See it live</button>
+      </div>
+      <div class="preview__mock">
+        <div class="mock__bar"><span></span><span></span><span></span></div>
+        <div class="mock__row">
+          <div class="mock__stat"><small>This month</small><strong>$2,480.10</strong></div>
+          <div class="mock__stat"><small>Budget left</small><strong class="green">$519.90</strong></div>
+        </div>
+        <div class="mock__chart">
+          <div class="mock__bar-chart">
+            <div class="bar" style="height: 40%"></div>
+            <div class="bar" style="height: 65%"></div>
+            <div class="bar" style="height: 50%"></div>
+            <div class="bar" style="height: 80%"></div>
+            <div class="bar" style="height: 60%"></div>
+            <div class="bar" style="height: 90%"></div>
+          </div>
+        </div>
+        <div class="mock__line" *ngFor="let i of [1,2,3]">
+          <span class="mock__dot"></span>
+          <span class="mock__ln"></span>
+          <span class="mock__ln short"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="rule-divider" id="pricing"></section>
+  <section class="pricing">
+    <div class="section-inner">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title">Start free. Upgrade when the numbers ask for it.</h2>
+      <div class="pricing__grid">
+        <div class="price-card" [class.price-card--featured]="tier.featured" *ngFor="let tier of pricing">
+          <p class="price-card__name">{{ tier.name }}</p>
+          <p class="price-card__price">{{ tier.price }}<span>{{ tier.cadence }}</span></p>
+          <p class="price-card__copy">{{ tier.copy }}</p>
+          <ul>
+            <li *ngFor="let p of tier.perks">{{ p }}</li>
+          </ul>
+          <button class="btn" [class.btn--brass]="tier.featured" [class.btn--outline]="!tier.featured" (click)="goToAuth('signup')">
+            Choose {{ tier.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <section class="cta-banner">
+    <div class="section-inner cta-banner__inner">
+      <h2>Ready to see where your money actually goes?</h2>
+      <button class="btn btn--brass btn--lg" (click)="goToAuth('signup')">Create your free ledger</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="section-inner footer__inner">
+      <div class="wordmark wordmark--footer">Expense<span>IQ</span></div>
+      <p>© 2026 ExpenseIQ. Every number, understood.</p>
+    </div>
+  </footer>
+
+</div>

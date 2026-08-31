@@ -1,0 +1,96 @@
+@use '../styles/tokens' as t;
+
+:host { display: block; font-family: t.$font-body; }
+
+.auth { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+.wordmark { font-family: t.$font-display; font-weight: 700; font-size: 20px; span { color: t.$brass; } }
+
+// Left side
+.side {
+  background: t.$ink;
+  color: t.$paper;
+  display: flex;
+  align-items: center;
+  padding: 60px;
+  &__inner { max-width: 440px; margin: 0 auto; }
+}
+blockquote {
+  font-family: t.$font-display;
+  font-size: 22px;
+  line-height: 1.5;
+  margin: 40px 0 44px;
+  color: t.$paper;
+  cite {
+    display: block;
+    font-family: t.$font-mono;
+    font-style: normal;
+    font-size: 12px;
+    color: t.$paper-muted;
+    margin-top: 12px;
+  }
+}
+.side__ledger {
+  background: t.$ink-soft;
+  border-radius: 6px;
+  padding: 18px 20px;
+  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(244,242,232,0.1); font-size: 13.5px; }
+  .row:last-child { border-bottom: none; }
+  .amt { font-family: t.$font-mono; color: t.$paper-muted; }
+  .row--total { margin-top: 4px; padding-top: 14px; border-top: 1px dashed rgba(184,134,46,0.4);
+    span:first-child { font-weight: 600; color: t.$paper; }
+    .amt { color: t.$brass-soft; font-weight: 600; }
+  }
+}
+
+// Right side
+.panel {
+  background: t.$paper;
+  display: flex;
+  align-items: center;
+  padding: 60px;
+  &__inner { max-width: 380px; margin: 0 auto; width: 100%; }
+}
+.back { display: inline-block; font-size: 13px; color: t.$ink-muted; text-decoration: none; margin-bottom: 30px; &:hover { color: t.$ink; } }
+
+.toggle {
+  display: flex;
+  background: t.$paper-dim;
+  border-radius: t.$radius;
+  padding: 4px;
+  margin-bottom: 30px;
+  button {
+    flex: 1; border: none; background: transparent; padding: 9px 0; border-radius: 3px;
+    font-family: t.$font-body; font-weight: 600; font-size: 13.5px; color: t.$ink-muted; cursor: pointer;
+    &.active { background: t.$ink; color: t.$paper; }
+  }
+}
+
+h1 { font-family: t.$font-display; font-size: 28px; margin: 0 0 8px; color: t.$ink; }
+.sub { color: t.$ink-muted; font-size: 14px; margin: 0 0 28px; }
+
+form { display: flex; flex-direction: column; gap: 16px; margin-bottom: 22px; }
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: t.$ink; font-weight: 500; }
+input {
+  font-family: t.$font-body; font-size: 14px; padding: 11px 13px;
+  border: 1px solid t.$rule; border-radius: t.$radius; background: white;
+  &:focus { outline: 2px solid t.$brass; outline-offset: 1px; }
+}
+
+.btn { font-family: t.$font-body; font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: t.$radius; border: 1px solid transparent; cursor: pointer; }
+.btn--brass { background: t.$brass; color: t.$ink; &:hover { opacity: 0.92; } &:disabled { opacity: 0.6; cursor: default; } }
+.btn--outline { background: transparent; border-color: t.$ink; color: t.$ink; }
+.btn--full { width: 100%; }
+
+.divider { text-align: center; position: relative; margin: 20px 0; span { background: t.$paper; padding: 0 10px; color: t.$ink-muted; font-size: 12px; position: relative; z-index: 1; }
+  &::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: t.$rule; }
+}
+
+.switch { text-align: center; font-size: 13.5px; color: t.$ink-muted; margin-top: 22px;
+  a { color: t.$brass; font-weight: 600; cursor: pointer; text-decoration: none; }
+}
+
+@media (max-width: 860px) {
+  .auth { grid-template-columns: 1fr; }
+  .side { display: none; }
+}

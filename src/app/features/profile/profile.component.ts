@@ -1,10 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { GoalsService } from '../../core/services/goals.service';
 import { DashboardService } from '../../core/services/dashboard.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 
 interface ProfileField {
@@ -394,6 +395,11 @@ interface Achievement {
       display: flex;
       align-items: center;
       gap: 0.875rem;
+      transition: box-shadow 150ms ease, transform 150ms ease;
+    }
+    .profile-stat:hover {
+      box-shadow: var(--eiq-shadow-md);
+      transform: translateY(-2px);
     }
     .profile-stat__icon {
       width: 2.75rem;
@@ -558,7 +564,7 @@ interface Achievement {
     .profile-fin__dot--success { background: var(--eiq-green); }
     .profile-fin__dot--danger { background: var(--eiq-red); }
     .profile-fin__dot--info { background: var(--eiq-primary); }
-    .profile-fin__dot--purple { background: oklch(0.398 0.07 227.392); }
+    .profile-fin__dot--purple { background: var(--eiq-purple); }
 
     /* Recent activity */
     .profile-activity {
@@ -612,6 +618,10 @@ interface Achievement {
       padding: 0.625rem 0.75rem;
       border: 1px solid var(--eiq-border);
       border-radius: 0.625rem;
+      transition: background 150ms ease;
+    }
+    .profile-account:hover {
+      background: var(--eiq-hover);
     }
     .profile-account__info {
       display: flex;
@@ -678,6 +688,11 @@ interface Achievement {
       border-radius: 0.75rem;
       background: var(--eiq-input-bg);
       text-align: center;
+      transition: box-shadow 150ms ease, transform 150ms ease;
+    }
+    .profile-achievement:hover {
+      box-shadow: var(--eiq-shadow-sm);
+      transform: translateY(-1px);
     }
     .profile-achievement__icon {
       font-size: 1.5rem;
@@ -702,28 +717,20 @@ interface Achievement {
     }
   `],
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly txnService = inject(TransactionService);
   private readonly goalsService = inject(GoalsService);
   private readonly dashboardService = inject(DashboardService);
 
+  ngOnInit(): void {
+    this.goalsService.loadGoals().subscribe();
+  }
+
   readonly editing = signal(false);
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',  exact: true },
-    { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'               },
-    { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                },
-    { label: 'Categories',      route: '/categories',       icon: 'label'                     },
-    { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                 },
-    { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                },
-    { label: 'Reports',         route: '/reports',          icon: 'description'                },
-    { label: 'Goals',           route: '/goals',            icon: 'flag'                       },
-    { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'             },
-    { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'     },
-    { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                  },
-  ];
+  readonly navItems = NAV_ITEMS;
 
   readonly user = this.authService.currentUser;
 

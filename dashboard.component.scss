@@ -1,0 +1,109 @@
+@use '../styles/tokens' as t;
+
+:host { display: block; font-family: t.$font-body; background: t.$paper; min-height: 100vh; }
+
+.dash { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+.wordmark { font-family: t.$font-display; font-weight: 700; font-size: 19px; color: t.$paper; span { color: t.$brass; } }
+
+// Sidebar
+.sidebar {
+  background: t.$ink;
+  color: t.$paper;
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  &__nav { display: flex; flex-direction: column; gap: 4px; margin-top: 40px; flex: 1;
+    a { color: t.$paper-muted; text-decoration: none; font-size: 14px; padding: 10px 12px; border-radius: t.$radius; cursor: pointer;
+      &.active { background: t.$ink-soft; color: t.$paper; font-weight: 600; }
+      &:hover { color: t.$paper; }
+    }
+  }
+  &__logout { color: t.$paper-muted; font-size: 13px; text-decoration: none; &:hover { color: t.$paper; } }
+}
+
+// Main
+.main { padding: 36px 44px; }
+
+.topbar {
+  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;
+  h1 { font-family: t.$font-display; font-size: 26px; margin: 0 0 4px; color: t.$ink; }
+  p { color: t.$ink-muted; font-size: 14px; margin: 0; }
+  &__user { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: t.$ink; }
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: t.$brass; color: t.$ink;
+  display: flex; align-items: center; justify-content: center; font-family: t.$font-mono; font-weight: 600; font-size: 13px;
+}
+
+// Stat cards
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 26px; }
+.stat-card {
+  background: white; border: 1px solid t.$rule; border-radius: t.$radius; padding: 20px;
+  &__label { font-size: 12.5px; color: t.$ink-muted; margin: 0 0 10px; }
+  &__value { font-family: t.$font-mono; font-size: 24px; font-weight: 600; color: t.$ink; margin: 0 0 8px; }
+  &__trend { font-size: 12px; color: t.$margin-red; margin: 0; &.good { color: t.$money-green; } }
+}
+
+// Shared card
+.card {
+  background: white; border: 1px solid t.$rule; border-radius: t.$radius; padding: 22px;
+  &__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px;
+    h3 { font-family: t.$font-display; font-size: 17px; margin: 0; color: t.$ink; }
+  }
+  &__sub { font-size: 12px; color: t.$ink-muted; font-family: t.$font-mono; }
+}
+
+.charts-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 26px; }
+
+// Bar chart
+.bar-chart { display: flex; align-items: flex-end; gap: 14px; height: 160px; padding-top: 10px;
+  &__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end;
+    span { font-size: 11px; color: t.$ink-muted; font-family: t.$font-mono; }
+  }
+  &__bar { width: 100%; max-width: 34px; background: t.$brass; border-radius: 4px 4px 0 0; }
+}
+
+// Donut
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut { width: 110px; height: 110px; border-radius: 50%; flex-shrink: 0;
+  position: relative;
+  &::after { content: ''; position: absolute; inset: 20px; background: white; border-radius: 50%; }
+}
+.legend { list-style: none; padding: 0; margin: 0; flex: 1;
+  li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 5px 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  &__name { color: t.$ink; flex: 1; }
+  &__amt { font-family: t.$font-mono; color: t.$ink-muted; }
+}
+
+// Insight banner
+.insight {
+  background: t.$ink; color: t.$paper; border-radius: t.$radius; padding: 18px 22px;
+  display: flex; gap: 16px; align-items: flex-start; margin-bottom: 26px;
+  &__mark {
+    font-family: t.$font-mono; font-weight: 700; font-size: 12px; color: t.$ink; background: t.$brass;
+    padding: 4px 8px; border-radius: 4px; flex-shrink: 0;
+  }
+  p { margin: 0; font-size: 14px; line-height: 1.6; color: t.$paper-muted;
+    strong { color: t.$paper; }
+  }
+}
+
+// Transactions table
+.txn-card table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: t.$ink-muted; padding: 0 0 12px; font-weight: 600; }
+th.right, td.right { text-align: right; }
+td { padding: 12px 0; border-top: 1px solid t.$rule; font-size: 13.5px; color: t.$ink; }
+.merchant { display: flex; align-items: center; gap: 10px; }
+.chip { width: 28px; height: 28px; border-radius: 6px; background: t.$paper-dim; display: flex; align-items: center; justify-content: center; font-family: t.$font-mono; font-size: 11px; font-weight: 600; color: t.$ink-muted; }
+.tag { background: t.$paper-dim; padding: 3px 9px; border-radius: 20px; font-size: 12px; color: t.$ink-muted; }
+.muted { color: t.$ink-muted; }
+.amount { font-family: t.$font-mono; font-weight: 600; &.positive { color: t.$money-green; } }
+
+@media (max-width: 980px) {
+  .dash { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .charts-row { grid-template-columns: 1fr; }
+}

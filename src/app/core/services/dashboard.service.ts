@@ -1,72 +1,73 @@
-import { Injectable, computed, inject } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
-import { TransactionService } from './transaction.service';
-import { DashboardStats, IncomeExpenseDataPoint, ChartDataPoint, CategoryBreakdown } from '../interfaces/dashboard.interface';
-import { DashboardData } from '../models/dashboard.model';
-
-// Exported chart constants
-export const MONTHLY_CHART: IncomeExpenseDataPoint[] = [
-  { month: 'Jan', income: 4800, expense: 2900 },
-  { month: 'Feb', income: 5100, expense: 3100 },
-  { month: 'Mar', income: 4600, expense: 2700 },
-  { month: 'Apr', income: 5300, expense: 3400 },
-  { month: 'May', income: 4900, expense: 2800 },
-  { month: 'Jun', income: 5200, expense: 3180 },
-];
-
-export const WEEKLY_SPENDING = [
-  { day: 'Mon', spending: 320 },
-  { day: 'Tue', spending: 480 },
-  { day: 'Wed', spending: 210 },
-  { day: 'Thu', spending: 560 },
-  { day: 'Fri', spending: 390 },
-  { day: 'Sat', spending: 720 },
-  { day: 'Sun', spending: 280 },
-];
-
-export const CATEGORY_BREAKDOWN: CategoryBreakdown[] = [
-  { category: 'Food & Dining', percentage: 45, amount: 1431, color: 'oklch(0.646 0.222 41.116)', icon: '🍔' },
-  { category: 'Transport',     percentage: 20, amount:  636, color: '#2b7fff',                   icon: '🚗' },
-  { category: 'Shopping',      percentage: 18, amount:  572, color: 'oklch(0.6 0.118 184.704)',   icon: '🛍️' },
-  { category: 'Others',        percentage: 17, amount:  541, color: 'oklch(0.398 0.07 227.392)',  icon: '📦' },
-];
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../interfaces/api.interface';
+import { DashboardData, DashboardSummary, MonthlyChartData, CategorySpending } from '../models/dashboard.model';
+import { DashboardStats } from '../interfaces/dashboard.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  private readonly txService = inject(TransactionService);
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/dashboard`;
 
-  readonly stats = computed<DashboardStats>(() => ({
-    currentBalance:  12450.80,
-    monthlyIncome:    5200.00,
-    monthlyExpense:   3180.50,
-    savings:          2019.50,
-    budgetRemaining:   820.00,
-    balanceTrend:   2.4,
-    incomeTrend:    5.1,
-    expenseTrend:   3.2,
-    savingsTrend:   8.7,
-    budgetTrend:   -1.5,
-  }));
+  private readonly _summary = signal<DashboardSummary | null>(null);
+
+  readonly stats = computed<DashboardStats>(() => {
+    const s = this._summary();
+    return {
+      currentBalance: s?.totalBalance ?? 0,
+      monthlyIncome: s?.monthlyIncome ?? 0,
+      monthlyExpense: s?.monthlyExpense ?? 0,
+      savings: s?.savings ?? 0,
+      budgetRemaining: s?.budgetRemaining ?? 0,
+      balanceTrend: s?.balanceChangePercent ?? 0,
+      incomeTrend: s?.incomeChangePercent ?? 0,
+      expenseTrend: s?.expenseChangePercent ?? 0,
+      savingsTrend: s?.savingsChangePercent ?? 0,
+      budgetTrend: s?.budgetChangePercent ?? 0,
+    };
+  });
 
   loadDashboard(): Observable<DashboardData> {
-    const data: DashboardData = {
-      summary: {
-        totalBalance: 12450.80,
-        monthlyIncome: 5200.00,
-        monthlyExpense: 3180.50,
-        savings: 2019.50,
-        budgetRemaining: 820.00,
-        balanceChangePercent: 2.4,
-        incomeChangePercent: 5.1,
-        expenseChangePercent: 3.2,
-        savingsChangePercent: 8.7,
-        budgetChangePercent: -1.5,
-      },
-      recentTransactions: this.txService.recentTransactions(),
-      monthlyChart: MONTHLY_CHART,
-      weeklySpending: WEEKLY_SPENDING,
-      categoryBreakdown: CATEGORY_BREAKDOWN,
-    };
-    return of(data).pipe(delay(400));
+    return this.http.get<ApiResponse<any>>(this.apiUrl, { withCredentials: true }).pipe(
+      map(response => {
+        const d = response.data;
+        const summary: DashboardSummary = {
+          totalBalance: d.summary.totalBalance,
+          monthlyIncome: d.summary.monthlyIncome,
+          monthlyExpense: d.summary.monthlyExpense,
+          savings: d.summary.savings,
+          budgetRemaining: d.summary.budgetRemaining,
+          balanceChangePercent: d.summary.balanceChangePercent,
+          incomeChangePercent: d.summary.incomeChangePercent,
+          expenseChangePercent: d.summary.expenseChangePercent,
+          savingsChangePercent: d.summary.savingsChangePercent,
+          budgetChangePercent: d.summary.budgetChangePercent,
+        };
+        this._summary.set(summary);
+        return {
+          summary,
+          recentTransactions: d.recentTransactions ?? [],
+          monthlyChart: d.monthlyChart ?? [],
+          weeklySpending: d.weeklySpending ?? [],
+          categoryBreakdown: d.categoryBreakdown ?? [],
+        };
+      }),
+      catchError(() => {
+        return of({
+          summary: {
+            totalBalance: 0, monthlyIncome: 0, monthlyExpense: 0, savings: 0,
+            budgetRemaining: 0, balanceChangePercent: 0, incomeChangePercent: 0,
+            expenseChangePercent: 0, savingsChangePercent: 0, budgetChangePercent: 0,
+          } as DashboardSummary,
+          recentTransactions: [],
+          monthlyChart: [],
+          weeklySpending: [],
+          categoryBreakdown: [],
+        });
+      })
+    );
   }
 }

@@ -280,7 +280,7 @@ interface AppNotification {
       border-radius: 9999px;
       font-size: 0.6rem;
       font-weight: 700;
-      color: white;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -291,7 +291,7 @@ interface AppNotification {
       height: 2rem;
       background: var(--eiq-primary);
       border-radius: 50%;
-      color: #eff6ff;
+      color: var(--eiq-primary-10);
       font-size: 0.875rem;
       font-weight: 600;
       display: flex;
@@ -317,6 +317,9 @@ interface AppNotification {
       box-shadow: var(--eiq-shadow-md);
       overflow: hidden;
       z-index: 50;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 200ms ease, transform 200ms ease;
     }
 
     .header-dropdown--notifications {
@@ -409,7 +412,7 @@ interface AppNotification {
       height: 2.5rem;
       border-radius: 50%;
       background: var(--eiq-primary);
-      color: white;
+      color: #fff;
       font-weight: 600;
       display: flex;
       align-items: center;

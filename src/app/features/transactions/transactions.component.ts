@@ -5,7 +5,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TransactionService } from '../../core/services/transaction.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { EiqCurrencyPipe } from '../../shared/pipes/eiq-currency.pipe';
@@ -160,6 +161,18 @@ import { Transaction } from '../../core/interfaces/transaction.interface';
       </div>
     </div>
   `,
+  styles: [`
+    .eiq-txn-row { transition: background 150ms ease; }
+    .eiq-txn-row:hover { background: var(--eiq-row-hover, var(--eiq-hover)); }
+    .eiq-page-btn { transition: background 150ms ease, color 150ms ease; }
+    .eiq-page-btn:hover:not(:disabled):not(.eiq-page-btn--active) { background: var(--eiq-hover); color: var(--eiq-foreground); }
+    .eiq-filter-bar__input,
+    .eiq-select { background: var(--eiq-input-bg, var(--eiq-surface)); border-color: var(--eiq-border); transition: border-color 150ms ease; }
+    .eiq-filter-bar__input:focus,
+    .eiq-select:focus { border-color: var(--eiq-primary); }
+    .eiq-txn-empty { text-align: center; padding: 3rem 1rem; color: var(--eiq-muted); }
+    .eiq-txn-empty p { margin: 1rem 0 0; font-size: 0.875rem; }
+  `]
 })
 export class TransactionsComponent {
   protected readonly authService = inject(AuthService);
@@ -173,19 +186,7 @@ export class TransactionsComponent {
   readonly currentPage = signal(1);
   readonly selectedIds = signal<Set<string>>(new Set());
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',        route: '/dashboard',       icon: 'dashboard', exact: true },
-    { label: 'Transactions',     route: '/transactions',    icon: 'swap_horiz' },
-    { label: 'Add Transaction',  route: '/add-transaction', icon: 'add_circle' },
-    { label: 'Categories',       route: '/categories',      icon: 'label' },
-    { label: 'Budget',           route: '/budget',          icon: 'pie_chart' },
-    { label: 'Analytics',        route: '/analytics',       icon: 'trending_up' },
-    { label: 'Reports',          route: '/reports',         icon: 'description' },
-    { label: 'Goals',            route: '/goals',           icon: 'flag' },
-    { label: 'Calendar',         route: '/calendar',        icon: 'calendar_month' },
-    { label: 'Wallet Accounts',  route: '/accounts',        icon: 'account_balance_wallet' },
-    { label: 'Recurring',        route: '/recurring',       icon: 'autorenew' },
-  ];
+  readonly navItems = NAV_ITEMS;
 
   readonly filteredTxns = computed<Transaction[]>(() => {
     let list = this.txnService.filteredTransactions();

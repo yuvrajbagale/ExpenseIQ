@@ -1,0 +1,26 @@
+// ExpenseIQ design tokens — "a ledger, made intelligent"
+// Import this in each component's .scss with:  @use '../styles/tokens' as t;
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+// Colors
+$ink:          #1C2333; // primary dark navy — text on paper, hero background
+$ink-soft:     #2C3547; // lighter navy, panels on dark
+$paper:        #F4F2E8; // ledger paper background
+$paper-dim:    #ECE9DC; // slightly deeper paper, for cards on paper bg
+$rule:         #B9C4B0; // faded ledger rule (sage)
+$margin-red:   #B5473A; // ledger margin line / negative amounts
+$brass:        #B8862E; // primary accent — CTAs, active states, numerals
+$brass-soft:   #E4C77E; // brass tint for dark backgrounds
+$money-green:  #4A7A5D; // positive amounts, success
+$ink-muted:    #6B7280; // secondary text on paper
+$paper-muted:  #C9C6B8; // secondary text on ink
+
+// Type
+$font-display: 'Fraunces', serif;
+$font-body:    'Inter', -apple-system, sans-serif;
+$font-mono:    'IBM Plex Mono', monospace;
+
+// Layout
+$radius:       4px;
+$max-width:    1180px;

@@ -1,8 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService, AnalyticsRange } from '../../core/services/analytics.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 
 @Component({
@@ -89,7 +90,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 </div>
                 <div class="eiq-chart-legend">
                   <span class="eiq-chart-legend__item"><span class="eiq-chart-legend__dot eiq-chart-legend__dot--blue"></span>Income</span>
-                  <span class="eiq-chart-legend__item"><span class="eiq-chart-legend__dot" style="background:#ef4444"></span>Expense</span>
+                  <span class="eiq-chart-legend__item"><span class="eiq-chart-legend__dot" style="background:var(--eiq-red)"></span>Expense</span>
                   <span class="eiq-chart-legend__item"><span class="eiq-chart-legend__dot eiq-chart-legend__dot--teal"></span>Savings</span>
                 </div>
               </div>
@@ -98,7 +99,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
                   <div class="eiq-bar-chart__group">
                     <div class="eiq-bar-chart__bars">
                       <div class="eiq-bar-chart__bar eiq-bar-chart__bar--income" [style.height.%]="(d.income / 6000) * 100" [title]="'Income: $' + d.income"></div>
-                      <div class="eiq-bar-chart__bar" style="background:#ef4444" [style.height.%]="(d.expense / 6000) * 100" [title]="'Expense: $' + d.expense"></div>
+                      <div class="eiq-bar-chart__bar eiq-bar-chart__bar--expense" [style.height.%]="(d.expense / 6000) * 100" [title]="'Expense: $' + d.expense"></div>
                     </div>
                     <span class="eiq-bar-chart__label">{{ d.month }}</span>
                   </div>
@@ -146,18 +147,18 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 <svg width="100%" height="100%" viewBox="0 0 420 200" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="cfIncomeGrad" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stop-color="#2b7fff" stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color="#2b7fff" stop-opacity="0"/>
+                      <stop offset="0%" style="stop-color: var(--eiq-primary); stop-opacity: 0.25"/>
+                      <stop offset="100%" style="stop-color: var(--eiq-primary); stop-opacity: 0"/>
                     </linearGradient>
                     <linearGradient id="cfExpenseGrad" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"/>
-                      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+                      <stop offset="0%" style="stop-color: var(--eiq-red); stop-opacity: 0.2"/>
+                      <stop offset="100%" style="stop-color: var(--eiq-red); stop-opacity: 0"/>
                     </linearGradient>
                   </defs>
                   <path [attr.d]="cashFlowAreaPath('income')" fill="url(#cfIncomeGrad)"/>
-                  <path [attr.d]="cashFlowLinePath('income')" fill="none" stroke="#2b7fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path [attr.d]="cashFlowLinePath('income')" fill="none" stroke="var(--eiq-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path [attr.d]="cashFlowAreaPath('expense')" fill="url(#cfExpenseGrad)"/>
-                  <path [attr.d]="cashFlowLinePath('expense')" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path [attr.d]="cashFlowLinePath('expense')" fill="none" stroke="var(--eiq-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <div class="eiq-area-chart__labels">
                   @for (d of cashFlowTicks(); track d) { <span>{{ d }}</span> }
@@ -237,11 +238,21 @@ import { HeaderComponent } from '../../shared/components/header.component';
       </div>
     </div>
   `,
+  styles: [`
+    .eiq-bar-chart__bar:hover {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  `],
 })
-export class AnalyticsComponent {
+export class AnalyticsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly analytics   = inject(AnalyticsService);
   private   readonly router      = inject(Router);
+
+  ngOnInit(): void {
+    this.analytics.loadAnalytics().subscribe();
+  }
 
   ranges: { label: string; value: AnalyticsRange }[] = [
     { label: 'This Week',  value: 'week'   },
@@ -250,19 +261,7 @@ export class AnalyticsComponent {
     { label: 'Custom',     value: 'custom' },
   ];
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',  exact: true },
-    { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'               },
-    { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                },
-    { label: 'Categories',      route: '/categories',       icon: 'label'                     },
-    { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                 },
-    { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                },
-    { label: 'Reports',         route: '/reports',          icon: 'description'                },
-    { label: 'Goals',           route: '/goals',            icon: 'flag'                       },
-    { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'             },
-    { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'     },
-    { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                  },
-  ];
+  readonly navItems = NAV_ITEMS;
 
   donutSegments = computed(() => {
     const circumference = 2 * Math.PI * 60;
@@ -292,11 +291,11 @@ export class AnalyticsComponent {
   heatColor(amount: number): string {
     const max = Math.max(...this.analytics.heatmap().map(c => c.amount));
     const t = amount / max;
-    if (t > 0.8) return '#1d4ed8';
-    if (t > 0.6) return '#3b82f6';
-    if (t > 0.4) return '#60a5fa';
-    if (t > 0.2) return '#93c5fd';
-    return '#dbeafe';
+    if (t > 0.8) return 'var(--eiq-primary)';
+    if (t > 0.6) return 'color-mix(in srgb, var(--eiq-primary) 70%, white)';
+    if (t > 0.4) return 'color-mix(in srgb, var(--eiq-primary) 50%, white)';
+    if (t > 0.2) return 'color-mix(in srgb, var(--eiq-primary) 30%, white)';
+    return 'color-mix(in srgb, var(--eiq-primary) 15%, white)';
   }
 
   private seriesPath(key: 'income' | 'expense', close: boolean): string {

@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TransactionService } from '../../core/services/transaction.service';
-import { SidebarComponent, NavItem } from '../../shared/components/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar.component';
+import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
 import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/interfaces/transaction.interface';
 
@@ -312,18 +313,18 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
       padding: 0.75rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 600;
       border: 2px solid var(--eiq-border); color: var(--eiq-muted);
-      cursor: pointer; transition: all 0.15s; background: var(--eiq-surface);
+      cursor: pointer; transition: all 0.2s ease; background: var(--eiq-surface);
       svg { width: 1rem; height: 1rem; }
-      &.type-btn--active { border-color: oklch(0.577 0.245 27.325); background: oklch(0.577 0.245 27.325 / 0.08); color: oklch(0.577 0.245 27.325); }
+      &.type-btn--active { border-color: var(--eiq-red); background: var(--eiq-red-10); color: var(--eiq-red); }
     }
-    .type-btn--income.type-btn--active { border-color: oklch(0.6 0.118 184.704); background: oklch(0.6 0.118 184.704 / 0.08); color: oklch(0.6 0.118 184.704); }
+    .type-btn--income.type-btn--active { border-color: var(--eiq-green); background: var(--eiq-green-10); color: var(--eiq-green); }
 
     /* Amount Input */
     .amount-input-wrap { display: flex; align-items: center; background: var(--eiq-input-bg); border: 2px solid var(--eiq-border); border-radius: 1rem; overflow: hidden; height: 4rem; }
     .amount-currency { padding: 0 1rem; font-size: 1.5rem; font-weight: 700; color: var(--eiq-muted); }
     .amount-input { flex: 1; background: none; border: none; outline: none; font-size: 1.5rem; font-weight: 700; color: var(--eiq-foreground); padding: 0; }
-    .amount-type-badge { padding: 0.25rem 0.75rem; margin: 0.5rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; background: oklch(0.577 0.245 27.325 / 0.12); color: oklch(0.577 0.245 27.325); white-space: nowrap; }
-    .amount-type-badge--income { background: oklch(0.6 0.118 184.704 / 0.12); color: oklch(0.6 0.118 184.704); }
+    .amount-type-badge { padding: 0.25rem 0.75rem; margin: 0.5rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; background: var(--eiq-red-12); color: var(--eiq-red); white-space: nowrap; }
+    .amount-type-badge--income { background: var(--eiq-green-12); color: var(--eiq-green); }
 
     /* Select */
     .select-wrap { position: relative; }
@@ -333,9 +334,9 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
     /* Category chips */
     .cat-chips { display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 0.25rem; }
     .cat-chip { font-size: 0.6875rem; font-weight: 500; border-radius: 9999px; padding: 0.25rem 0.5rem; border: 1px solid; cursor: pointer; }
-    .cat-chip--orange { background: oklch(0.646 0.222 41.116 / 0.12); color: oklch(0.646 0.222 41.116); border-color: oklch(0.646 0.222 41.116 / 0.2); }
-    .cat-chip--blue   { background: oklch(0.623 0.214 259.815 / 0.1);  color: oklch(0.623 0.214 259.815);  border-color: oklch(0.623 0.214 259.815 / 0.2); }
-    .cat-chip--teal   { background: oklch(0.6 0.118 184.704 / 0.12);   color: oklch(0.6 0.118 184.704);    border-color: oklch(0.6 0.118 184.704 / 0.2); }
+    .cat-chip--orange { background: var(--eiq-orange-12); color: var(--eiq-orange); border-color: var(--eiq-orange-20); }
+    .cat-chip--blue   { background: var(--eiq-primary-10); color: var(--eiq-primary); border-color: var(--eiq-primary-20); }
+    .cat-chip--teal   { background: var(--eiq-green-12); color: var(--eiq-green); border-color: var(--eiq-green-20); }
 
     /* Wallet Buttons */
     .wallet-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -343,9 +344,9 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
       display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.75rem;
       border-radius: 0.75rem; font-size: 0.75rem; font-weight: 500;
       border: 1px solid var(--eiq-border); color: var(--eiq-muted);
-      background: var(--eiq-surface); cursor: pointer; transition: all 0.15s;
+      background: var(--eiq-surface); cursor: pointer; transition: all 0.2s ease;
       svg { width: 0.875rem; height: 0.875rem; }
-      &.wallet-btn--active { border-width: 2px; border-color: var(--eiq-primary); background: rgba(43,127,255,0.08); color: var(--eiq-primary); font-weight: 600; }
+      &.wallet-btn--active { border-width: 2px; border-color: var(--eiq-primary); background: var(--eiq-primary-10); color: var(--eiq-primary); font-weight: 600; }
     }
 
     /* Payment Methods */
@@ -358,32 +359,32 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
     /* Input with icon */
     .input-icon-wrap { position: relative; }
     .input-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: var(--eiq-muted); pointer-events: none; }
-    .eiq-input { width: 100%; border: 1px solid var(--eiq-border); background: var(--eiq-surface); border-radius: 0.75rem; font-size: 0.875rem; color: var(--eiq-foreground); padding: 0.75rem 1rem; outline: none; &:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px rgba(43,127,255,0.12); } }
+    .eiq-input { width: 100%; border: 1px solid var(--eiq-border); background: var(--eiq-input-bg); border-radius: 0.75rem; font-size: 0.875rem; color: var(--eiq-foreground); padding: 0.75rem 1rem; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; &:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px var(--eiq-primary-12); } }
     .eiq-input--icon { padding-left: 2.5rem; }
-    .eiq-textarea { width: 100%; border: 1px solid var(--eiq-border); background: var(--eiq-surface); border-radius: 0.75rem; font-size: 0.875rem; color: var(--eiq-foreground); padding: 0.75rem 1rem; outline: none; resize: vertical; &:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px rgba(43,127,255,0.12); } }
+    .eiq-textarea { width: 100%; border: 1px solid var(--eiq-border); background: var(--eiq-input-bg); border-radius: 0.75rem; font-size: 0.875rem; color: var(--eiq-foreground); padding: 0.75rem 1rem; outline: none; resize: vertical; transition: border-color 0.2s ease, box-shadow 0.2s ease; &:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px var(--eiq-primary-12); } }
 
     /* Tags */
     .tag-input-box { min-height: 3rem; border: 1px solid var(--eiq-border); border-radius: 0.75rem; padding: 0.5rem 0.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; background: var(--eiq-surface); &:focus-within { border-color: var(--eiq-primary); } }
-    .tag-chip { display: flex; align-items: center; gap: 0.25rem; background: rgba(43,127,255,0.1); color: var(--eiq-primary); border: 1px solid rgba(43,127,255,0.2); border-radius: 9999px; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.625rem; }
+    .tag-chip { display: flex; align-items: center; gap: 0.25rem; background: var(--eiq-primary-10); color: var(--eiq-primary); border: 1px solid var(--eiq-primary-20); border-radius: 9999px; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.625rem; }
     .tag-chip__remove { background: none; border: none; cursor: pointer; color: inherit; display: flex; padding: 0; svg { width: 0.75rem; height: 0.75rem; } }
     .tag-input { flex: 1; min-width: 5rem; background: none; border: none; outline: none; font-size: 0.875rem; color: var(--eiq-foreground); &::placeholder { color: var(--eiq-muted); } }
 
     /* Upload Zone */
-    .upload-zone { border: 2px dashed rgba(43,127,255,0.35); background: rgba(43,127,255,0.03); border-radius: 0.75rem; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.15s; &:hover { background: rgba(43,127,255,0.06); } }
-    .upload-zone__icon { width: 3rem; height: 3rem; background: rgba(43,127,255,0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; svg { width: 1.25rem; height: 1.25rem; color: var(--eiq-primary); } }
+    .upload-zone { border: 2px dashed var(--eiq-primary-40); background: var(--eiq-primary-04); border-radius: 0.75rem; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s ease; &:hover { background: var(--eiq-primary-08); } }
+    .upload-zone__icon { width: 3rem; height: 3rem; background: var(--eiq-primary-10); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; svg { width: 1.25rem; height: 1.25rem; color: var(--eiq-primary); } }
     .upload-zone__title { font-size: 0.875rem; font-weight: 600; color: var(--eiq-foreground); margin: 0; }
     .upload-zone__sub { font-size: 0.75rem; color: var(--eiq-muted); margin: 0; }
-    .upload-zone__btn { font-size: 0.75rem; font-weight: 600; color: var(--eiq-primary); border: 1px solid var(--eiq-primary); background: none; border-radius: 0.5rem; padding: 0.375rem 1rem; cursor: pointer; }
+    .upload-zone__btn { font-size: 0.75rem; font-weight: 600; color: var(--eiq-primary); border: 1px solid var(--eiq-primary); background: none; border-radius: 0.5rem; padding: 0.375rem 1rem; cursor: pointer; transition: all 0.2s ease; &:hover { background: var(--eiq-primary-10); } }
 
     /* Recurring Row */
     .recurring-row { display: flex; align-items: center; justify-content: space-between; background: color-mix(in oklch, var(--eiq-input-bg) 50%, transparent); border: 1px solid var(--eiq-border); border-radius: 0.75rem; padding: 0.75rem 1rem; }
     .recurring-row__left { display: flex; align-items: center; gap: 0.75rem; }
-    .recurring-row__icon { width: 2rem; height: 2rem; background: rgba(43,127,255,0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; svg { width: 1rem; height: 1rem; color: var(--eiq-primary); } }
+    .recurring-row__icon { width: 2rem; height: 2rem; background: var(--eiq-primary-10); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; svg { width: 1rem; height: 1rem; color: var(--eiq-primary); } }
     .recurring-row__title { font-size: 0.875rem; font-weight: 600; color: var(--eiq-foreground); margin: 0 0 0.125rem; }
     .recurring-row__sub { font-size: 0.75rem; color: var(--eiq-muted); margin: 0; }
     .recurring-row__right { display: flex; align-items: center; gap: 0.75rem; }
-    .toggle-btn { position: relative; width: 2.75rem; height: 1.5rem; background: var(--eiq-border); border-radius: 9999px; border: none; cursor: pointer; transition: background 0.2s; &.toggle-btn--on { background: var(--eiq-primary); } }
-    .toggle-btn__thumb { position: absolute; top: 0.125rem; left: 0.125rem; width: 1.25rem; height: 1.25rem; background: var(--eiq-surface); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .toggle-btn { position: relative; width: 2.75rem; height: 1.5rem; background: var(--eiq-border); border-radius: 9999px; border: none; cursor: pointer; transition: background 0.2s ease; &.toggle-btn--on { background: var(--eiq-primary); } }
+    .toggle-btn__thumb { position: absolute; top: 0.125rem; left: 0.125rem; width: 1.25rem; height: 1.25rem; background: var(--eiq-surface); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: transform 0.2s ease; }
     .toggle-btn--on .toggle-btn__thumb { transform: translateX(1.25rem); }
 
     /* Form Actions */
@@ -400,8 +401,8 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
     .quick-stat--bordered { border-top: 1px solid var(--eiq-border); padding-top: 0.75rem; }
     .quick-stat__label { font-size: 0.75rem; color: var(--eiq-muted); margin: 0 0 0.25rem; }
     .quick-stat__value { font-size: 1.25rem; font-weight: 700; margin: 0; }
-    .quick-stat__value--pos { color: oklch(0.6 0.118 184.704); }
-    .quick-stat__value--neg { color: oklch(0.577 0.245 27.325); }
+    .quick-stat__value--pos { color: var(--eiq-green); }
+    .quick-stat__value--neg { color: var(--eiq-red); }
     .recent-cat-card { padding: 1.25rem; }
     .recent-cat-card__title { font-size: 0.875rem; font-weight: 700; color: var(--eiq-foreground); margin: 0 0 1rem; }
     .recent-cats { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -409,8 +410,8 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
     .recent-cat__left { display: flex; align-items: center; gap: 0.5rem; }
     .recent-cat__emoji { font-size: 1rem; }
     .recent-cat__name { font-size: 0.875rem; color: var(--eiq-foreground); font-weight: 500; }
-    .recent-cat__amount { font-size: 0.875rem; font-weight: 600; color: oklch(0.577 0.245 27.325); }
-    .eiq-spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .recent-cat__amount { font-size: 0.875rem; font-weight: 600; color: var(--eiq-red); }
+    .eiq-spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
@@ -436,19 +437,7 @@ export class AddTransactionComponent {
   recurringFreq  = 'monthly' as RecurringFrequency;
   isSaving       = signal(false);
 
-  readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       route: '/dashboard',       icon: 'dashboard',              exact: true },
-    { label: 'Transactions',    route: '/transactions',    icon: 'swap_horiz'                           },
-    { label: 'Add Transaction', route: '/add-transaction', icon: 'add_circle'                           },
-    { label: 'Categories',      route: '/categories',      icon: 'label'                                },
-    { label: 'Budget',          route: '/budget',          icon: 'pie_chart'                            },
-    { label: 'Analytics',       route: '/analytics',       icon: 'trending_up'                          },
-    { label: 'Reports',         route: '/reports',         icon: 'description'                          },
-    { label: 'Goals',           route: '/goals',           icon: 'flag'                                 },
-    { label: 'Calendar',        route: '/calendar',        icon: 'calendar_month'                       },
-    { label: 'Wallet Accounts', route: '/accounts',        icon: 'account_balance_wallet'               },
-    { label: 'Recurring',       route: '/recurring',       icon: 'autorenew'                            },
-  ];
+  readonly navItems = NAV_ITEMS;
 
   walletOptions = [
     { value: 'cash' as PaymentMethod, label: 'Cash',

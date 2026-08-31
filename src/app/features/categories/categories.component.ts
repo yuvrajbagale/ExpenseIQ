@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CategoriesService, CategoryType } from '../../core/services/categories.service';
@@ -108,7 +108,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 </div>
 
                 <div class="eiq-progress-bar">
-                  <div class="eiq-progress-bar__fill" [style.width.%]="Math.min(cat.budgetUsage, 100)" [style.background]="cat.iconColor"></div>
+                  <div class="eiq-progress-bar__fill" [style.width.%]="Math.min(cat.budgetUsage, 100)"></div>
                 </div>
                 <span class="cat-card__usage">Budget usage: {{ cat.budgetUsage }}%</span>
 
@@ -151,7 +151,9 @@ import { HeaderComponent } from '../../shared/components/header.component';
   `,
   styles: [`
     .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .cat-card { display: flex; flex-direction: column; gap: 0.5rem; }
+    .cat-card { display: flex; flex-direction: column; gap: 0.5rem; transition: transform 200ms ease, box-shadow 200ms ease; }
+    .cat-card:hover { transform: translateY(-2px); box-shadow: var(--eiq-shadow-md); }
+    .cat-card .eiq-progress-bar__fill { background: var(--eiq-primary); }
     .cat-card__top { display: flex; justify-content: space-between; align-items: flex-start; }
     .cat-card__icon { width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
     .cat-card__txn-count { font-size: 0.6875rem; color: var(--eiq-muted); text-align: right; line-height: 1.3; strong { color: var(--eiq-foreground); font-size: 0.8125rem; } }
@@ -168,11 +170,15 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .cat-spend-row__amount { font-size: 0.8125rem; font-weight: 700; color: var(--eiq-foreground); text-align: right; }
   `]
 })
-export class CategoriesComponent {
+export class CategoriesComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly categories  = inject(CategoriesService);
   protected readonly Math = Math;
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.categories.loadCategories().subscribe();
+  }
 
   onSearch(e: Event): void { this.categories.setSearch((e.target as HTMLInputElement).value); }
   onTypeChange(e: Event): void { this.categories.setTypeFilter((e.target as HTMLSelectElement).value as 'all' | CategoryType); }
