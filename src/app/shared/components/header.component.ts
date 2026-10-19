@@ -8,7 +8,6 @@ import {
   computed,
   HostListener,
   ElementRef,
-  Renderer2,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -16,6 +15,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { User } from '../../core/interfaces/user.interface';
+import { IconComponent } from './icon.component';
 
 interface AppNotification {
   id: string;
@@ -23,446 +23,228 @@ interface AppNotification {
   message: string;
   time: string;
   read: boolean;
+  tone: 'info' | 'warning' | 'success';
 }
 
 @Component({
   selector: 'eiq-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   template: `
-    <header class="app-header">
+    <header class="eiq-header">
       <button
         type="button"
         class="eiq-menu-btn"
         aria-label="Open navigation menu"
         (click)="toggleMobileNav()">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
+        <eiq-icon name="lucideMenu" [size]="21" [strokeWidth]="2" anim="pop" />
       </button>
-      <div class="header-search">
-        <span class="search-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
+
+      <div class="eiq-header__search">
+        <span class="eiq-header__search-icon" aria-hidden="true">
+          <eiq-icon name="lucideSearch" [size]="16" [strokeWidth]="2" />
         </span>
-        <input class="search-input"
+        <input
+          type="search"
+          class="eiq-header__search-input"
+          [attr.aria-label]="searchPlaceholder"
           [placeholder]="searchPlaceholder"
           (input)="onSearch($event)" />
       </div>
 
-      <div class="header-actions">
+      <div class="eiq-header__actions">
+        <!-- Theme toggle -->
+        <button
+          type="button"
+          class="eiq-header__icon-btn"
+          [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+          [title]="theme.isDark() ? 'Light mode' : 'Dark mode'"
+          (click)="toggleTheme()">
+          <eiq-icon [name]="theme.isDark() ? 'lucideMoon' : 'lucideSun'" [size]="19" anim="draw" />
+        </button>
+
         <!-- Notifications -->
-        <div class="header-dropdown-wrap">
+        <div class="eiq-header__wrap">
           <button
             type="button"
-            class="action-btn"
-            [class.action-btn--active]="showNotifications()"
+            class="eiq-header__icon-btn"
+            [class.eiq-header__icon-btn--open]="showNotifications()"
             aria-label="Notifications"
+            [attr.aria-expanded]="showNotifications()"
             (click)="toggleNotifications($event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
+            <eiq-icon name="lucideBell" [size]="19" anim="swing" />
             @if (unreadCount() > 0) {
-              <span class="notif-badge">{{ unreadCount() }}</span>
+              <span class="eiq-header__badge">{{ unreadCount() }}</span>
             }
           </button>
 
           @if (showNotifications()) {
-            <div class="header-dropdown header-dropdown--notifications">
-              <div class="header-dropdown__head">
+            <div class="eiq-dropdown eiq-header__menu eiq-header__menu--wide" role="dialog" aria-label="Notifications">
+              <div class="eiq-header__menu-head">
                 <span>Notifications</span>
                 @if (unreadCount() > 0) {
-                  <button type="button" class="header-dropdown__link" (click)="markAllRead()">
-                    Mark all read
-                  </button>
+                  <button type="button" class="eiq-link" (click)="markAllRead()">Mark all read</button>
                 }
               </div>
-              <div class="header-dropdown__body">
+              <div class="eiq-header__menu-body">
                 @for (item of notifications(); track item.id) {
                   <button
                     type="button"
-                    class="notif-item"
-                    [class.notif-item--unread]="!item.read"
+                    class="eiq-notif"
+                    [class.eiq-notif--unread]="!item.read"
                     (click)="openNotification(item)">
-                    <span class="notif-item__title">{{ item.title }}</span>
-                    <span class="notif-item__msg">{{ item.message }}</span>
-                    <span class="notif-item__time">{{ item.time }}</span>
+                    <span class="eiq-notif__dot" [class]="'eiq-notif__dot--' + item.tone" aria-hidden="true"></span>
+                    <span class="eiq-notif__body">
+                      <span class="eiq-notif__title">{{ item.title }}</span>
+                      <span class="eiq-notif__msg">{{ item.message }}</span>
+                      <span class="eiq-notif__time">{{ item.time }}</span>
+                    </span>
                   </button>
                 } @empty {
-                  <p class="header-dropdown__empty">No notifications</p>
+                  <p class="eiq-header__menu-empty">You're all caught up.</p>
                 }
               </div>
             </div>
           }
         </div>
 
-        <!-- Theme toggle -->
-        <button
-          type="button"
-          class="action-btn"
-          [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-          [title]="theme.isDark() ? 'Light mode' : 'Dark mode'"
-          (click)="toggleTheme()">
-          @if (theme.isDark()) {
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          } @else {
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-            </svg>
-          }
-        </button>
-
         <!-- User menu -->
-        <div class="header-dropdown-wrap">
+        <div class="eiq-header__wrap">
           <button
             type="button"
-            class="user-avatar"
-            aria-label="User menu"
-            [class.user-avatar--active]="showUserMenu()"
+            class="eiq-header__avatar"
+            [class.eiq-header__avatar--open]="showUserMenu()"
+            aria-label="Account menu"
+            [attr.aria-expanded]="showUserMenu()"
             (click)="toggleUserMenu($event)">
-            {{ resolvedUser?.initials ?? auth.user()?.initials ?? 'JD' }}
+            {{ initials }}
           </button>
 
           @if (showUserMenu()) {
-            <div class="header-dropdown header-dropdown--menu">
-              <div class="header-dropdown__user">
-                <div class="header-dropdown__avatar">{{ resolvedUser?.initials ?? 'JD' }}</div>
-                <div>
-                  <p class="header-dropdown__name">{{ resolvedUser?.name ?? 'John Doe' }}</p>
-                  <p class="header-dropdown__email">{{ resolvedUser?.email ?? 'john@example.com' }}</p>
+            <div class="eiq-dropdown eiq-header__menu" role="dialog" aria-label="Account">
+              <div class="eiq-header__menu-user">
+                <div class="eiq-header__menu-avatar">{{ initials }}</div>
+                <div class="eiq-header__menu-identity">
+                  <p class="eiq-header__menu-name">{{ resolvedUser?.name ?? 'John Doe' }}</p>
+                  <p class="eiq-header__menu-email">{{ resolvedUser?.email ?? 'john@example.com' }}</p>
                 </div>
               </div>
-              <div class="header-dropdown__divider"></div>
-              <button type="button" class="header-dropdown__item" (click)="goToSettings()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M19.07 4.93a10 10 0 0 0-14.14 0"/>
-                  <path d="M4.93 19.07a10 10 0 0 0 14.14 0"/>
-                </svg>
+              <div class="eiq-header__menu-divider"></div>
+              <button type="button" class="eiq-header__menu-item" (click)="goToProfile()">
+                <eiq-icon name="lucideUser" [size]="16" anim="draw" />
+                Profile
+              </button>
+              <button type="button" class="eiq-header__menu-item" (click)="goToSettings()">
+                <eiq-icon name="lucideSettings" [size]="16" anim="draw" />
                 Settings
               </button>
-              <button type="button" class="header-dropdown__item" (click)="toggleThemeFromMenu()">
-                @if (theme.isDark()) {
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                  </svg>
-                  Light mode
-                } @else {
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  </svg>
-                  Dark mode
-                }
+              <button type="button" class="eiq-header__menu-item" (click)="toggleThemeFromMenu()">
+                <eiq-icon [name]="theme.isDark() ? 'lucideSun' : 'lucideMoon'" [size]="16" anim="draw" />
+                {{ theme.isDark() ? 'Light mode' : 'Dark mode' }}
               </button>
-              <div class="header-dropdown__divider"></div>
-              <button type="button" class="header-dropdown__item header-dropdown__item--danger" (click)="logout()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <polyline points="16 17 21 12 16 7"/>
-                  <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Logout
+              <div class="eiq-header__menu-divider"></div>
+              <button type="button" class="eiq-header__menu-item eiq-header__menu-item--danger" (click)="logout()">
+                <eiq-icon name="lucideLogOut" [size]="16" anim="draw" />
+                Log out
               </button>
             </div>
           }
         </div>
-
-        <!-- Settings -->
-        <button
-          type="button"
-          class="action-btn"
-          aria-label="Settings"
-          title="Settings"
-          (click)="goToSettings()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
       </div>
     </header>
   `,
   styles: [`
-    .app-header {
-      height: 3.5rem;
-      background: var(--eiq-surface);
-      border-bottom: 1px solid var(--eiq-border);
-      box-shadow: var(--eiq-shadow-sm);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0 1.5rem;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 35;
-    }
+    .eiq-header__wrap { position: relative; display: flex; }
+    .eiq-header__icon-btn--open { background: var(--eiq-hover); color: var(--eiq-foreground); }
+    .eiq-header__avatar--open { box-shadow: 0 0 0 3px var(--eiq-primary-ring); }
+    .eiq-header__avatar svg { width: 17px; height: 17px; }
 
-    .header-search { position: relative; flex: 1; }
-
-    .search-icon {
+    .eiq-header__menu {
       position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      svg { width: 1rem; height: 1rem; color: var(--eiq-muted); }
-    }
-
-    .search-input {
-      max-width: 24rem;
-      width: 100%;
-      background: var(--eiq-input-bg);
-      border: 1px solid var(--eiq-border);
-      border-radius: 0.5rem;
-      color: var(--eiq-foreground);
-      font-size: 0.875rem;
-      padding: 0.375rem 1rem 0.375rem 2.25rem;
-      outline: none;
-      transition: border-color 150ms ease, box-shadow 150ms ease;
-      &::placeholder { color: var(--eiq-muted); }
-      &:focus {
-        border-color: var(--eiq-primary);
-        box-shadow: 0 0 0 3px var(--eiq-primary-10);
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .header-dropdown-wrap {
-      position: relative;
-    }
-
-    .action-btn {
-      position: relative;
-      background: none;
-      border: none;
-      cursor: pointer;
-      border-radius: 0.5rem;
-      padding: 0.5rem;
-      color: var(--eiq-muted);
-      display: flex;
-      align-items: center;
-      transition: background 150ms ease, color 150ms ease;
-      svg { width: 1.25rem; height: 1.25rem; }
-      &:hover,
-      &.action-btn--active {
-        background: var(--eiq-hover);
-        color: var(--eiq-foreground);
-      }
-    }
-
-    .notif-badge {
-      position: absolute;
-      right: 0.125rem;
-      top: 0.125rem;
-      min-width: 1rem;
-      height: 1rem;
-      padding: 0 0.2rem;
-      background: var(--eiq-red);
-      border-radius: 9999px;
-      font-size: 0.6rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .user-avatar {
-      width: 2rem;
-      height: 2rem;
-      background: var(--eiq-primary);
-      border-radius: 50%;
-      color: var(--eiq-primary-10);
-      font-size: 0.875rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border: 2px solid var(--eiq-primary);
-      transition: box-shadow 150ms ease, transform 150ms ease;
-      &:hover,
-      &.user-avatar--active {
-        box-shadow: 0 0 0 3px var(--eiq-primary-10);
-      }
-    }
-
-    .header-dropdown {
-      position: absolute;
-      top: calc(100% + 0.5rem);
+      top: calc(100% + 8px);
       right: 0;
-      min-width: 18rem;
-      background: var(--eiq-surface);
-      border: 1px solid var(--eiq-border);
-      border-radius: 0.75rem;
-      box-shadow: var(--eiq-shadow-md);
+      min-width: 230px;
       overflow: hidden;
-      z-index: 50;
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 200ms ease, transform 200ms ease;
+      animation: eiq-rise-in 160ms cubic-bezier(0.2, 0, 0.2, 1);
     }
+    .eiq-header__menu--wide { width: 340px; }
 
-    .header-dropdown--notifications {
-      width: 20rem;
-    }
-
-    .header-dropdown__head {
+    .eiq-header__menu-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 1rem;
+      gap: 12px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--eiq-border);
-      font-size: 0.875rem;
-      font-weight: 600;
+      font-size: 0.8125rem;
+      font-weight: 700;
       color: var(--eiq-foreground);
+      letter-spacing: -0.01em;
     }
-
-    .header-dropdown__link {
-      background: none;
-      border: none;
-      color: var(--eiq-primary);
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 0;
-      &:hover { text-decoration: underline; }
-    }
-
-    .header-dropdown__body {
-      max-height: 16rem;
-      overflow-y: auto;
-    }
-
-    .header-dropdown__empty {
-      padding: 1.5rem 1rem;
+    .eiq-header__menu-body { max-height: 340px; overflow-y: auto; }
+    .eiq-header__menu-empty {
+      padding: 30px 16px;
       text-align: center;
       color: var(--eiq-muted);
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
     }
 
-    .notif-item {
+    .eiq-notif {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.125rem;
+      gap: 10px;
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 12px 14px;
       border: none;
-      border-bottom: 1px solid var(--eiq-border);
+      border-bottom: 1px solid var(--eiq-border-subtle);
       background: transparent;
       text-align: left;
       cursor: pointer;
-      transition: background 150ms ease;
-      &:last-child { border-bottom: none; }
+      transition: background 160ms ease;
+    }
+    .eiq-notif:last-child { border-bottom: none; }
+    .eiq-notif:hover { background: var(--eiq-hover); }
+    .eiq-notif--unread { background: var(--eiq-primary-softer); }
+    .eiq-notif--unread:hover { background: var(--eiq-primary-soft); }
+    .eiq-notif__dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      margin-top: 6px; flex-shrink: 0; background: var(--eiq-primary);
+    }
+    .eiq-notif__dot--warning { background: var(--eiq-warning); }
+    .eiq-notif__dot--success { background: var(--eiq-positive); }
+    .eiq-notif__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .eiq-notif__title { font-size: 0.8125rem; font-weight: 700; color: var(--eiq-foreground); }
+    .eiq-notif__msg { font-size: 0.75rem; color: var(--eiq-muted); line-height: 1.45; }
+    .eiq-notif__time { font-size: 0.6875rem; color: var(--eiq-faint); margin-top: 2px; }
+
+    .eiq-header__menu-user { display: flex; align-items: center; gap: 11px; padding: 14px; }
+    .eiq-header__menu-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--eiq-primary-grad); color: #fff;
+      font-size: 0.8125rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .eiq-header__menu-identity { min-width: 0; }
+    .eiq-header__menu-name {
+      font-size: 0.8125rem; font-weight: 700; color: var(--eiq-foreground);
+      margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .eiq-header__menu-email {
+      font-size: 0.75rem; color: var(--eiq-muted); margin: 1px 0 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .eiq-header__menu-divider { height: 1px; background: var(--eiq-border); }
+
+    .eiq-header__menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 14px; border: none;
+      background: transparent; color: var(--eiq-foreground);
+      font-size: 0.8125rem; font-weight: 500; cursor: pointer; text-align: left;
+      transition: background 160ms ease;
+      eiq-icon { color: var(--eiq-subtle); }
       &:hover { background: var(--eiq-hover); }
     }
-
-    .notif-item--unread {
-      background: var(--eiq-primary-10);
-      &:hover { background: var(--eiq-primary-12); }
-    }
-
-    .notif-item__title {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--eiq-foreground);
-    }
-
-    .notif-item__msg {
-      font-size: 0.75rem;
-      color: var(--eiq-muted);
-      line-height: 1.4;
-    }
-
-    .notif-item__time {
-      font-size: 0.6875rem;
-      color: var(--eiq-subtle);
-      margin-top: 0.125rem;
-    }
-
-    .header-dropdown__user {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
-    }
-
-    .header-dropdown__avatar {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      background: var(--eiq-primary);
-      color: #fff;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .header-dropdown__name {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--eiq-foreground);
-      margin: 0;
-    }
-
-    .header-dropdown__email {
-      font-size: 0.75rem;
-      color: var(--eiq-muted);
-      margin: 0.125rem 0 0;
-    }
-
-    .header-dropdown__divider {
-      height: 1px;
-      background: var(--eiq-border);
-    }
-
-    .header-dropdown__item {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      width: 100%;
-      padding: 0.625rem 1rem;
-      border: none;
-      background: transparent;
-      color: var(--eiq-foreground);
-      font-size: 0.875rem;
-      cursor: pointer;
-      text-align: left;
-      transition: background 150ms ease;
-      svg { width: 1rem; height: 1rem; color: var(--eiq-muted); }
-      &:hover {
-        background: var(--eiq-hover);
-      }
-    }
-
-    .header-dropdown__item--danger {
-      color: var(--eiq-red);
-      svg { color: var(--eiq-red); }
-      &:hover { background: var(--eiq-red-10); }
-    }
-  `]
+    .eiq-header__menu-item--danger { color: var(--eiq-negative); eiq-icon { color: var(--eiq-negative); } &:hover { background: var(--eiq-negative-soft); } }
+  `],
 })
 export class HeaderComponent {
   @Input() currentUser: User | null = null;
@@ -474,40 +256,47 @@ export class HeaderComponent {
   readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly elementRef = inject(ElementRef);
-  private readonly renderer = inject(Renderer2);
 
   readonly showNotifications = signal(false);
   readonly showUserMenu = signal(false);
+
   readonly notifications = signal<AppNotification[]>([
     {
       id: '1',
-      title: 'Budget alert',
-      message: 'Food & Dining is at 85% of your monthly budget.',
+      title: 'Food & Dining near limit',
+      message: 'You are at 85% of this month’s Food & Dining budget.',
       time: '2 min ago',
       read: false,
+      tone: 'warning',
     },
     {
       id: '2',
-      title: 'Transaction added',
-      message: 'Grocery expense of $84.50 was recorded.',
+      title: 'Transaction recorded',
+      message: 'Grocery expense of $84.50 was added under Food & Dining.',
       time: '1 hr ago',
       read: false,
+      tone: 'success',
     },
     {
       id: '3',
       title: 'Weekly summary',
-      message: 'You spent 12% less than last week. Great job!',
+      message: 'You spent 12% less than last week. Keep it up.',
       time: 'Yesterday',
       read: false,
+      tone: 'info',
     },
   ]);
 
   readonly unreadCount = computed(
-    () => this.notifications().filter(n => !n.read).length
+    () => this.notifications().filter((n) => !n.read).length
   );
 
   get resolvedUser(): User | null {
     return this.currentUser ?? this.auth.user();
+  }
+
+  get initials(): string {
+    return this.resolvedUser?.initials ?? 'JD';
   }
 
   @HostListener('document:click', ['$event'])
@@ -523,8 +312,7 @@ export class HeaderComponent {
   }
 
   onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchChanged.emit(value);
+    this.searchChanged.emit((event.target as HTMLInputElement).value);
   }
 
   toggleTheme(): void {
@@ -539,25 +327,23 @@ export class HeaderComponent {
   toggleNotifications(event: MouseEvent): void {
     event.stopPropagation();
     this.showUserMenu.set(false);
-    this.showNotifications.update(v => !v);
+    this.showNotifications.update((v) => !v);
   }
 
   toggleUserMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showNotifications.set(false);
-    this.showUserMenu.update(v => !v);
+    this.showUserMenu.update((v) => !v);
   }
 
   markAllRead(): void {
-    this.notifications.update(items =>
-      items.map(item => ({ ...item, read: true }))
-    );
+    this.notifications.update((items) => items.map((item) => ({ ...item, read: true })));
   }
 
   openNotification(item: AppNotification): void {
     if (!item.read) {
-      this.notifications.update(items =>
-        items.map(n => (n.id === item.id ? { ...n, read: true } : n))
+      this.notifications.update((items) =>
+        items.map((n) => (n.id === item.id ? { ...n, read: true } : n))
       );
     }
     this.showNotifications.set(false);
@@ -568,28 +354,28 @@ export class HeaderComponent {
     this.router.navigate(['/settings']);
   }
 
+  goToProfile(): void {
+    this.closeMenus();
+    this.router.navigate(['/profile']);
+  }
+
   logout(): void {
     this.closeMenus();
     this.auth.logout();
   }
 
-  private closeMenus(): void {
-    this.showNotifications.set(false);
-    this.showUserMenu.set(false);
-  }
-
   /** Mobile sidebar overlay: toggles the off-canvas navigation. */
   toggleMobileNav(): void {
-    const body = document.body;
-    if (body.classList.contains('eiq-nav-open')) {
-      this.renderer.removeClass(body, 'eiq-nav-open');
-    } else {
-      this.renderer.addClass(body, 'eiq-nav-open');
-    }
+    document.body.classList.toggle('eiq-nav-open');
   }
 
   /** Close the mobile sidebar (called by the scrim in the sidebar component). */
   closeMobileNav(): void {
-    this.renderer.removeClass(document.body, 'eiq-nav-open');
+    document.body.classList.remove('eiq-nav-open');
+  }
+
+  private closeMenus(): void {
+    this.showNotifications.set(false);
+    this.showUserMenu.set(false);
   }
 }

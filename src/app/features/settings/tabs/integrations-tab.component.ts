@@ -61,10 +61,10 @@ interface Integration {
 })
 export class SettingsIntegrationsTabComponent {
   integrations = signal<Integration[]>([
-    { name: 'Google Drive', icon: '📁', description: 'Backup and sync files to Drive', connected: true },
-    { name: 'Dropbox', icon: '📦', description: 'Store exports and backups securely', connected: false },
-    { name: 'Plaid Bank Sync', icon: '🏦', description: 'Connect bank accounts for live sync', connected: true },
-    { name: 'Zapier', icon: '⚡', description: 'Automate workflows and notifications', connected: false },
+    { name: 'Google Drive', icon: 'ðŸ“', description: 'Backup and sync files to Drive', connected: true },
+    { name: 'Dropbox', icon: 'ðŸ“¦', description: 'Store exports and backups securely', connected: false },
+    { name: 'Plaid Bank Sync', icon: 'ðŸ¦', description: 'Connect bank accounts for live sync', connected: true },
+    { name: 'Zapier', icon: 'âš¡', description: 'Automate workflows and notifications', connected: false },
   ]);
 
   toggleIntegration(name: string): void {

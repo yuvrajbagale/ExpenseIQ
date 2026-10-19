@@ -215,7 +215,9 @@ export class AuthService {
     if (parts.length >= 2) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
-    return local.slice(0, 2).toUpperCase();
+    // Single-token local part (e.g. "jane@test.com") must stay consistent with
+    // deriveName(), which yields "Jane" — so a single initial, not two.
+    return (parts[0]?.[0] ?? 'U').toUpperCase();
   }
 
   private normalizeUser(user: ApiUser, fallbackEmail: string): User {

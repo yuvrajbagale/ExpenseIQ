@@ -5,6 +5,8 @@ import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
+import { AppIconName } from '../../shared/icons/app-icons';
 import { SettingsGeneralTabComponent } from './tabs/general-tab.component';
 import { SettingsNotificationsTabComponent } from './tabs/notifications-tab.component';
 import { SettingsSecurityTabComponent } from './tabs/security-tab.component';
@@ -25,7 +27,7 @@ type SettingsTab =
 interface NavTab {
   id: SettingsTab;
   label: string;
-  icon: string;
+  icon: AppIconName;
 }
 
 @Component({
@@ -34,6 +36,7 @@ interface NavTab {
   imports: [
     SidebarComponent,
     HeaderComponent,
+    IconComponent,
     SettingsGeneralTabComponent,
     SettingsNotificationsTabComponent,
     SettingsSecurityTabComponent,
@@ -49,7 +52,7 @@ interface NavTab {
         <eiq-header
           [currentUser]="authService.currentUser()"
           [notificationCount]="0"
-          searchPlaceholder="Search settings…" />
+          searchPlaceholder="Search settingsâ€¦" />
         <main class="eiq-content">
 
           <!-- Page Header -->
@@ -58,18 +61,13 @@ interface NavTab {
               <h1 class="eiq-page-header__title">Settings</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2.2" />
                 <span class="eiq-breadcrumb__active">Settings</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button type="button" class="eiq-btn eiq-btn--primary eiq-btn--sm" (click)="save()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                  <polyline points="17 21 17 13 7 13 7 21" />
-                </svg>
+                <eiq-icon name="lucideCheck" [size]="14" [strokeWidth]="2.2" anim="draw" />
                 Save Changes
               </button>
             </div>
@@ -84,7 +82,9 @@ interface NavTab {
                   class="settings-nav__item"
                   [class.settings-nav__item--active]="activeTab() === tab.id"
                   (click)="activeTab.set(tab.id)">
-                  <span class="settings-nav__icon" [innerHTML]="tabIcon(tab.icon)"></span>
+                  <span class="settings-nav__icon">
+                    <eiq-icon [name]="tab.icon" [size]="18" anim="draw" />
+                  </span>
                   <span class="settings-nav__label">{{ tab.label }}</span>
                 </button>
               }
@@ -94,44 +94,42 @@ interface NavTab {
             <div class="settings-content">
               @if (saved()) {
                 <div class="settings-toast" role="status">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
+                  <eiq-icon name="lucideCircleCheck" [size]="16" [strokeWidth]="2.4" anim="pop" />
                   Settings saved successfully.
                 </div>
               }
 
-              <!-- ════ GENERAL ════ -->
+              <!-- â•â•â•â• GENERAL â•â•â•â• -->
               @if (activeTab() === 'general') {
                 <eiq-settings-general />
               }
 
-              <!-- ════ NOTIFICATIONS ════ -->
+              <!-- â•â•â•â• NOTIFICATIONS â•â•â•â• -->
               @if (activeTab() === 'notifications') {
                 <eiq-settings-notifications />
               }
 
-              <!-- ════ SECURITY ════ -->
+              <!-- â•â•â•â• SECURITY â•â•â•â• -->
               @if (activeTab() === 'security') {
                 <eiq-settings-security (accountDeleted)="confirmDelete()" />
               }
 
-              <!-- ════ APPEARANCE ════ -->
+              <!-- â•â•â•â• APPEARANCE â•â•â•â• -->
               @if (activeTab() === 'appearance') {
                 <eiq-settings-appearance (themeChanged)="onThemeChanged($event)" />
               }
 
-              <!-- ════ CURRENCY & LANGUAGE ════ -->
+              <!-- â•â•â•â• CURRENCY & LANGUAGE â•â•â•â• -->
               @if (activeTab() === 'currency') {
                 <eiq-settings-currency />
               }
 
-              <!-- ════ DATA & EXPORT ════ -->
+              <!-- â•â•â•â• DATA & EXPORT â•â•â•â• -->
               @if (activeTab() === 'data') {
                 <eiq-settings-data />
               }
 
-              <!-- ════ INTEGRATIONS ════ -->
+              <!-- â•â•â•â• INTEGRATIONS â•â•â•â• -->
               @if (activeTab() === 'integrations') {
                 <eiq-settings-integrations />
               }
@@ -143,7 +141,7 @@ interface NavTab {
     </div>
   `,
   styles: [`
-    /* ── Layout ── */
+    /* â”€â”€ Layout â”€â”€ */
     .settings-layout {
       display: grid;
       grid-template-columns: 220px 1fr;
@@ -151,7 +149,7 @@ interface NavTab {
       align-items: start;
     }
 
-    /* ── Sub-navigation ── */
+    /* â”€â”€ Sub-navigation â”€â”€ */
     .settings-nav {
       display: flex;
       flex-direction: column;
@@ -194,7 +192,7 @@ interface NavTab {
     }
     .settings-nav__label { flex: 1; }
 
-    /* ── Content ── */
+    /* â”€â”€ Content â”€â”€ */
     .settings-content {
       display: flex;
       flex-direction: column;
@@ -215,7 +213,7 @@ interface NavTab {
       font-weight: 600;
     }
 
-    /* ── Forms ── */
+    /* â”€â”€ Forms â”€â”€ */
     .settings-form {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -261,7 +259,7 @@ interface NavTab {
     }
     .settings-select--sm { height: 2.25rem; font-size: 0.8125rem; width: auto; min-width: 9rem; }
 
-    /* ── Segmented buttons ── */
+    /* â”€â”€ Segmented buttons â”€â”€ */
     .settings-section-row {
       display: flex;
       align-items: center;
@@ -291,7 +289,7 @@ interface NavTab {
       border-color: var(--eiq-primary);
     }
 
-    /* ── Accent dots ── */
+    /* â”€â”€ Accent dots â”€â”€ */
     .accent-row { display: flex; gap: 0.625rem; }
     .accent-dot {
       width: 1.75rem;
@@ -308,7 +306,7 @@ interface NavTab {
       box-shadow: 0 0 0 2px var(--eiq-surface), 0 0 0 4px var(--eiq-primary-40);
     }
 
-    /* ── Toggle list ── */
+    /* â”€â”€ Toggle list â”€â”€ */
     .toggle-list { display: flex; flex-direction: column; }
     .toggle-list--bordered { border-top: 1px solid var(--eiq-border); margin-top: 0.5rem; padding-top: 0.5rem; }
     .toggle-row {
@@ -358,11 +356,11 @@ interface NavTab {
     }
     .toggle-switch--on::after { transform: translateX(1.25rem); }
 
-    /* ── Badges & actions ── */
+    /* â”€â”€ Badges & actions â”€â”€ */
     .settings-badge {
       display: inline-flex;
       align-items: center;
-      font-size: 0.625rem;
+      font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -380,7 +378,7 @@ interface NavTab {
       margin-top: 0.5rem;
     }
 
-    /* ── Login activity ── */
+    /* â”€â”€ Login activity â”€â”€ */
     .login-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
     .login-item {
       display: flex;
@@ -405,7 +403,7 @@ interface NavTab {
     .login-item__device { font-size: 0.8125rem; font-weight: 600; color: var(--eiq-foreground); margin: 0; }
     .login-item__meta { font-size: 0.6875rem; color: var(--eiq-muted); margin: 0.125rem 0 0; }
     .login-item__status {
-      font-size: 0.625rem;
+      font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -416,7 +414,7 @@ interface NavTab {
     .login-item__status--current { background: var(--eiq-green-12); color: var(--eiq-green); }
     .login-item__status--muted { background: var(--eiq-hover); color: var(--eiq-muted); }
 
-    /* ── Danger zone ── */
+    /* â”€â”€ Danger zone â”€â”€ */
     .settings-danger__title { color: var(--eiq-red); }
     .settings-danger__btn {
       font-size: 0.8125rem;
@@ -432,7 +430,7 @@ interface NavTab {
     }
     .settings-danger__btn:hover { background: var(--eiq-red-10); }
 
-    /* ── Data & Export ── */
+    /* â”€â”€ Data & Export â”€â”€ */
     .data-block {
       padding: 1rem 0;
       border-bottom: 1px solid var(--eiq-border);
@@ -468,7 +466,7 @@ interface NavTab {
     }
     .data-retention { display: flex; align-items: center; gap: 0.75rem; }
 
-    /* ── Integrations ── */
+    /* â”€â”€ Integrations â”€â”€ */
     .integrations-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625rem; }
     .integration {
       display: flex;
@@ -493,7 +491,7 @@ interface NavTab {
     .integration__name { font-size: 0.875rem; font-weight: 600; color: var(--eiq-foreground); margin: 0; }
     .integration__desc { font-size: 0.6875rem; color: var(--eiq-muted); margin: 0.125rem 0 0; }
     .integration__status {
-      font-size: 0.625rem;
+      font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -527,7 +525,7 @@ interface NavTab {
     }
     .integration__btn--primary:hover { background: var(--eiq-primary-dark); }
 
-    /* ── Responsive ── */
+    /* â”€â”€ Responsive â”€â”€ */
     @media (max-width: 1024px) {
       .settings-layout { grid-template-columns: 1fr; }
       .settings-nav {
@@ -557,13 +555,13 @@ export class SettingsComponent {
   readonly navItems = NAV_ITEMS;
 
   readonly tabs: NavTab[] = [
-    { id: 'general',       label: 'General',            icon: 'general' },
-    { id: 'notifications', label: 'Notifications',      icon: 'notifications' },
-    { id: 'security',      label: 'Security & Privacy', icon: 'security' },
-    { id: 'appearance',    label: 'Appearance',         icon: 'appearance' },
-    { id: 'currency',      label: 'Currency & Language', icon: 'currency' },
-    { id: 'data',          label: 'Data & Export',      icon: 'data' },
-    { id: 'integrations',  label: 'Integrations',       icon: 'integrations' },
+    { id: 'general',       label: 'General',            icon: 'lucideSettings'  },
+    { id: 'notifications', label: 'Notifications',      icon: 'lucideBell'      },
+    { id: 'security',      label: 'Security & Privacy', icon: 'lucideShield'    },
+    { id: 'appearance',    label: 'Appearance',         icon: 'lucidePalette'   },
+    { id: 'currency',      label: 'Currency & Language', icon: 'lucideCoins'     },
+    { id: 'data',          label: 'Data & Export',      icon: 'lucideDatabase'  },
+    { id: 'integrations',  label: 'Integrations',       icon: 'lucideLink'      },
   ];
 
   onThemeChanged(choice: 'light' | 'dark' | 'system'): void {
@@ -588,19 +586,5 @@ export class SettingsComponent {
 
   onLogout(): void {
     this.authService.logout();
-  }
-
-  private readonly ICONS: Record<string, string> = {
-    general:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
-    notifications: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
-    security:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-    appearance:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
-    currency:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-    data:          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
-    integrations:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>',
-  };
-
-  tabIcon(name: string): string {
-    return this.ICONS[name] ?? this.ICONS['general'];
   }
 }

@@ -4,25 +4,30 @@
  * All feature components that render <eiq-sidebar> should import NAV_ITEMS
  * from this file instead of defining their own duplicate arrays.
  *
+ * `icon` is a name from the curated registry in `shared/icons/app-icons.ts`,
+ * so a typo fails the build instead of rendering an empty box.
+ *
  * The NavItem interface is also re-exported here for convenience.
  */
+import { AppIconName } from '../icons/app-icons';
+
 export interface NavItem {
   label: string;
   route: string;
-  icon: string;
+  icon: AppIconName;
   exact?: boolean;
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',       route: '/dashboard',        icon: 'dashboard',              exact: true },
-  { label: 'Transactions',    route: '/transactions',     icon: 'swap_horiz'                           },
-  { label: 'Add Transaction', route: '/transactions/add', icon: 'add_circle'                            },
-  { label: 'Categories',      route: '/categories',       icon: 'label'                                },
-  { label: 'Budget',          route: '/budget',           icon: 'pie_chart'                            },
-  { label: 'Analytics',       route: '/analytics',        icon: 'trending_up'                          },
-  { label: 'Reports',         route: '/reports',          icon: 'description'                          },
-  { label: 'Goals',           route: '/goals',            icon: 'flag'                                 },
-  { label: 'Calendar',        route: '/calendar',         icon: 'calendar_month'                       },
-  { label: 'Wallet Accounts', route: '/accounts',         icon: 'account_balance_wallet'               },
-  { label: 'Recurring',       route: '/recurring',        icon: 'autorenew'                            },
+  { label: 'Dashboard',       route: '/dashboard',        icon: 'lucideLayoutDashboard', exact: true },
+  { label: 'Transactions',    route: '/transactions',     icon: 'lucideArrowLeftRight'                          },
+  { label: 'Add Transaction', route: '/transactions/add', icon: 'lucideCirclePlus'                               },
+  { label: 'Categories',      route: '/categories',       icon: 'lucideTag'                                     },
+  { label: 'Budget',          route: '/budget',           icon: 'lucideChartPie'                                },
+  { label: 'Analytics',       route: '/analytics',        icon: 'lucideTrendingUp'                              },
+  { label: 'Reports',         route: '/reports',          icon: 'lucideFileText'                                },
+  { label: 'Goals',           route: '/goals',            icon: 'lucideFlag'                                    },
+  { label: 'Calendar',        route: '/calendar',         icon: 'lucideCalendarDays'                            },
+  { label: 'Wallet Accounts', route: '/accounts',         icon: 'lucideWalletCards'                             },
+  { label: 'Recurring',       route: '/recurring',        icon: 'lucideRefreshCw'                               },
 ];

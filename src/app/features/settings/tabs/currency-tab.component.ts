@@ -16,18 +16,18 @@ import { Component, signal } from '@angular/core';
           <label class="settings-field__label" for="primCur">Primary Currency</label>
           <select id="primCur" class="settings-select" [value]="primary()" (change)="primary.set(inputValue($event))">
             <option value="USD $">USD $</option>
-            <option value="EUR €">EUR €</option>
-            <option value="GBP £">GBP £</option>
-            <option value="INR ₹">INR ₹</option>
-            <option value="JPY ¥">JPY ¥</option>
+            <option value="EUR â‚¬">EUR â‚¬</option>
+            <option value="GBP Â£">GBP Â£</option>
+            <option value="INR â‚¹">INR â‚¹</option>
+            <option value="JPY Â¥">JPY Â¥</option>
           </select>
         </div>
         <div class="settings-field">
           <label class="settings-field__label" for="secCur">Secondary Currency</label>
           <select id="secCur" class="settings-select" [value]="secondary()" (change)="secondary.set(inputValue($event))">
-            <option value="EUR €">EUR €</option>
+            <option value="EUR â‚¬">EUR â‚¬</option>
             <option value="USD $">USD $</option>
-            <option value="GBP £">GBP £</option>
+            <option value="GBP Â£">GBP Â£</option>
             <option value="None">None</option>
           </select>
         </div>
@@ -35,10 +35,10 @@ import { Component, signal } from '@angular/core';
           <label class="settings-field__label" for="language">Language</label>
           <select id="language" class="settings-select" [value]="language()" (change)="language.set(inputValue($event))">
             <option value="English">English</option>
-            <option value="Español">Español</option>
-            <option value="Français">Français</option>
+            <option value="EspaÃ±ol">EspaÃ±ol</option>
+            <option value="FranÃ§ais">FranÃ§ais</option>
             <option value="Deutsch">Deutsch</option>
-            <option value="हिन्दी">हिन्दी</option>
+            <option value="à¤¹à¤¿à¤¨à¥à¤¦à¥€">à¤¹à¤¿à¤¨à¥à¤¦à¥€</option>
           </select>
         </div>
         <div class="settings-field">
@@ -74,7 +74,7 @@ import { Component, signal } from '@angular/core';
 })
 export class SettingsCurrencyTabComponent {
   primary = signal('USD $');
-  secondary = signal('EUR €');
+  secondary = signal('EUR â‚¬');
   language = signal('English');
   numberFormat = signal('1,234.56');
   timezone = signal('America/New_York');

@@ -4,15 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TransactionService } from '../../core/services/transaction.service';
+import { ToastService } from '../../core/services/toast.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
+import { AppIconName } from '../../shared/icons/app-icons';
 import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/interfaces/transaction.interface';
 
 @Component({
   selector: 'app-add-transaction',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SidebarComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterLink, SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar [navItems]="navItems" (logoutClicked)="authService.logout()" />
@@ -23,10 +26,10 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
           <!-- Page Header -->
           <div class="eiq-page-header">
             <div>
-              <h1 class="eiq-page-header__title">Add Transaction</h1>
+               <h1 class="eiq-page-header__title">Add Transaction</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" [routerLink]="'/dashboard'">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2.2" />
                 <span class="eiq-breadcrumb__active">Add Transaction</span>
               </nav>
             </div>
@@ -46,11 +49,11 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                   <label class="field-label">Transaction Type</label>
                   <div class="type-toggle">
                     <button class="type-btn" [class.type-btn--active]="txnType()==='expense'" (click)="txnType.set('expense')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                      <eiq-icon name="lucideTrendingDown" [size]="16" [strokeWidth]="2" anim="draw" />
                       Expense
                     </button>
                     <button class="type-btn type-btn--income" [class.type-btn--active]="txnType()==='income'" (click)="txnType.set('income')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                      <eiq-icon name="lucideTrendingUp" [size]="16" [strokeWidth]="2" anim="draw" />
                       Income
                     </button>
                   </div>
@@ -74,22 +77,22 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                     <label class="field-label">Category</label>
                     <div class="select-wrap">
                       <select class="eiq-select eiq-select--full" [(ngModel)]="category">
-                        <option value="">🍔 Food &amp; Dining</option>
-                        <option value="transport">🚗 Transport</option>
-                        <option value="shopping">🛍️ Shopping</option>
-                        <option value="health">💊 Health</option>
-                        <option value="entertainment">🎬 Entertainment</option>
-                        <option value="housing">🏠 Housing</option>
-                        <option value="education">📚 Education</option>
-                        <option value="salary">💼 Salary</option>
-                        <option value="freelance">💻 Freelance</option>
+                        <option value="food">ðŸ” Food &amp; Dining</option>
+                        <option value="transport">ðŸš— Transport</option>
+                        <option value="shopping">ðŸ›ï¸ Shopping</option>
+                        <option value="health">ðŸ’Š Health</option>
+                        <option value="entertainment">ðŸŽ¬ Entertainment</option>
+                        <option value="housing">ðŸ  Housing</option>
+                        <option value="education">ðŸ“š Education</option>
+                        <option value="salary">ðŸ’¼ Salary</option>
+                        <option value="freelance">ðŸ’» Freelance</option>
                       </select>
-                      <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      <eiq-icon class="select-arrow" name="lucideChevronDown" [size]="16" [strokeWidth]="2" />
                     </div>
                     <div class="cat-chips">
-                      <span class="cat-chip cat-chip--orange">🍔 Food</span>
-                      <span class="cat-chip cat-chip--blue">🚗 Transport</span>
-                      <span class="cat-chip cat-chip--teal">💊 Health</span>
+                      <span class="cat-chip cat-chip--orange">ðŸ” Food</span>
+                      <span class="cat-chip cat-chip--blue">ðŸš— Transport</span>
+                      <span class="cat-chip cat-chip--teal">ðŸ’Š Health</span>
                     </div>
                   </div>
 
@@ -104,7 +107,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                         <option>Coffee</option>
                         <option>Delivery</option>
                       </select>
-                      <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      <eiq-icon class="select-arrow" name="lucideChevronDown" [size]="16" [strokeWidth]="2" />
                     </div>
                   </div>
 
@@ -114,7 +117,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                     <div class="wallet-btns">
                       @for (w of walletOptions; track w.value) {
                         <button class="wallet-btn" [class.wallet-btn--active]="wallet()===w.value" (click)="wallet.set(w.value)">
-                          <span [innerHTML]="w.icon"></span>
+                          <eiq-icon [name]="w.icon" [size]="14" [strokeWidth]="2" anim="pop" />
                           {{ w.label }}
                         </button>
                       }
@@ -125,7 +128,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                   <div class="field-group">
                     <label class="field-label">Date</label>
                     <div class="input-icon-wrap">
-                      <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      <eiq-icon class="input-icon" name="lucideCalendarDays" [size]="16" [strokeWidth]="2" />
                       <input class="eiq-input eiq-input--icon" type="date" [(ngModel)]="txnDate" />
                     </div>
                   </div>
@@ -134,7 +137,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                   <div class="field-group">
                     <label class="field-label">Time</label>
                     <div class="input-icon-wrap">
-                      <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      <eiq-icon class="input-icon" name="lucideClock" [size]="16" [strokeWidth]="2" />
                       <input class="eiq-input eiq-input--icon" type="time" [(ngModel)]="txnTime" />
                     </div>
                   </div>
@@ -158,7 +161,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                 <!-- Description -->
                 <div class="field-group">
                   <label class="field-label">Description</label>
-                  <textarea class="eiq-textarea" [(ngModel)]="description" rows="3" placeholder="Add a note about this transaction…"></textarea>
+                  <textarea class="eiq-textarea" [(ngModel)]="description" rows="3" placeholder="Add a note about this transactionâ€¦"></textarea>
                 </div>
 
                 <!-- Tags -->
@@ -169,11 +172,11 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                       <span class="tag-chip">
                         {{ tag }}
                         <button class="tag-chip__remove" (click)="removeTag(tag)">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          <eiq-icon name="lucideX" [size]="14" [strokeWidth]="2" anim="pop" />
                         </button>
                       </span>
                     }
-                    <input class="tag-input" [(ngModel)]="tagInput" placeholder="Add tag…" (keydown.enter)="addTag()" />
+                    <input class="tag-input" [(ngModel)]="tagInput" placeholder="Add tagâ€¦" (keydown.enter)="addTag()" />
                   </div>
                 </div>
 
@@ -181,8 +184,8 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                 <div class="field-group">
                   <label class="field-label">Location</label>
                   <div class="input-icon-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <input class="eiq-input eiq-input--icon" [(ngModel)]="location" placeholder="Enter location or place name…" />
+                    <eiq-icon class="input-icon" name="lucideTarget" [size]="16" [strokeWidth]="2" />
+                    <input class="eiq-input eiq-input--icon" [(ngModel)]="location" placeholder="Enter location or place nameâ€¦" />
                   </div>
                 </div>
 
@@ -191,11 +194,12 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                   <label class="field-label">Receipt</label>
                   <div class="upload-zone">
                     <div class="upload-zone__icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <eiq-icon name="lucideDownload" [size]="26" [strokeWidth]="2" anim="bounce" />
                     </div>
                     <p class="upload-zone__title">Drag &amp; drop or click to upload</p>
                     <p class="upload-zone__sub">Supports JPG, PNG, PDF up to 10MB</p>
-                    <button class="upload-zone__btn" type="button">Browse Files</button>
+                    <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" />
+                    <button class="upload-zone__btn" type="button" (click)="fileInput.click()">Browse Files</button>
                   </div>
                 </div>
 
@@ -203,7 +207,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                 <div class="recurring-row">
                   <div class="recurring-row__left">
                     <div class="recurring-row__icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      <eiq-icon name="lucideRefreshCw" [size]="18" [strokeWidth]="2" anim="spin" />
                     </div>
                     <div>
                       <p class="recurring-row__title">Mark as Recurring</p>
@@ -222,7 +226,7 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                           <option value="daily">Daily</option>
                           <option value="yearly">Yearly</option>
                         </select>
-                        <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        <eiq-icon class="select-arrow" name="lucideChevronDown" [size]="16" [strokeWidth]="2" />
                       </div>
                     }
                   </div>
@@ -231,19 +235,19 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
                 <!-- Form Actions -->
                 <div class="form-actions">
                   <button class="eiq-btn eiq-btn--outline" [routerLink]="'/transactions'">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <eiq-icon name="lucideX" [size]="16" [strokeWidth]="2" anim="pop" />
                     Cancel
                   </button>
                   <div class="form-actions__right">
                     <button class="eiq-btn eiq-btn--ghost" (click)="resetForm()">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72L1 10"/></svg>
+                      <eiq-icon name="lucideRefreshCw" [size]="16" [strokeWidth]="2" anim="pop" />
                       Reset
                     </button>
                     <button class="eiq-btn eiq-btn--primary eiq-btn--save" (click)="saveTransaction()" [disabled]="isSaving()">
                       @if (isSaving()) {
-                        <span class="eiq-spinner"></span> Saving…
+                        <span class="eiq-spinner"></span> Savingâ€¦
                       } @else {
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <eiq-icon name="lucideCheck" [size]="16" [strokeWidth]="2.2" anim="draw" />
                         Save Transaction
                       }
                     </button>
@@ -418,36 +422,33 @@ import { PaymentMethod, RecurringFrequency, TransactionType } from '../../core/i
 export class AddTransactionComponent {
   protected readonly authService  = inject(AuthService);
   protected readonly txnService   = inject(TransactionService);
+  private   readonly toastService = inject(ToastService);
   private   readonly router       = inject(Router);
 
   // Form state using signals
   txnType        = signal<TransactionType>('expense');
   amount         = 0;
-  category       = '';
-  subCategory    = 'Restaurant';
-  wallet         = signal<PaymentMethod>('cash');
-  txnDate        = new Date().toISOString().split('T')[0];
-  txnTime        = '12:30';
-  paymentMethod  = signal<PaymentMethod>('cash');
-  description    = '';
-  tags           = signal<string[]>(['lunch', 'work', 'weekday']);
-  tagInput       = '';
-  location       = '';
-  isRecurring    = signal(true);
+   category       = 'food';
+   subCategory    = 'Restaurant';
+   wallet         = signal<PaymentMethod>('cash');
+   txnDate        = new Date().toISOString().split('T')[0];
+   txnTime        = new Date().toTimeString().slice(0,5);
+   paymentMethod  = signal<PaymentMethod>('cash');
+   description    = '';
+   tags           = signal<string[]>([]);
+   tagInput       = '';
+   location       = '';
+   isRecurring    = signal(false);
   recurringFreq  = 'monthly' as RecurringFrequency;
   isSaving       = signal(false);
 
   readonly navItems = NAV_ITEMS;
 
   walletOptions = [
-    { value: 'cash' as PaymentMethod, label: 'Cash',
-      icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>' },
-    { value: 'bank' as PaymentMethod, label: 'Bank',
-      icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>' },
-    { value: 'card' as PaymentMethod, label: 'Card',
-      icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>' },
-    { value: 'upi'  as PaymentMethod, label: 'UPI',
-      icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>' },
+    { value: 'cash' as PaymentMethod, label: 'Cash', icon: 'lucideBanknote' as AppIconName },
+    { value: 'bank' as PaymentMethod, label: 'Bank', icon: 'lucideLandmark' as AppIconName },
+    { value: 'card' as PaymentMethod, label: 'Card', icon: 'lucideCreditCard' as AppIconName },
+    { value: 'upi'  as PaymentMethod, label: 'UPI',  icon: 'lucideSmartphone' as AppIconName },
   ];
 
   paymentMethods = [
@@ -458,10 +459,10 @@ export class AddTransactionComponent {
   ];
 
   recentCats = [
-    { emoji: '🍔', label: 'Food & Dining', amount: '-$84.50'  },
-    { emoji: '⚡', label: 'Utilities',      amount: '-$120.00' },
-    { emoji: '🚗', label: 'Transport',      amount: '-$18.75'  },
-    { emoji: '🎬', label: 'Entertainment',  amount: '-$15.99'  },
+    { emoji: 'ðŸ”', label: 'Food & Dining', amount: '-$84.50'  },
+    { emoji: 'âš¡', label: 'Utilities',      amount: '-$120.00' },
+    { emoji: 'ðŸš—', label: 'Transport',      amount: '-$18.75'  },
+    { emoji: 'ðŸŽ¬', label: 'Entertainment',  amount: '-$15.99'  },
   ];
 
   addTag(): void {
@@ -472,6 +473,12 @@ export class AddTransactionComponent {
 
   removeTag(tag: string): void {
     this.tags.update(ts => ts.filter(t => t !== tag));
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.toastService.success(`Selected: ${file.name}`);
   }
 
   resetForm(): void {
@@ -495,14 +502,15 @@ export class AddTransactionComponent {
       isRecurring: this.isRecurring(),
       recurringFrequency: this.isRecurring() ? this.recurringFreq : undefined,
     }).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-        this.router.navigate(['/transactions']);
-      },
-      error: () => {
-        this.isSaving.set(false);
-        alert('Unable to save transaction. Please make sure the backend is running.');
-      },
+       next: () => {
+         this.isSaving.set(false);
+         this.toastService.success('Transaction saved');
+         this.router.navigate(['/transactions']);
+       },
+       error: () => {
+         this.isSaving.set(false);
+         this.toastService.error('Unable to save transaction. Please make sure the backend is running.');
+       },
     });
   }
 }

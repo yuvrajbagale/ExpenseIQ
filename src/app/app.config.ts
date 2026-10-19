@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { csrfInterceptor } from './core/interceptors/csrf.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { provideAppIcons } from './shared/icons/app-icons';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     // errorInterceptor third (handles 401).
     provideHttpClient(withInterceptors([authInterceptor, csrfInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
+    ...provideAppIcons(),
   ],
 };

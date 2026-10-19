@@ -4,16 +4,17 @@ import { AuthService } from '../../core/services/auth.service';
 import { GoalsService } from '../../core/services/goals.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar (logoutClicked)="authService.logout()" />
       <div class="eiq-main">
-        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search goals…" />
+        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search goalsâ€¦" />
         <main class="eiq-content">
 
           <div class="eiq-page-header">
@@ -21,13 +22,13 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <h1 class="eiq-page-header__title">Savings Goals</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Goals</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button class="eiq-btn eiq-btn--primary eiq-btn--sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <eiq-icon name="lucidePlus" [size]="14" [strokeWidth]="2" anim="draw" />
                 Add Goal
               </button>
             </div>
@@ -72,18 +73,18 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 <span class="goal-card__pct">{{ goals.progress(goal) }}% complete</span>
 
                 <div class="goal-card__meta">
-                  <span>🗓️ Due {{ goal.deadline }}</span>
+                  <span>ðŸ—“ï¸ Due {{ goal.deadline }}</span>
                   @if (goal.monthlyContribution > 0) {
-                    <span>💰 \${{ goal.monthlyContribution }}/mo</span>
+                    <span>ðŸ’° \${{ goal.monthlyContribution }}/mo</span>
                   }
                 </div>
 
                 <div class="goal-card__actions">
                   <button class="eiq-icon-btn" title="Edit">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <eiq-icon name="lucidePencil" [size]="14" [strokeWidth]="2" anim="pop" />
                   </button>
                   <button class="eiq-icon-btn eiq-icon-btn--danger" title="Delete" (click)="goals.remove(goal.id)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                    <eiq-icon name="lucideTrash2" [size]="14" [strokeWidth]="2" anim="pop" />
                   </button>
                 </div>
               </div>

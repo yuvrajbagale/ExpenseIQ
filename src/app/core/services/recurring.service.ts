@@ -78,8 +78,8 @@ export class RecurringService {
     this._items().filter(r => r.status === 'active').forEach(r => {
       cats[r.category] = (cats[r.category] || 0) + r.amount;
     });
-    const colors: Record<string, string> = { Housing: '#ef4444', Utilities: '#2b7fff', Entertainment: '#eab308', Health: '#16a34a', Education: '#9333ea', Insurance: '#06b6d4' };
-    return Object.entries(cats).map(([category, amount]) => ({ category, amount, color: colors[category] || '#6b7280' }));
+    const colors: Record<string, string> = { Housing: '#6366f1', Utilities: '#0284c7', Entertainment: '#f59e0b', Health: '#059669', Education: '#7c3aed', Insurance: '#0891b2' };
+    return Object.entries(cats).map(([category, amount]) => ({ category, amount, color: colors[category] || '#64748b' }));
   });
 
   loadRecurring(): Observable<void> {

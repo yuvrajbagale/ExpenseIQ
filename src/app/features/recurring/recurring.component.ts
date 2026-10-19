@@ -5,16 +5,17 @@ import { AuthService } from '../../core/services/auth.service';
 import { RecurringService, RecurringFrequency, RecurringStatus } from '../../core/services/recurring.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [TitleCasePipe, SidebarComponent, HeaderComponent],
+  imports: [TitleCasePipe, SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar (logoutClicked)="authService.logout()" />
       <div class="eiq-main">
-        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search transactions, categories…" />
+        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search transactions, categoriesâ€¦" />
         <main class="eiq-content">
 
           <div class="eiq-page-header">
@@ -22,13 +23,13 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <h1 class="eiq-page-header__title">Recurring Expenses</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Recurring Expenses</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button class="eiq-btn eiq-btn--primary eiq-btn--sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <eiq-icon name="lucidePlus" [size]="14" [strokeWidth]="2" anim="draw" />
                 Add Recurring
               </button>
             </div>
@@ -39,7 +40,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Total Recurring / Month</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--blue">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  <eiq-icon name="lucideRefreshCw" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value">\${{ recurring.totals().totalMonthly.toLocaleString() }}</p>
@@ -49,7 +50,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Active Subscriptions</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--green">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <eiq-icon name="lucideCheck" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value">{{ recurring.totals().activeCount }}</p>
@@ -59,7 +60,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Next Due This Week</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--amber">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <eiq-icon name="lucideClock" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value">{{ recurring.totals().dueThisWeek }}</p>
@@ -69,8 +70,8 @@ import { HeaderComponent } from '../../shared/components/header.component';
 
           <div class="eiq-card eiq-filter-bar">
             <div class="eiq-filter-bar__search">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input class="eiq-filter-bar__input" type="text" placeholder="Search recurring expenses…" (input)="onSearch($event)" />
+              <eiq-icon name="lucideSearch" [size]="16" [strokeWidth]="2" anim="none" />
+              <input class="eiq-filter-bar__input" type="text" placeholder="Search recurring expensesâ€¦" (input)="onSearch($event)" />
             </div>
             <div class="eiq-filter-bar__filters">
               <select class="eiq-select" (change)="onFrequencyChange($event)">
@@ -89,7 +90,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 <option value="paused">Paused</option>
               </select>
               <button class="eiq-btn eiq-btn--ghost eiq-btn--sm" (click)="recurring.resetFilters()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <eiq-icon name="lucideX" [size]="14" [strokeWidth]="2" anim="pop" />
                 Reset Filters
               </button>
             </div>
@@ -136,13 +137,13 @@ import { HeaderComponent } from '../../shared/components/header.component';
                       <td class="eiq-txn-td eiq-txn-td--center">
                         <div class="eiq-txn-actions">
                           <button class="eiq-icon-btn" title="Edit">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <eiq-icon name="lucidePencil" [size]="14" [strokeWidth]="2" anim="pop" />
                           </button>
                           <button class="eiq-icon-btn" title="Toggle status" (click)="recurring.toggleStatus(item.id)">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            <eiq-icon name="lucideRefreshCw" [size]="14" [strokeWidth]="2" anim="pop" />
                           </button>
                           <button class="eiq-icon-btn eiq-icon-btn--danger" title="Delete" (click)="recurring.remove(item.id)">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                            <eiq-icon name="lucideTrash2" [size]="14" [strokeWidth]="2" anim="pop" />
                           </button>
                         </div>
                       </td>

@@ -5,11 +5,12 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar [navItems]="navItems" (logoutClicked)="onLogout()" />
@@ -17,26 +18,20 @@ import { HeaderComponent } from '../../shared/components/header.component';
         <eiq-header
           [currentUser]="authService.currentUser()"
           [notificationCount]="3"
-          searchPlaceholder="Search reports…" />
+          searchPlaceholder="Search reportsâ€¦" />
         <main class="eiq-content">
           <div class="eiq-page-header">
             <div>
               <h1 class="eiq-page-header__title">Reports</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Reports</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button class="eiq-btn eiq-btn--ghost eiq-btn--sm" (click)="exportCsv()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
+                <eiq-icon name="lucideDownload" [size]="14" [strokeWidth]="2" anim="draw" />
                 Export CSV
               </button>
             </div>

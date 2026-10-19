@@ -1,219 +1,301 @@
-<!-- ═══ NAV ═══════════════════════════════════════════════════════════ -->
-<nav #nav class="ld-nav">
+<!-- ═══ NAV ═════════════════════════════════════════════════════════════ -->
+<nav #nav class="ld-nav" aria-label="Primary">
   <div class="ld-nav__inner">
     <a class="ld-nav__brand" (click)="goToAuth('login')">
-      <span class="ld-nav__logo">◆</span>
+      <span class="ld-nav__logo" aria-hidden="true"><eiq-icon name="lucideWallet" [size]="17" [strokeWidth]="2" /></span>
       <span class="ld-nav__wordmark">ExpenseIQ</span>
     </a>
     <div class="ld-nav__links">
+      <a class="ld-nav__link" href="#how-it-works">How it works</a>
       <a class="ld-nav__link" href="#features">Features</a>
+      <a class="ld-nav__link" href="#security">Security</a>
       <a class="ld-nav__link" href="#pricing">Pricing</a>
-      <a class="ld-nav__link" (click)="goToAuth('login')">Log in</a>
-      <button class="ld-btn ld-btn--primary ld-btn--sm" (click)="goToAuth('signup')">
-        Start free trial
-      </button>
+      <button class="ld-btn ld-btn--sm ld-btn--primary" (click)="goToAuth('signup')">Get started</button>
     </div>
   </div>
 </nav>
 
-<!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
-<section class="ld-hero">
-  <canvas #heroCanvas class="ld-hero__canvas" aria-hidden="true"></canvas>
+<!-- ═══ HERO ════════════════════════════════════════════════════════════ -->
+<header class="ld-hero">
+  <!-- Video (optional) + canvas aurora + grid + beams + grain -->
+  <eiq-hero-bg class="ld-hero__bg" [videoSrc]="heroVideoSrc"></eiq-hero-bg>
+
   <div class="ld-hero__inner">
-    <div class="ld-hero__badge">
-      <span class="ld-hero__badge-dot"></span>
-      Now with AI-powered receipt scanning
-    </div>
-    <h1 class="ld-hero__title">
-      Track every dollar.<br>
-      <span class="ld-hero__title-accent">Control your finances.</span>
-    </h1>
-    <p class="ld-hero__sub">
-      ExpenseIQ captures receipts, categorizes spending, and shows you exactly where your money goes — so you can make smarter financial decisions.
-    </p>
-    <div class="ld-hero__ctas">
-      <button class="ld-btn ld-btn--primary ld-btn--lg" (click)="goToAuth('signup')">
-        Get started free
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </button>
-      <button class="ld-btn ld-btn--ghost ld-btn--lg" (click)="goToAuth('login')">
-        See live demo
-      </button>
-    </div>
-    <div class="ld-hero__trust">
-      <div class="ld-hero__trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Bank-level security
+    <div class="ld-hero__copy">
+      <span class="ld-hero__badge">
+        <span class="ld-hero__badge-dot" aria-hidden="true"></span>
+        Built for people who want the real numbers
+      </span>
+      <h1 class="ld-hero__title">
+        Know exactly<br />
+        <span class="ld-hero__title-accent">where your money goes.</span>
+      </h1>
+      <p class="ld-hero__sub">
+        ExpenseIQ tracks every transaction, categorizes it automatically, and turns your
+        spending into budgets and trends you can actually act on.
+      </p>
+      <div class="ld-hero__ctas">
+        <button class="ld-btn ld-btn--primary ld-btn--lg ld-btn--shine" (click)="goToAuth('signup')">
+          Start free
+          <eiq-icon name="lucideArrowRight" [size]="17" [strokeWidth]="2" anim="slide" />
+        </button>
+        <button class="ld-btn ld-btn--ghost ld-btn--lg" (click)="goToAuth('login')">Sign in</button>
       </div>
-      <div class="ld-hero__trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        256-bit encryption
-      </div>
-      <div class="ld-hero__trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        No credit card required
+      <ul class="ld-hero__trust">
+        <li class="ld-hero__trust-item">
+          <eiq-icon name="lucideCircleCheck" [size]="15" [strokeWidth]="2.2" anim="pop" />
+          Free forever plan
+        </li>
+        <li class="ld-hero__trust-item">
+          <eiq-icon name="lucideCircleCheck" [size]="15" [strokeWidth]="2.2" anim="pop" />
+          No credit card
+        </li>
+        <li class="ld-hero__trust-item">
+          <eiq-icon name="lucideCircleCheck" [size]="15" [strokeWidth]="2.2" anim="pop" />
+          Cancel anytime
+        </li>
+      </ul>
+    </div>
+
+    <!-- Product preview: proves what the product does instead of claiming it does -->
+    <div class="ld-hero__panel" aria-hidden="true">
+      <div #panel class="ld-panel">
+        <div class="ld-panel__top">
+          <div>
+            <p class="ld-panel__label">Total balance</p>
+            <p class="ld-panel__amount">
+              <eiq-count-up
+                [value]="24850"
+                [decimals]="2"
+                prefix="$"
+                [delay]="620" />
+            </p>
+          </div>
+          <span class="ld-panel__delta">
+            <eiq-icon name="lucideTrendingUp" [size]="12" [strokeWidth]="2.4" anim="slide" />
+            <eiq-count-up [value]="4.2" [decimals]="1" suffix="%" [delay]="980" />
+          </span>
+        </div>
+        <div class="ld-panel__stats">
+          <div class="ld-panel__stat">
+            <span class="ld-panel__stat-label">Income</span>
+            <span class="ld-panel__stat-value ld-panel__stat-value--in">
+              <eiq-count-up [value]="6240" prefix="$" [delay]="760" />
+            </span>
+          </div>
+          <div class="ld-panel__stat">
+            <span class="ld-panel__stat-label">Expense</span>
+            <span class="ld-panel__stat-value">
+              <eiq-count-up [value]="3180" prefix="$" [delay]="860" />
+            </span>
+          </div>
+          <div class="ld-panel__stat">
+            <span class="ld-panel__stat-label">Saved</span>
+            <span class="ld-panel__stat-value ld-panel__stat-value--in">
+              <eiq-count-up [value]="3060" prefix="$" [delay]="960" />
+            </span>
+          </div>
+        </div>
+        <div class="ld-panel__chart">
+          <svg viewBox="0 0 320 70" width="100%" height="70" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="ldPanelGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#818cf8" stop-opacity="0.45" />
+                <stop offset="100%" stop-color="#818cf8" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0 56 L32 48 L64 52 L96 36 L128 42 L160 26 L192 31 L224 18 L256 23 L288 11 L320 16 L320 70 L0 70 Z" fill="url(#ldPanelGrad)" />
+            <path d="M0 56 L32 48 L64 52 L96 36 L128 42 L160 26 L192 31 L224 18 L256 23 L288 11 L320 16" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="ld-panel__rows">
+          @for (row of panelTransactions; track row.name; let i = $index) {
+            <div class="ld-panel__row">
+              <span class="ld-panel__row-name">{{ row.name }}</span>
+              <span
+                class="ld-panel__row-amt"
+                [class.ld-panel__row-amt--in]="row.income"
+                [class.ld-panel__row-amt--out]="!row.income">
+                <eiq-count-up
+                  [value]="row.amount"
+                  [decimals]="2"
+                  [prefix]="row.income ? '+$' : '−$'"
+                  [delay]="1180 + i * 120" />
+              </span>
+            </div>
+          }
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ═══ SOCIAL PROOF BAR ══════════════════════════════════════════════ -->
-<section class="ld-proof">
-  <div class="ld-proof__inner">
-    <p class="ld-proof__label">Trusted by</p>
-    <div class="ld-proof__stats">
-      <span class="ld-proof__stat"><strong>12,400+</strong> active users</span>
-      <span class="ld-proof__sep">·</span>
-      <span class="ld-proof__stat"><strong>$2.1M</strong> tracked monthly</span>
-      <span class="ld-proof__sep">·</span>
-      <span class="ld-proof__stat"><strong>99.9%</strong> uptime</span>
-      <span class="ld-proof__sep">·</span>
-      <span class="ld-proof__stat"><strong>4.9/5</strong> user rating</span>
-    </div>
+  <!-- Fades the hero into the strip below -->
+  <div class="ld-hero__fade" aria-hidden="true"></div>
+</header>
+
+<!-- ═══ CAPABILITY MARQUEE ══════════════════════════════════════════════ -->
+<section class="ld-strip" aria-label="Platform capabilities">
+  <div class="ld-strip__track">
+    @for (item of marqueeItems; track $index) {
+      <div class="ld-strip__item" [attr.aria-hidden]="$index >= strip.length">
+        <span class="ld-strip__icon" aria-hidden="true"><eiq-icon [name]="item.icon" [size]="15" [strokeWidth]="2" /></span>
+        <span class="ld-strip__label">{{ item.label }}</span>
+      </div>
+    }
   </div>
 </section>
 
-<!-- ═══ HOW IT WORKS ══════════════════════════════════════════════════ -->
+<!-- ═══ TRUST METRICS (count-up) ════════════════════════════════════════ -->
+<section class="ld-metrics" aria-label="Platform specifications">
+  <div class="ld-metrics__inner">
+    @for (m of metrics; track m.label; let i = $index) {
+      <div class="ld-metric ld-reveal">
+        <p class="ld-metric__value">
+          <eiq-count-up
+            [value]="m.count ?? 0"
+            [suffix]="m.suffix"
+            [duration]="1600"
+            [delay]="i * 120" />
+        </p>
+        <p class="ld-metric__label">{{ m.label }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ════════════════════════════════════════════════════ -->
 <section class="ld-steps" id="how-it-works">
   <div class="ld-steps__inner">
     <div class="ld-section-header ld-reveal">
       <span class="ld-section-tag">How it works</span>
-      <h2 class="ld-section-title">Three simple steps to financial clarity</h2>
-      <p class="ld-section-sub">No spreadsheets. No manual entry. No guesswork.</p>
+      <h2 class="ld-section-title">Three steps, then it just runs</h2>
+      <p class="ld-section-sub">No spreadsheets. No manual sorting. No guesswork.</p>
     </div>
     <div class="ld-steps__grid">
-      <div class="ld-step ld-reveal" *ngFor="let step of steps; let i = index">
-        <div class="ld-step__num">{{ step.n }}</div>
-        <div class="ld-step__bar" aria-hidden="true"></div>
-        <h3 class="ld-step__title">{{ step.title }}</h3>
-        <p class="ld-step__copy">{{ step.copy }}</p>
-      </div>
+      @for (step of steps; track step.n) {
+        <article class="ld-step ld-reveal">
+          <span class="ld-step__num">{{ step.n }}</span>
+          <h3 class="ld-step__title">{{ step.title }}</h3>
+          <p class="ld-step__copy">{{ step.copy }}</p>
+        </article>
+      }
     </div>
   </div>
 </section>
 
-<!-- ═══ FEATURES ══════════════════════════════════════════════════════ -->
+<!-- ═══ FEATURES ═════════════════════════════════════════════════════════ -->
 <section class="ld-features" id="features">
   <div class="ld-features__inner">
     <div class="ld-section-header ld-reveal">
       <span class="ld-section-tag">Features</span>
       <h2 class="ld-section-title">Everything you need to manage spending</h2>
-      <p class="ld-section-sub">Built for individuals and teams who take their finances seriously.</p>
+      <p class="ld-section-sub">Six tools that replace a spreadsheet, three banking apps and a shoebox of receipts.</p>
     </div>
     <div class="ld-features__grid">
-      <div class="ld-feature ld-reveal" *ngFor="let f of features">
-        <div class="ld-feature__icon">
-          <ng-container [ngSwitch]="f.icon">
-            <svg *ngSwitchCase="'scan'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
-            <svg *ngSwitchCase="'brain'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <svg *ngSwitchCase="'bell'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            <svg *ngSwitchCase="'bank'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 10v11"/><path d="M12 10v11"/><path d="M16 10v11"/></svg>
-            <svg *ngSwitchCase="'team'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            <svg *ngSwitchCase="'chart'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <svg *ngSwitchDefault width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
-          </ng-container>
-        </div>
-        <h3 class="ld-feature__title">{{ f.title }}</h3>
-        <p class="ld-feature__copy">{{ f.copy }}</p>
-      </div>
+      @for (f of features; track f.title) {
+        <article class="ld-feature ld-reveal">
+          <div class="ld-feature__icon" aria-hidden="true">
+            <eiq-icon [name]="featureIcon(f.icon)" [size]="19" [strokeWidth]="1.7" />
+          </div>
+          <h3 class="ld-feature__title">{{ f.title }}</h3>
+          <p class="ld-feature__copy">{{ f.copy }}</p>
+        </article>
+      }
     </div>
   </div>
 </section>
 
-<!-- ═══ SECURITY ══════════════════════════════════════════════════════ -->
-<section class="ld-security">
-  <div class="ld-security__inner ld-reveal">
-    <div class="ld-security__content">
+<!-- ═══ SECURITY ═════════════════════════════════════════════════════════ -->
+<section class="ld-security" id="security">
+  <div class="ld-security__inner">
+    <div class="ld-security__head ld-reveal">
       <span class="ld-section-tag">Security</span>
-      <h2 class="ld-section-title">Your data is protected at every layer</h2>
-      <p class="ld-security__copy">
-        We use the same encryption standards as major banks. Your financial data is encrypted in transit and at rest — we never have access to your plain-text information.
+      <h2 class="ld-section-title ld-section-title--left">Security that is actually implemented</h2>
+      <p class="ld-section-sub ld-section-sub--left">
+        These are the exact protections running in this application's backend — not aspirational badges.
       </p>
-      <div class="ld-security__badges">
-        <div class="ld-security__badge">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="ld-security__grid">
+      @for (fact of securityFacts; track fact.title) {
+        <div class="ld-security__badge ld-reveal">
+          <eiq-icon [name]="fact.icon" [size]="19" [strokeWidth]="1.7" />
           <div>
-            <strong>SOC 2 Compliant</strong>
-            <span>Audited annually</span>
+            <strong>{{ fact.title }}</strong>
+            <span>{{ fact.copy }}</span>
           </div>
         </div>
-        <div class="ld-security__badge">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          <div>
-            <strong>AES-256 Encryption</strong>
-            <span>Data at rest</span>
-          </div>
-        </div>
-        <div class="ld-security__badge">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <div>
-            <strong>Read-only Access</strong>
-            <span>We never move money</span>
-          </div>
-        </div>
-      </div>
+      }
     </div>
   </div>
 </section>
 
-<!-- ═══ PRICING ═══════════════════════════════════════════════════════ -->
+<!-- ═══ PRICING ══════════════════════════════════════════════════════════ -->
 <section class="ld-pricing" id="pricing">
   <div class="ld-pricing__inner">
     <div class="ld-section-header ld-reveal">
       <span class="ld-section-tag">Pricing</span>
       <h2 class="ld-section-title">Simple, transparent pricing</h2>
-      <p class="ld-section-sub">Start free. Upgrade when you need more.</p>
+      <p class="ld-section-sub">Start free. Upgrade only if you outgrow it. Cancel from settings in one click.</p>
     </div>
     <div class="ld-pricing__grid">
-      <div class="ld-tier" *ngFor="let tier of pricing" [class.ld-tier--featured]="tier.featured">
-        <div class="ld-tier__badge" *ngIf="tier.featured">Most popular</div>
-        <h3 class="ld-tier__name">{{ tier.name }}</h3>
-        <div class="ld-tier__price">
-          <span class="ld-tier__amount">{{ tier.price }}</span>
-          <span class="ld-tier__cadence">{{ tier.cadence }}</span>
+      @for (tier of pricing; track tier.name) {
+        <div class="ld-tier" [class.ld-tier--featured]="tier.featured">
+          @if (tier.featured) {
+            <span class="ld-tier__badge">Most popular</span>
+          }
+          <h3 class="ld-tier__name">{{ tier.name }}</h3>
+          <div class="ld-tier__price">
+            <span class="ld-tier__amount">{{ tier.price }}</span>
+            <span class="ld-tier__cadence">{{ tier.cadence }}</span>
+          </div>
+          <p class="ld-tier__copy">{{ tier.copy }}</p>
+          <ul class="ld-tier__perks">
+            @for (perk of tier.perks; track perk) {
+              <li>
+                <eiq-icon name="lucideCircleCheck" [size]="14" [strokeWidth]="2.2" anim="pop" />
+                {{ perk }}
+              </li>
+            }
+          </ul>
+          <button class="ld-btn ld-btn--full"
+                  [class.ld-btn--primary]="tier.featured"
+                  [class.ld-btn--outline]="!tier.featured"
+                  (click)="goToAuth('signup')">
+            {{ tier.featured ? 'Start free trial' : 'Get started' }}
+          </button>
         </div>
-        <p class="ld-tier__copy">{{ tier.copy }}</p>
-        <ul class="ld-tier__perks">
-          <li *ngFor="let perk of tier.perks">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            {{ perk }}
-          </li>
-        </ul>
-        <button class="ld-btn ld-btn--full" [class.ld-btn--primary]="tier.featured" [class.ld-btn--outline]="!tier.featured" (click)="goToAuth('signup')">
-          {{ tier.featured ? 'Start free trial' : 'Get started' }}
-        </button>
-      </div>
+      }
     </div>
   </div>
 </section>
 
-<!-- ═══ FINAL CTA ═════════════════════════════════════════════════════ -->
+<!-- ═══ FINAL CTA ═══════════════════════════════════════════════════════ -->
 <section class="ld-cta">
   <div class="ld-cta__inner ld-reveal">
-    <h2 class="ld-cta__title">Take control of your finances today</h2>
-    <p class="ld-cta__sub">Join 12,400+ users who stopped guessing and started knowing.</p>
-    <button class="ld-btn ld-btn--primary ld-btn--xl" (click)="goToAuth('signup')">
+    <h2 class="ld-cta__title">Stop guessing where your money goes</h2>
+    <p class="ld-cta__sub">Create a free account and see your real spending in under a minute.</p>
+    <button class="ld-btn ld-btn--primary ld-btn--xl ld-btn--shine" (click)="goToAuth('signup')">
       Create your free account
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      <eiq-icon name="lucideArrowRight" [size]="17" [strokeWidth]="2" anim="slide" />
     </button>
   </div>
 </section>
 
-<!-- ═══ FOOTER ════════════════════════════════════════════════════════ -->
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
 <footer class="ld-footer">
   <div class="ld-footer__inner">
     <div class="ld-footer__left">
       <div class="ld-footer__brand">
-        <span class="ld-nav__logo">◆</span>
+        <span class="ld-nav__logo" aria-hidden="true"><eiq-icon name="lucideWallet" [size]="17" [strokeWidth]="2" /></span>
         <span class="ld-nav__wordmark">ExpenseIQ</span>
       </div>
-      <p class="ld-footer__copy">&copy; 2025 ExpenseIQ. All rights reserved.</p>
+      <p class="ld-footer__copy">© {{ year }} ExpenseIQ. All rights reserved.</p>
     </div>
-    <div class="ld-footer__links">
-      <a class="ld-footer__link" (click)="goToAuth('login')">Privacy Policy</a>
-      <a class="ld-footer__link" (click)="goToAuth('login')">Terms of Service</a>
-      <a class="ld-footer__link" (click)="goToAuth('login')">Security</a>
-      <a class="ld-footer__link" (click)="goToAuth('login')">Contact</a>
-    </div>
+    <nav class="ld-footer__links" aria-label="Footer">
+      <a class="ld-footer__link" href="#features">Features</a>
+      <a class="ld-footer__link" href="#pricing">Pricing</a>
+      <a class="ld-footer__link" href="#security">Security</a>
+      <a class="ld-footer__link" (click)="goToAuth('login')">Sign in</a>
+    </nav>
   </div>
 </footer>

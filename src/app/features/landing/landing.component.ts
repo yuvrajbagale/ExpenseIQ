@@ -1,11 +1,23 @@
 import {
-  Component, OnInit, OnDestroy, AfterViewInit,
-  ElementRef, ViewChild, NgZone, PLATFORM_ID, Inject,
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+  NgZone,
+  PLATFORM_ID,
+  Inject,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+import { HeroBackgroundComponent } from '../../shared/components/hero-background.component';
+import { CountUpComponent } from '../../shared/components/count-up.component';
+import { IconComponent } from '../../shared/components/icon.component';
+import { AppIconName } from '../../shared/icons/app-icons';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,41 +36,145 @@ interface PricingTier {
   featured: boolean;
 }
 
+interface Metric {
+  /** Value the counter lands on. */
+  count: number;
+  /** Rendered after the digits. */
+  suffix: string;
+  label: string;
+}
+
+/** Icon names for the landing-page feature, marquee and security sections. */
+const FEATURE_ICONS = {
+  scan: 'lucideFilter',
+  budget: 'lucideChartPie',
+  chart: 'lucideTrendingUp',
+  calendar: 'lucideCalendarDays',
+  wallet: 'lucideWallet',
+  bell: 'lucideBell',
+  flag: 'lucideFlag',
+  shield: 'lucideShield',
+  lock: 'lucideLock',
+  check: 'lucideCheck',
+  spark: 'lucideZap',
+} as const satisfies Record<string, AppIconName>;
+
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeroBackgroundComponent, CountUpComponent, IconComponent],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],
 })
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('heroCanvas') heroCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('nav') navRef!: ElementRef<HTMLElement>;
+  @ViewChild('panel') panelRef!: ElementRef<HTMLElement>;
 
   private ctx: gsap.Context | null = null;
-  private threeScene: any = null;
-  private animFrameId = 0;
-  private isBrowser: boolean;
+  private scrollHandler: (() => void) | null = null;
+  private tiltHandler: ((e: PointerEvent) => void) | null = null;
+  private readonly isBrowser: boolean;
+  private readonly reduceMotion: boolean;
+
+  readonly year = new Date().getFullYear();
+
+  /**
+   * Optional looping hero video.
+   *
+   * To enable: drop a silent, muted 1920×1080 (or 2560×1440) MP4/WebM loop into
+   * `public/` and set this, e.g. `hero/assets/hero-loop.mp4`.
+   *
+   * The canvas aurora renders underneath regardless, so the hero is never blank
+   * while the video buffers — and if the asset is missing, nothing breaks.
+   */
+  readonly heroVideoSrc: string | null = null;
+
+  /** Concrete platform capabilities — verifiable, not vanity metrics. */
+  readonly strip = [
+    { label: 'Secure sessions', icon: FEATURE_ICONS.shield },
+    { label: 'Server-side pagination', icon: FEATURE_ICONS.chart },
+    { label: 'Budget alerts', icon: FEATURE_ICONS.bell },
+    { label: 'Recurring detection', icon: FEATURE_ICONS.calendar },
+    { label: 'CSV export', icon: FEATURE_ICONS.wallet },
+  ];
+
+  /** Duplicated once for a seamless marquee loop. */
+  readonly marqueeItems = [...this.strip, ...this.strip];
+
+  /** Recent rows in the hero preview — amounts count up in sequence. */
+  readonly panelTransactions = [
+    { name: 'Whole Foods Market', amount: 84.5, income: false },
+    { name: 'Salary deposit', amount: 3120, income: true },
+    { name: 'Metro Transit', amount: 42, income: false },
+  ];
+
+  /** Count-up figures — factual capabilities, not invented traction. */
+  readonly metrics: Metric[] = [
+    { count: 12, suffix: ' rounds', label: 'bcrypt cost' },
+    { count: 100, suffix: ' req / 15 min', label: 'Rate limit per IP' },
+    { count: 1, suffix: ' MB', label: 'Max request body' },
+    { count: 24, suffix: ' h', label: 'Access token life' },
+  ];
 
   readonly steps = [
-    { n: '01', title: 'Capture', copy: 'Forward a receipt or snap a photo. OCR pulls every detail automatically.' },
-    { n: '02', title: 'Categorize', copy: 'AI files each line item under the right ledger. No manual sorting.' },
-    { n: '03', title: 'Understand', copy: 'See where money goes with real-time reports and budget alerts.' },
+    {
+      n: '01',
+      title: 'Capture',
+      copy: 'Record an expense the moment it happens — merchant, amount, category and date in one pass.',
+    },
+    {
+      n: '02',
+      title: 'Categorize',
+      copy: 'Every entry files itself under the right category, so your ledger stays clean without busywork.',
+    },
+    {
+      n: '03',
+      title: 'Understand',
+      copy: 'Budgets, trends and reports show exactly where your money goes and what to change.',
+    },
   ];
 
   readonly features: Feature[] = [
-    { icon: 'scan', title: 'Receipt scanning', copy: 'Point your camera at a receipt. Merchant, tax, total — extracted in seconds.' },
-    { icon: 'brain', title: 'Smart categorization', copy: 'Filed automatically. Gets sharper every time you correct it.' },
-    { icon: 'bell', title: 'Budget alerts', copy: 'Know the moment a category runs hot, not when the statement arrives.' },
-    { icon: 'bank', title: 'Bank sync', copy: 'Connect accounts and cards. Balances stay current on their own.' },
-    { icon: 'team', title: 'Team reports', copy: 'Roll up spend across a team or household into one shared ledger.' },
-    { icon: 'chart', title: 'Monthly insight', copy: 'A plain-language summary of what moved, and why.' },
+    { icon: 'wallet', title: 'Accounts & wallets', copy: 'Track balances across cash, bank and card accounts in one ledger.' },
+    { icon: 'budget', title: 'Budgets that roll over', copy: 'Set a monthly limit per category. Unspent budget carries into the next month.' },
+    { icon: 'chart', title: 'Spend analytics', copy: 'Income-versus-expense trends, category breakdowns and recurring-pattern detection.' },
+    { icon: 'calendar', title: 'Calendar view', copy: 'See spending laid out across the month, with a heatmap of your heaviest days.' },
+    { icon: 'bell', title: 'Budget alerts', copy: 'Get told the moment a category runs hot, not when the statement arrives.' },
+    { icon: 'flag', title: 'Savings goals', copy: 'Name a goal, set a target and watch progress move with every transaction.' },
+  ];
+
+  readonly securityFacts = [
+    { icon: 'lock', title: 'Passwords hashed with bcrypt', copy: '12 rounds. Plain-text passwords are never stored or logged.' },
+    { icon: 'shield', title: 'Sessions in HttpOnly cookies', copy: 'Tokens stay out of JavaScript reach. Secure and SameSite=Strict.' },
+    { icon: 'check', title: 'CSRF protection on writes', copy: 'State-changing requests are signed and verified server-side.' },
+    { icon: 'spark', title: 'Rate limited & validated', copy: '100 requests per 15 minutes per IP, with server-side input validation.' },
   ];
 
   readonly pricing: PricingTier[] = [
-    { name: 'Personal', price: '$0', cadence: '/forever', copy: 'For tracking your own spend.', perks: ['1 bank connection', 'Manual receipt capture', 'Monthly summary'], featured: false },
-    { name: 'Pro', price: '$9', cadence: '/month', copy: 'For anyone serious about their numbers.', perks: ['Unlimited connections', 'Auto receipt scanning', 'Budget alerts', 'CSV export'], featured: true },
-    { name: 'Team', price: '$24', cadence: '/month', copy: 'For households and small teams.', perks: ['Everything in Pro', 'Shared ledgers', 'Role-based access', 'Priority support'], featured: false },
+    {
+      name: 'Personal',
+      price: '$0',
+      cadence: '/forever',
+      copy: 'Everything you need to see where your money goes.',
+      perks: ['Unlimited transactions', 'Budgets & categories', 'Analytics & reports', 'CSV export', 'Dark mode'],
+      featured: false,
+    },
+    {
+      name: 'Pro',
+      price: '$9',
+      cadence: '/month',
+      copy: 'Automation and forecasting for serious money habits.',
+      perks: ['Everything in Personal', 'Recurring transaction detection', 'Savings goal forecasting', 'Calendar heatmap', 'Priority support'],
+      featured: true,
+    },
+    {
+      name: 'Team',
+      price: '$24',
+      cadence: '/month',
+      copy: 'Shared ledgers for households and small teams.',
+      perks: ['Everything in Pro', 'Shared ledgers', 'Role-based access', 'Consolidated reporting'],
+      featured: false,
+    },
   ];
 
   constructor(
@@ -67,173 +183,132 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.reduceMotion = this.isBrowser
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
   }
 
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
-    this.initThree();
+    this.initNav();
+    if (this.reduceMotion) return;
     this.initGSAP();
+    this.initPanelTilt();
   }
 
   ngOnDestroy(): void {
     this.ctx?.revert();
-    cancelAnimationFrame(this.animFrameId);
-    this.threeScene?.dispose?.();
+    if (!this.isBrowser) return;
+    if (this.scrollHandler) window.removeEventListener('scroll', this.scrollHandler);
+    const panel = this.panelRef?.nativeElement;
+    if (panel && this.tiltHandler) {
+      panel.removeEventListener('pointermove', this.tiltHandler);
+      panel.removeEventListener('pointerleave', this.tiltHandler);
+    }
   }
 
-  /* ─── THREE.JS — Subtle floating particles ─────────────────────────── */
+  /* ─── Nav: solidifies on scroll ──────────────────────────────────────── */
 
-  private async initThree(): Promise<void> {
-    const THREE = await import('three');
-    const canvas = this.heroCanvas.nativeElement;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(w, h);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
-    camera.position.set(0, 0, 5);
-
-    /* ── Subtle particle field ── */
-    const count = 300;
-    const geo = new THREE.BufferGeometry();
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      positions[i * 3]     = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10 - 3;
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const mat = new THREE.PointsMaterial({
-      color: 0x3b82f6,
-      size: 0.015,
-      transparent: true,
-      opacity: 0.3,
-      sizeAttenuation: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
+  private initNav(): void {
+    const nav = this.navRef?.nativeElement;
+    if (!nav) return;
+    const apply = () => nav.classList.toggle('ld-nav--solid', window.scrollY > 12);
+    this.ngZone.runOutsideAngular(() => {
+      this.scrollHandler = apply;
+      window.addEventListener('scroll', apply, { passive: true });
+      apply();
     });
-    const particles = new THREE.Points(geo, mat);
-    scene.add(particles);
+  }
 
-    /* ── Soft radial glow ── */
-    const glowGeo = new THREE.PlaneGeometry(12, 12);
-    const glowMat = new THREE.ShaderMaterial({
-      transparent: true,
-      depthWrite: false,
-      uniforms: {
-        uColor: { value: new THREE.Color(0x3b82f6) },
-        uTime: { value: 0 },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform vec3 uColor;
-        uniform float uTime;
-        varying vec2 vUv;
-        void main() {
-          float d = distance(vUv, vec2(0.5));
-          float glow = exp(-d * 3.0) * 0.12;
-          float pulse = 1.0 + sin(uTime * 0.3) * 0.15;
-          gl_FragColor = vec4(uColor, glow * pulse);
-        }
-      `,
-    });
-    const glowMesh = new THREE.Mesh(glowGeo, glowMat);
-    glowMesh.position.set(0, 1, -4);
-    scene.add(glowMesh);
+  /* ─── Product panel: pointer-following tilt (fine pointer only) ───────── */
 
-    /* ── Store & animate ── */
-    const clock = new THREE.Clock();
-    this.threeScene = { renderer, scene, camera, particles, dispose: () => {
-      renderer.dispose();
-      geo.dispose();
-      mat.dispose();
-      glowGeo.dispose();
-      glowMat.dispose();
-    }};
+  private initPanelTilt(): void {
+    const panel = this.panelRef?.nativeElement;
+    if (!panel || !window.matchMedia('(pointer: fine)').matches) return;
 
     this.ngZone.runOutsideAngular(() => {
-      const animate = () => {
-        this.animFrameId = requestAnimationFrame(animate);
-        const t = clock.getElapsedTime();
-
-        particles.rotation.y = t * 0.015;
-        particles.rotation.x = Math.sin(t * 0.1) * 0.02;
-
-        glowMat.uniforms.uTime.value = t;
-
-        renderer.render(scene, camera);
+      const reset = () => {
+        panel.style.setProperty('--tilt-x', '0deg');
+        panel.style.setProperty('--tilt-y', '0deg');
+        panel.style.setProperty('--glow-x', '50%');
+        panel.style.setProperty('--glow-y', '50%');
       };
-      animate();
-    });
 
-    window.addEventListener('resize', () => {
-      const w2 = window.innerWidth;
-      const h2 = window.innerHeight;
-      camera.aspect = w2 / h2;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w2, h2);
+      this.tiltHandler = (e: PointerEvent) => {
+        const r = panel.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        panel.style.setProperty('--tilt-x', `${(0.5 - py) * 7}deg`);
+        panel.style.setProperty('--tilt-y', `${(px - 0.5) * 9}deg`);
+        panel.style.setProperty('--glow-x', `${px * 100}%`);
+        panel.style.setProperty('--glow-y', `${py * 100}%`);
+      };
+
+      panel.addEventListener('pointermove', this.tiltHandler);
+      panel.addEventListener('pointerleave', reset);
     });
   }
 
-  /* ─── GSAP ──────────────────────────────────────────────────────────── */
+  /* ─── GSAP entrances. Reveals use `fromTo` with `immediateRender: false`
+         so content can never be left stuck at opacity 0 if a trigger misfires. */
 
   private initGSAP(): void {
     this.ctx = gsap.context(() => {
-      /* ── Hero entrance ── */
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       heroTl
-        .from('.ld-hero__badge', { opacity: 0, y: 20, duration: 0.6 }, 0.2)
-        .from('.ld-hero__title', { opacity: 0, y: 30, duration: 0.8 }, 0.3)
-        .from('.ld-hero__sub', { opacity: 0, y: 20, duration: 0.7 }, 0.5)
-        .from('.ld-hero__ctas', { opacity: 0, y: 20, duration: 0.6 }, 0.6)
-        .from('.ld-hero__trust', { opacity: 0, y: 15, duration: 0.6 }, 0.7);
+        .from('.ld-hero__badge', { opacity: 0, y: 18, duration: 0.5 }, 0.1)
+        .from('.ld-hero__title', { opacity: 0, y: 28, duration: 0.7 }, 0.2)
+        .from('.ld-hero__sub', { opacity: 0, y: 18, duration: 0.6 }, 0.38)
+        .from('.ld-hero__ctas', { opacity: 0, y: 18, duration: 0.5 }, 0.48)
+        .from('.ld-hero__trust', { opacity: 0, y: 14, duration: 0.5 }, 0.58)
+        .from('.ld-hero__panel', { opacity: 0, y: 40, duration: 0.9, ease: 'power2.out' }, 0.45);
 
-      /* ── Section reveals ── */
       gsap.utils.toArray<HTMLElement>('.ld-reveal').forEach((el) => {
-        gsap.from(el, {
-          scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 60%', scrub: 1 },
-          opacity: 0,
-          y: 40,
-        });
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 32 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power2.out',
+            immediateRender: false,
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+          }
+        );
       });
 
-      /* ── Pricing stagger ── */
       gsap.from('.ld-tier', {
-        scrollTrigger: { trigger: '.ld-pricing__grid', start: 'top 80%' },
+        scrollTrigger: { trigger: '.ld-pricing__grid', start: 'top 82%' },
         opacity: 0,
-        y: 40,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: 'power2.out',
-      });
-
-      /* ── Security badges stagger ── */
-      gsap.from('.ld-security__badge', {
-        scrollTrigger: { trigger: '.ld-security__badges', start: 'top 85%' },
-        opacity: 0,
-        x: -20,
+        y: 32,
         stagger: 0.1,
-        duration: 0.6,
+        duration: 0.7,
         ease: 'power2.out',
       });
 
-    }, document.body);
+      // Parallax: hero content drifts slower than the page.
+      gsap.to('.ld-hero__copy', {
+        yPercent: 14,
+        opacity: 0.35,
+        ease: 'none',
+        scrollTrigger: { trigger: '.ld-hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
+      });
+      gsap.to('.ld-hero__panel', {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: { trigger: '.ld-hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
+      });
+    });
   }
 
-  /* ─── HELPERS ───────────────────────────────────────────────────────── */
+  /* ─── Helpers ───────────────────────────────────────────────────────── */
+
+  featureIcon(name: string): AppIconName {
+    return FEATURE_ICONS[name as keyof typeof FEATURE_ICONS] ?? 'lucideCircle';
+  }
 
   goToAuth(mode: 'login' | 'signup'): void {
     this.router.navigate(['/auth'], { queryParams: { mode } });

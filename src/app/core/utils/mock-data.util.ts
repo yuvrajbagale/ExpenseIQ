@@ -16,7 +16,7 @@ export const MOCK_SUMMARY: TransactionSummary = {
 export const MOCK_TRANSACTIONS: Transaction[] = [
   {
     id: 'txn_001', sequenceId: '001',
-    category: { id: 'cat_food', name: 'Food', icon: 'utensils', color: '#2b7fff', bgColor: 'rgba(43,127,255,0.12)' },
+    category: { id: 'cat_food', name: 'Food', icon: 'utensils', color: '#4f46e5', bgColor: 'rgba(79,70,229,0.12)' },
     description: 'Grocery shopping — weekly',
     date: new Date('2025-06-30'),
     amount: -134.5, type: 'expense', status: 'completed', paymentMethod: 'card',
@@ -24,7 +24,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_002', sequenceId: '002',
-    category: { id: 'cat_income', name: 'Salary', icon: 'trending-up', color: '#22c55e', bgColor: 'rgba(34,197,94,0.12)' },
+    category: { id: 'cat_income', name: 'Salary', icon: 'trending-up', color: '#059669', bgColor: 'rgba(5,150,105,0.12)' },
     description: 'Monthly salary — June',
     date: new Date('2025-06-30'),
     amount: 5200.0, type: 'income', status: 'completed', paymentMethod: 'bank',
@@ -32,7 +32,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_003', sequenceId: '003',
-    category: { id: 'cat_transport', name: 'Transport', icon: 'car', color: '#8b5cf6', bgColor: 'rgba(139,92,246,0.12)' },
+    category: { id: 'cat_transport', name: 'Transport', icon: 'car', color: '#7c3aed', bgColor: 'rgba(124,58,237,0.12)' },
     description: 'Uber ride — office',
     date: new Date('2025-06-29'),
     amount: -18.5, type: 'expense', status: 'completed', paymentMethod: 'card',
@@ -40,7 +40,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_004', sequenceId: '004',
-    category: { id: 'cat_shop', name: 'Shopping', icon: 'shopping-cart', color: '#f97316', bgColor: 'rgba(249,115,22,0.12)' },
+    category: { id: 'cat_shop', name: 'Shopping', icon: 'shopping-cart', color: '#ea580c', bgColor: 'rgba(234,88,12,0.12)' },
     description: 'Amazon order — electronics',
     date: new Date('2025-06-29'),
     amount: -89.99, type: 'expense', status: 'pending', paymentMethod: 'card',
@@ -48,7 +48,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_005', sequenceId: '005',
-    category: { id: 'cat_util', name: 'Utilities', icon: 'zap', color: '#2b7fff', bgColor: 'rgba(43,127,255,0.12)' },
+    category: { id: 'cat_util', name: 'Utilities', icon: 'zap', color: '#4f46e5', bgColor: 'rgba(79,70,229,0.12)' },
     description: 'Electricity bill — June',
     date: new Date('2025-06-28'),
     amount: -65.0, type: 'expense', status: 'completed', paymentMethod: 'upi',
@@ -56,7 +56,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_006', sequenceId: '006',
-    category: { id: 'cat_ent', name: 'Entertainment', icon: 'film', color: '#eab308', bgColor: 'rgba(234,179,8,0.15)' },
+    category: { id: 'cat_ent', name: 'Entertainment', icon: 'film', color: '#f59e0b', bgColor: 'rgba(245,158,11,0.15)' },
     description: 'Netflix subscription',
     date: new Date('2025-06-25'),
     amount: -15.99, type: 'expense', status: 'completed', paymentMethod: 'card',
@@ -64,7 +64,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_007', sequenceId: '007',
-    category: { id: 'cat_health', name: 'Health', icon: 'heart-pulse', color: '#22c55e', bgColor: 'rgba(34,197,94,0.12)' },
+    category: { id: 'cat_health', name: 'Health', icon: 'heart-pulse', color: '#059669', bgColor: 'rgba(5,150,105,0.12)' },
     description: 'Pharmacy — vitamins',
     date: new Date('2025-06-22'),
     amount: -32.0, type: 'expense', status: 'completed', paymentMethod: 'cash',
@@ -72,7 +72,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_008', sequenceId: '008',
-    category: { id: 'cat_food2', name: 'Food', icon: 'utensils', color: '#2b7fff', bgColor: 'rgba(43,127,255,0.12)' },
+    category: { id: 'cat_food2', name: 'Food', icon: 'utensils', color: '#4f46e5', bgColor: 'rgba(79,70,229,0.12)' },
     description: 'Restaurant dinner',
     date: new Date('2025-06-20'),
     amount: -67.0, type: 'expense', status: 'completed', paymentMethod: 'card',
@@ -80,7 +80,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_009', sequenceId: '009',
-    category: { id: 'cat_rent', name: 'Rent', icon: 'home', color: '#2b7fff', bgColor: 'rgba(43,127,255,0.12)' },
+    category: { id: 'cat_rent', name: 'Rent', icon: 'home', color: '#4f46e5', bgColor: 'rgba(79,70,229,0.12)' },
     description: 'Monthly apartment rent',
     date: new Date('2025-06-01'),
     amount: -1200.0, type: 'expense', status: 'completed', paymentMethod: 'bank',
@@ -88,7 +88,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'txn_010', sequenceId: '010',
-    category: { id: 'cat_fit', name: 'Fitness', icon: 'dumbbell', color: '#eab308', bgColor: 'rgba(234,179,8,0.15)' },
+    category: { id: 'cat_fit', name: 'Fitness', icon: 'dumbbell', color: '#f59e0b', bgColor: 'rgba(245,158,11,0.15)' },
     description: 'Gym membership — monthly',
     date: new Date('2025-05-31'),
     amount: -49.0, type: 'expense', status: 'pending', paymentMethod: 'card',

@@ -7,6 +7,7 @@ import { DashboardService } from '../../core/services/dashboard.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 interface ProfileField {
   label: string;
@@ -50,7 +51,7 @@ interface Achievement {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar [navItems]="navItems" (logoutClicked)="onLogout()" />
@@ -58,7 +59,7 @@ interface Achievement {
         <eiq-header
           [currentUser]="authService.currentUser()"
           [notificationCount]="0"
-          searchPlaceholder="Search transactions, categories…" />
+          searchPlaceholder="Search transactions, categoriesâ€¦" />
         <main class="eiq-content">
 
           <!-- Page Header -->
@@ -67,18 +68,13 @@ interface Achievement {
               <h1 class="eiq-page-header__title">Profile</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Profile</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button type="button" class="eiq-btn eiq-btn--primary eiq-btn--sm" (click)="toggleEdit()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
+                <eiq-icon name="lucidePencil" [size]="14" [strokeWidth]="2" anim="draw" />
                 {{ editing() ? 'Save Profile' : 'Edit Profile' }}
               </button>
             </div>
@@ -96,7 +92,7 @@ interface Achievement {
                   <h2 class="profile-hero__name">{{ displayName() }}</h2>
                   <span class="profile-hero__badge">Premium Member</span>
                 </div>
-                <p class="profile-hero__email">{{ user()?.email ?? '—' }}</p>
+                <p class="profile-hero__email">{{ user()?.email ?? 'â€”' }}</p>
                 <p class="profile-hero__since">Member since {{ memberSince() }}</p>
               </div>
             </div>
@@ -109,21 +105,13 @@ interface Achievement {
                 <div class="profile-stat__icon" [class]="'profile-stat__icon--' + stat.icon">
                   @switch (stat.icon) {
                     @case ('transactions') {
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M7 16V4m0 0L3 8m4-4l4 4" />
-                        <path d="M17 8v12m0 0l4-4m-4 4l-4-4" />
-                      </svg>
+                      <eiq-icon name="lucideArrowLeftRight" [size]="18" [strokeWidth]="2" anim="pop" />
                     }
                     @case ('savings') {
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                      </svg>
+                  <eiq-icon name="lucideBanknote" [size]="18" [strokeWidth]="2" />
                     }
                     @case ('goals') {
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                        <line x1="4" y1="22" x2="4" y2="15" />
-                      </svg>
+                      <eiq-icon name="lucideFlag" [size]="18" [strokeWidth]="2" anim="pop" />
                     }
                   }
                 </div>
@@ -152,9 +140,7 @@ interface Achievement {
                     <div class="profile-field__value-row">
                       <span class="profile-field__value">{{ field.value }}</span>
                       @if (field.verified) {
-                        <svg class="profile-field__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <eiq-icon class="profile-field__check" name="lucideCheck" [size]="14" [strokeWidth]="2.5" anim="pop" />
                       }
                     </div>
                   </div>
@@ -189,13 +175,9 @@ interface Achievement {
                     <li class="profile-completion__item" [class.profile-completion__item--done]="item.done">
                       <span class="profile-completion__check">
                         @if (item.done) {
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <eiq-icon name="lucideCheck" [size]="12" [strokeWidth]="3" anim="pop" />
                         } @else {
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="12" cy="12" r="10" />
-                          </svg>
+                          <eiq-icon name="lucideCircle" [size]="12" [strokeWidth]="2.5" anim="none" />
                         }
                       </span>
                       <span class="profile-completion__label">{{ item.label }}</span>
@@ -298,7 +280,7 @@ interface Achievement {
     </div>
   `,
   styles: [`
-    /* ── Hero header card ── */
+    /* â”€â”€ Hero header card â”€â”€ */
     .profile-hero {
       position: relative;
       border-radius: var(--eiq-radius-lg);
@@ -308,7 +290,7 @@ interface Achievement {
     }
     .profile-hero__bg {
       height: 84px;
-      background: linear-gradient(135deg, var(--eiq-primary), oklch(0.45 0.18 259.815));
+      background: linear-gradient(135deg, var(--eiq-primary), var(--eiq-primary-hover));
     }
     .profile-hero__content {
       display: flex;
@@ -322,7 +304,7 @@ interface Achievement {
       width: 84px;
       height: 84px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--eiq-primary), oklch(0.45 0.18 259.815));
+      background: linear-gradient(135deg, var(--eiq-primary), var(--eiq-primary-hover));
       color: #fff;
       font-size: 1.75rem;
       font-weight: 700;
@@ -380,7 +362,7 @@ interface Achievement {
       margin: 0.125rem 0 0;
     }
 
-    /* ── Stats row ── */
+    /* â”€â”€ Stats row â”€â”€ */
     .profile-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -428,7 +410,7 @@ interface Achievement {
       margin: 0.125rem 0 0;
     }
 
-    /* ── Main grid ── */
+    /* â”€â”€ Main grid â”€â”€ */
     .profile-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -634,7 +616,7 @@ interface Achievement {
       color: var(--eiq-foreground);
     }
     .profile-account__status {
-      font-size: 0.625rem;
+      font-size: 0.6875rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -704,7 +686,7 @@ interface Achievement {
       color: var(--eiq-foreground);
     }
 
-    /* ── Responsive ── */
+    /* â”€â”€ Responsive â”€â”€ */
     @media (max-width: 1024px) {
       .profile-grid { grid-template-columns: 1fr; }
     }
@@ -744,7 +726,7 @@ export class ProfileComponent implements OnInit {
     return created.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   });
 
-  // Stats row — derived from real services where possible.
+  // Stats row â€” derived from real services where possible.
   readonly stats = computed<StatItem[]>(() => {
     const txns = this.txnService.totalStats();
     const goals = this.goalsService.totals();
@@ -804,7 +786,7 @@ export class ProfileComponent implements OnInit {
   });
 
   readonly recentActivity = signal<ActivityItem[]>([
-    { text: 'Added transaction: Grocery Shopping — $85.00', time: '1 hour ago', tone: 'info' },
+    { text: 'Added transaction: Grocery Shopping â€” $85.00', time: '1 hour ago', tone: 'info' },
     { text: 'Budget updated: Food category', time: '1 day ago', tone: 'neutral' },
     { text: 'Goal achieved: Emergency Fund', time: '1 week ago', tone: 'success' },
     { text: 'New recurring: Netflix subscription', time: '3 days ago', tone: 'info' },
@@ -819,12 +801,12 @@ export class ProfileComponent implements OnInit {
   ]);
 
   readonly achievements = signal<Achievement[]>([
-    { label: 'Budget Master', icon: '🎯' },
-    { label: 'Savings Champion', icon: '🏆' },
-    { label: '30-Day Streak', icon: '🔥' },
-    { label: 'Debt Free', icon: '💚' },
-    { label: 'Goal Crusher', icon: '💪' },
-    { label: 'Smart Saver', icon: '⭐' },
+    { label: 'Budget Master', icon: 'ðŸŽ¯' },
+    { label: 'Savings Champion', icon: 'ðŸ†' },
+    { label: '30-Day Streak', icon: 'ðŸ”¥' },
+    { label: 'Debt Free', icon: 'ðŸ’š' },
+    { label: 'Goal Crusher', icon: 'ðŸ’ª' },
+    { label: 'Smart Saver', icon: 'â­' },
   ]);
 
   toggleEdit(): void {

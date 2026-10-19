@@ -5,11 +5,12 @@ import { AnalyticsService, AnalyticsRange } from '../../core/services/analytics.
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { NAV_ITEMS } from '../../shared/constants/nav-items';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar [navItems]="navItems" (logoutClicked)="onLogout()" />
@@ -22,7 +23,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <h1 class="eiq-page-header__title">Analytics</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Analytics</span>
               </nav>
             </div>
@@ -39,7 +40,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
             <div class="eiq-kpi-card">
               <div class="eiq-kpi-card__header">
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--red">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 18L13.5 8.5L8.5 13.5L1 6"/><path d="M17 18H23V12"/></svg>
+                  <eiq-icon name="lucideTrendingDown" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
                 <span class="eiq-kpi-card__trend eiq-kpi-card__trend--down">{{ analytics.kpis().totalSpentTrend }}% vs last period</span>
               </div>
@@ -50,7 +51,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
             <div class="eiq-kpi-card">
               <div class="eiq-kpi-card__header">
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--green">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6L13.5 15.5L8.5 10.5L1 18"/><path d="M17 6H23V12"/></svg>
+                  <eiq-icon name="lucideTrendingUp" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
                 <span class="eiq-kpi-card__trend eiq-kpi-card__trend--up">+{{ analytics.kpis().totalIncomeTrend }}% vs last period</span>
               </div>
@@ -61,7 +62,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
             <div class="eiq-kpi-card">
               <div class="eiq-kpi-card__header">
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--blue">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  <eiq-icon name="lucideBriefcase" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
                 <span class="eiq-kpi-card__trend eiq-kpi-card__trend--up">+{{ analytics.kpis().netSavingsTrend }}% vs last period</span>
               </div>
@@ -72,7 +73,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
             <div class="eiq-kpi-card">
               <div class="eiq-kpi-card__header">
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--amber">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <eiq-icon name="lucideCalendarDays" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
                 <span class="eiq-kpi-card__trend eiq-kpi-card__trend--down">{{ analytics.kpis().avgDailySpendTrend }}% vs last period</span>
               </div>
@@ -170,7 +171,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-card__header">
                 <div>
                   <h3 class="eiq-card__title">Expense Heatmap</h3>
-                  <p class="eiq-card__subtitle">Daily spend intensity — this month</p>
+                  <p class="eiq-card__subtitle">Daily spend intensity â€” this month</p>
                 </div>
               </div>
               <div class="eiq-heatmap">
@@ -204,7 +205,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
                 <p class="eiq-card__subtitle">Last 6 months overview</p>
               </div>
               <button class="eiq-btn eiq-btn--ghost eiq-btn--sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <eiq-icon name="lucideDownload" [size]="14" [strokeWidth]="2" anim="draw" />
                 Export
               </button>
             </div>

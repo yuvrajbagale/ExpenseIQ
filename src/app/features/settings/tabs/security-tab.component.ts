@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, signal } from '@angular/core';
 import { ToggleRowComponent } from '../../../shared/components/toggle-row.component';
+import { IconComponent } from '../../../shared/components/icon.component';
 
 interface LoginEntry {
   device: string;
@@ -11,7 +12,7 @@ interface LoginEntry {
 @Component({
   selector: 'eiq-settings-security',
   standalone: true,
-  imports: [ToggleRowComponent],
+  imports: [ToggleRowComponent, IconComponent],
   template: `
     <div class="eiq-card">
       <div class="eiq-card__header">
@@ -23,15 +24,15 @@ interface LoginEntry {
       <div class="settings-form">
         <div class="settings-field">
           <label class="settings-field__label" for="curPwd">Current Password</label>
-          <input id="curPwd" class="settings-input" type="password" placeholder="••••••••" />
+          <input id="curPwd" class="settings-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
         </div>
         <div class="settings-field">
           <label class="settings-field__label" for="newPwd">New Password</label>
-          <input id="newPwd" class="settings-input" type="password" placeholder="••••••••" />
+          <input id="newPwd" class="settings-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
         </div>
         <div class="settings-field">
           <label class="settings-field__label" for="confPwd">Confirm Password</label>
-          <input id="confPwd" class="settings-input" type="password" placeholder="••••••••" />
+          <input id="confPwd" class="settings-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
         </div>
       </div>
       <div class="toggle-list toggle-list--bordered">
@@ -58,15 +59,11 @@ interface LoginEntry {
         @for (entry of loginActivity(); track entry.device + entry.time) {
           <li class="login-item">
             <div class="login-item__icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                <line x1="8" y1="21" x2="16" y2="21" />
-                <line x1="12" y1="17" x2="12" y2="21" />
-              </svg>
+              <eiq-icon name="lucideSmartphone" [size]="16" [strokeWidth]="2" anim="none" />
             </div>
             <div class="login-item__body">
               <p class="login-item__device">{{ entry.device }}</p>
-              <p class="login-item__meta">{{ entry.location }} · {{ entry.time }}</p>
+              <p class="login-item__meta">{{ entry.location }} Â· {{ entry.time }}</p>
             </div>
             @if (entry.current) {
               <span class="login-item__status login-item__status--current">Current</span>
@@ -123,6 +120,6 @@ export class SettingsSecurityTabComponent {
   loginActivity = signal<LoginEntry[]>([
     { device: 'MacBook Pro', location: 'New York, US', time: 'Today, 9:42 AM', current: true },
     { device: 'iPhone 15', location: 'Boston, US', time: 'Yesterday, 6:18 PM', current: false },
-    { device: 'Chrome', location: 'Chicago, US', time: 'Jun 18, 2025 · 2:05 PM', current: false },
+    { device: 'Chrome', location: 'Chicago, US', time: 'Jun 18, 2025 Â· 2:05 PM', current: false },
   ]);
 }

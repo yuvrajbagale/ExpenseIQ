@@ -1,8 +1,10 @@
 import { Component, signal } from '@angular/core';
+import { IconComponent } from '../../../shared/components/icon.component';
 
 @Component({
   selector: 'eiq-settings-data',
   standalone: true,
+  imports: [IconComponent],
   template: `
     <div class="eiq-card">
       <div class="eiq-card__header">
@@ -31,11 +33,7 @@ import { Component, signal } from '@angular/core';
       <div class="data-block">
         <p class="data-block__label">Import Data</p>
         <div class="data-dropzone">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
+          <eiq-icon name="lucideDownload" [size]="20" [strokeWidth]="2" anim="draw" />
           <span>Drop CSV file here or click to browse</span>
         </div>
       </div>

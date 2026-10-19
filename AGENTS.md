@@ -1,6 +1,6 @@
 # ExpenseIQ — Agent Instructions
 
-**Last Updated:** 2026-08-30 (All phases + backend security complete)  
+**Last Updated:** 2026-10-18 (Phase 11 — icon system & motion)  
 **Project:** Angular 21 Expense Tracking Application  
 **Overall Health:** 9.5/10 (improved from 5.5/10 at start)
 
@@ -20,6 +20,8 @@
 | Phase 7: Test Coverage | ✅ DONE | 2026-08-29 |
 | Phase 8: Documentation | ✅ DONE | 2026-08-29 |
 | Phase 9: Backend Security | ✅ DONE | 2026-08-30 |
+| Phase 10: Design System v2 | ✅ DONE | 2026-10-18 |
+| Phase 11: Icon System & Motion | ✅ DONE | 2026-10-18 |
 
 ---
 
@@ -180,6 +182,7 @@ All audit reports are in `/docs/`:
 | `BACKEND_SECURITY_REQUIREMENTS.md` | Backend requirements for production auth |
 | `PHASE_3_RXJS_AUDIT.md` | Full RxJS subscription classification |
 | `PHASE_3_MEMORY_RISK.md` | Memory risk matrix (all clear) |
+| `DESIGN_SYSTEM.md` | Design tokens, component rules, colour semantics, iconography & motion vocabulary, UI verification |
 
 ---
 

@@ -4,16 +4,17 @@ import { AuthService } from '../../core/services/auth.service';
 import { WalletsService } from '../../core/services/wallets.service';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
 import { HeaderComponent } from '../../shared/components/header.component';
+import { IconComponent } from '../../shared/components/icon.component';
 
 @Component({
   selector: 'app-wallets',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent],
+  imports: [SidebarComponent, HeaderComponent, IconComponent],
   template: `
     <div class="eiq-app">
       <eiq-sidebar (logoutClicked)="authService.logout()" />
       <div class="eiq-main">
-        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search transactions, categories…" />
+        <eiq-header [currentUser]="authService.currentUser()" [notificationCount]="3" searchPlaceholder="Search transactions, categoriesâ€¦" />
         <main class="eiq-content">
 
           <div class="eiq-page-header">
@@ -21,13 +22,13 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <h1 class="eiq-page-header__title">Wallet Accounts</h1>
               <nav class="eiq-breadcrumb">
                 <span class="eiq-breadcrumb__link" (click)="goTo('/dashboard')">Dashboard</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <eiq-icon name="lucideChevronRight" [size]="12" [strokeWidth]="2" anim="slide" />
                 <span class="eiq-breadcrumb__active">Wallet Accounts</span>
               </nav>
             </div>
             <div class="eiq-page-header__actions">
               <button class="eiq-btn eiq-btn--primary eiq-btn--sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <eiq-icon name="lucidePlus" [size]="14" [strokeWidth]="2" anim="draw" />
                 Add Account
               </button>
             </div>
@@ -38,7 +39,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Total Balance</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--blue">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>
+                  <eiq-icon name="lucideCreditCard" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value">\${{ wallets.totals().totalBalance.toLocaleString() }}</p>
@@ -48,7 +49,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Total Income This Month</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--green">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6L13.5 15.5L8.5 10.5L1 18"/></svg>
+                  <eiq-icon name="lucideTrendingUp" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value eiq-kpi-card__value--success">\${{ wallets.totals().totalIncome.toLocaleString() }}</p>
@@ -58,7 +59,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
               <div class="eiq-kpi-card__header">
                 <p class="eiq-kpi-card__label">Total Expenses This Month</p>
                 <div class="eiq-kpi-card__icon eiq-kpi-card__icon--red">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 18L13.5 8.5L8.5 13.5L1 6"/></svg>
+                  <eiq-icon name="lucideTrendingDown" [size]="16" [strokeWidth]="2" anim="pop" />
                 </div>
               </div>
               <p class="eiq-kpi-card__value eiq-kpi-card__value--danger">\${{ wallets.totals().totalExpense.toLocaleString() }}</p>
@@ -141,7 +142,7 @@ import { HeaderComponent } from '../../shared/components/header.component';
     .wallet-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     .wallet-card__top { display: flex; justify-content: space-between; align-items: center; }
     .wallet-card__name { font-size: 0.8125rem; font-weight: 700; }
-    .wallet-card__kind { font-size: 0.625rem; background: rgba(255,255,255,0.2); border-radius: 9999px; padding: 2px 8px; }
+    .wallet-card__kind { font-size: 0.6875rem; background: rgba(255,255,255,0.2); border-radius: 9999px; padding: 2px 8px; }
     .wallet-card__number { font-size: 0.75rem; opacity: 0.7; margin: 0; letter-spacing: 0.05em; }
     .wallet-card__balance { font-size: 1.5rem; font-weight: 700; margin: 0.25rem 0; }
     .wallet-card__flow { display: flex; flex-direction: column; gap: 2px; font-size: 0.6875rem; opacity: 0.85; }

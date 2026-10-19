@@ -1,16 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { IconComponent } from '../../../shared/components/icon.component';
 
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
+  imports: [IconComponent],
   template: `
     <div class="callback-root">
       <div class="callback-card">
         @if (error) {
           <div class="callback-icon callback-icon--error">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <eiq-icon name="lucideCircleAlert" [size]="48" [strokeWidth]="2" anim="pop" />
           </div>
           <h2>Authentication Failed</h2>
           <p>{{ error }}</p>

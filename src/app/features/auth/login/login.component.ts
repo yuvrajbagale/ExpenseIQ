@@ -13,193 +13,100 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { IconComponent } from '../../../shared/components/icon.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, IconComponent],
   template: `
     <div class="login-root">
-      <!-- Left Panel -->
-      <div class="login-panel">
-        <div class="login-panel__glow login-panel__glow--tr"></div>
-        <div class="login-panel__glow login-panel__glow--bl"></div>
+      <!-- ── Brand panel ── -->
+      <aside class="login-panel">
+        <div class="login-panel__mesh" aria-hidden="true">
+          <span class="login-orb login-orb--1"></span>
+          <span class="login-orb login-orb--2"></span>
+        </div>
 
         <div class="login-panel__content">
-          <!-- Brand -->
           <div class="login-panel__brand">
-            <div class="login-panel__brand-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M20 7H4C2.9 7 2 7.9 2 9V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V9C22 7.9 21.1 7 20 7Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                <path d="M16 3H8L6 7H18L16 3Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
+            <span class="login-panel__brand-icon" aria-hidden="true">
+              <eiq-icon name="lucideWallet" [size]="19" [strokeWidth]="2" />
+            </span>
             <span class="login-panel__brand-name">ExpenseIQ</span>
           </div>
 
-          <!-- Hero Copy -->
           <div class="login-panel__hero">
-            <div class="login-panel__tagline">
-              <h2 class="login-panel__headline">
-                Take control of<br />your finances
-              </h2>
-              <p class="login-panel__subheadline">
-                Smart expense tracking, budgeting, and analytics — all in one place.
-              </p>
-            </div>
+            <h2 class="login-panel__headline">Take control of your finances</h2>
+            <p class="login-panel__subheadline">
+              One place for transactions, budgets, recurring costs and savings goals — with numbers you can actually read.
+            </p>
 
-            <!-- Balance Card -->
-            <div class="login-balance-card">
-              <div class="login-balance-card__top">
-                <div>
-                  <p class="login-balance-card__label">Total Balance</p>
-                  <p class="login-balance-card__amount">$24,850.00</p>
-                </div>
-                <div class="login-balance-card__icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M20 7H4C2.9 7 2 7.9 2 9V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V9C22 7.9 21.1 7 20 7Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M16 3H8L6 7H18L16 3Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="login-balance-card__stats">
-                <div class="login-balance-card__stat">
-                  <div class="login-balance-card__stat-header">
-                    <div class="login-balance-card__stat-icon login-balance-card__stat-icon--income">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M23 6L13.5 15.5L8.5 10.5L1 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 6H23V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <span class="login-balance-card__stat-label">Income</span>
-                  </div>
-                  <p class="login-balance-card__stat-value">$6,240</p>
-                </div>
-                <div class="login-balance-card__stat">
-                  <div class="login-balance-card__stat-header">
-                    <div class="login-balance-card__stat-icon login-balance-card__stat-icon--expense">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M23 18L13.5 8.5L8.5 13.5L1 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 18H23V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <span class="login-balance-card__stat-label">Expense</span>
-                  </div>
-                  <p class="login-balance-card__stat-value">$3,180</p>
-                </div>
-              </div>
-              <!-- Sparkline -->
-              <div class="login-balance-card__sparkline">
-                <svg width="100%" height="56" viewBox="0 0 240 56" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="sparkGrad" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stop-color="#2b7fff" stop-opacity="0.5"/>
-                      <stop offset="100%" stop-color="#2b7fff" stop-opacity="0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M0 45 L30 38 L60 42 L90 28 L120 32 L150 18 L180 22 L210 12 L240 8"
-                    fill="none" stroke="#2b7fff" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M0 45 L30 38 L60 42 L90 28 L120 32 L150 18 L180 22 L210 12 L240 8 L240 56 L0 56 Z"
-                    fill="url(#sparkGrad)"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Category Pills -->
-            <div class="login-categories">
-              <div class="login-category-pill">
-                <div class="login-category-pill__icon login-category-pill__icon--orange">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <span>Shopping</span>
-              </div>
-              <div class="login-category-pill">
-                <div class="login-category-pill__icon login-category-pill__icon--teal">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 2h3l2.7 9.8M7.7 11.8L6 18h15l-1.4-6.2H7.7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="20" cy="21" r="1" fill="currentColor"/></svg>
-                </div>
-                <span>Food</span>
-              </div>
-              <div class="login-category-pill">
-                <div class="login-category-pill__icon login-category-pill__icon--blue">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 8h5l2 3v4h-7V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
-                </div>
-                <span>Transport</span>
-              </div>
-              <div class="login-category-pill">
-                <div class="login-category-pill__icon login-category-pill__icon--yellow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <span>Utilities</span>
-              </div>
-            </div>
-
-            <!-- Social Proof -->
-            <div class="login-social-proof">
-              <div class="login-social-proof__avatars">
-                <div class="login-social-proof__avatar" style="background:#2b7fff">A</div>
-                <div class="login-social-proof__avatar" style="background:#22c55e">M</div>
-                <div class="login-social-proof__avatar" style="background:#f97316">J</div>
-              </div>
-              <p class="login-social-proof__text">
-                Join <strong>50,000+</strong> users managing smarter
-              </p>
-            </div>
+            <ul class="login-panel__points">
+              <li>
+                <eiq-icon name="lucideCircleCheck" [size]="16" [strokeWidth]="2.2" anim="pop" />
+                Automatic transaction categorization
+              </li>
+              <li>
+                <eiq-icon name="lucideCircleCheck" [size]="16" [strokeWidth]="2.2" anim="pop" />
+                Budgets that roll over every month
+              </li>
+              <li>
+                <eiq-icon name="lucideCircleCheck" [size]="16" [strokeWidth]="2.2" anim="pop" />
+                Recurring expense detection
+              </li>
+              <li>
+                <eiq-icon name="lucideCircleCheck" [size]="16" [strokeWidth]="2.2" anim="pop" />
+                Alerts before a budget runs out
+              </li>
+            </ul>
           </div>
 
-          <!-- Trust Badges -->
-          <div class="login-trust-badges">
-            <div class="login-trust-badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Bank-level security</span>
+          <div class="login-panel__trust">
+            <div class="login-panel__trust-item">
+              <eiq-icon name="lucideLock" [size]="15" [strokeWidth]="2" />
+              HttpOnly session cookies
             </div>
-            <div class="login-trust-badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="#22c55e" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>256-bit encryption</span>
-            </div>
-            <div class="login-trust-badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#eab308" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>4.9 rated app</span>
+            <div class="login-panel__trust-item">
+              <eiq-icon name="lucideShield" [size]="15" [strokeWidth]="2" />
+              Bcrypt password hashing
             </div>
           </div>
         </div>
-      </div>
+      </aside>
 
-      <!-- Right Panel — Login Form -->
-      <div class="login-form-panel">
+      <!-- ── Form panel ── -->
+      <main class="login-form-panel">
         <button
           type="button"
           class="login-theme-toggle"
           [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
           (click)="theme.toggleTheme()">
           @if (theme.isDark()) {
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-            </svg>
+            <eiq-icon name="lucideSun" [size]="18" anim="draw" />
           } @else {
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
+            <eiq-icon name="lucideMoon" [size]="18" anim="draw" />
           }
         </button>
 
         <div class="login-form-container">
-          <div class="login-form-header">
-            <h1 class="login-form-header__title">Welcome Back</h1>
-            <p class="login-form-header__subtitle">Sign in to your account to continue</p>
-          </div>
+          <header class="login-form-header">
+            <h1 class="login-form-header__title">Welcome back</h1>
+            <p class="login-form-header__subtitle">Sign in to continue to your dashboard</p>
+          </header>
 
           @if (authService.authError()) {
-            <div class="login-error-alert">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              {{ authService.authError() }}
+            <div class="login-error-alert" role="alert">
+              <eiq-icon name="lucideCircleAlert" [size]="16" [strokeWidth]="2.2" anim="pop" />
+              <span>{{ authService.authError() }}</span>
             </div>
           }
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
-            <!-- Email -->
             <div class="login-field">
-              <label class="login-field__label" for="email">Email Address</label>
+              <label class="login-field__label" for="email">Email address</label>
               <div class="login-field__input-wrap">
-                <svg class="login-field__icon" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <eiq-icon class="login-field__icon" name="lucideMail" [size]="16" [strokeWidth]="1.8" />
                 <input
                   id="email"
                   formControlName="email"
@@ -213,16 +120,15 @@ import { ThemeService } from '../../../core/services/theme.service';
               @if (isFieldInvalid('email')) {
                 <p class="login-field__error">
                   @if (loginForm.get('email')?.errors?.['required']) { Email is required. }
-                  @else if (loginForm.get('email')?.errors?.['email']) { Please enter a valid email. }
+                  @else { Enter a valid email address. }
                 </p>
               }
             </div>
 
-            <!-- Password -->
             <div class="login-field">
               <label class="login-field__label" for="password">Password</label>
               <div class="login-field__input-wrap">
-                <svg class="login-field__icon" width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <eiq-icon class="login-field__icon" name="lucideLock" [size]="16" [strokeWidth]="1.8" />
                 <input
                   id="password"
                   formControlName="password"
@@ -236,162 +142,273 @@ import { ThemeService } from '../../../core/services/theme.service';
                   type="button"
                   class="login-field__toggle"
                   (click)="showPassword.set(!showPassword())"
-                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
-                >
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
                   @if (showPassword()) {
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <eiq-icon name="lucideEyeOff" [size]="16" [strokeWidth]="1.8" anim="pop" />
                   } @else {
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+                    <eiq-icon name="lucideEye" [size]="16" [strokeWidth]="1.8" anim="pop" />
                   }
                 </button>
               </div>
               @if (isFieldInvalid('password')) {
                 <p class="login-field__error">
                   @if (loginForm.get('password')?.errors?.['required']) { Password is required. }
-                  @else if (loginForm.get('password')?.errors?.['minlength']) { Minimum 6 characters. }
+                  @else { Password must be at least 6 characters. }
                 </p>
               }
             </div>
 
-            <!-- Remember + Forgot -->
             <div class="login-form__row">
               <label class="login-checkbox">
-                <input
-                  formControlName="rememberMe"
-                  type="checkbox"
-                  class="login-checkbox__input"
-                />
-                <span class="login-checkbox__label">Remember me</span>
+                <input formControlName="rememberMe" type="checkbox" class="login-checkbox__input" />
+                <span class="login-checkbox__label">Keep me signed in</span>
               </label>
-              <a routerLink="/auth/forgot-password" class="login-link">Forgot Password?</a>
+              <a routerLink="/auth/forgot-password" class="login-link">Forgot password?</a>
             </div>
 
-            <!-- Submit -->
-            <button
-              type="submit"
-              class="login-submit-btn"
-              [disabled]="authService.isLoading()"
-            >
+            <button type="submit" class="login-submit-btn" [disabled]="authService.isLoading()">
               @if (authService.isLoading()) {
-                <span class="login-submit-btn__spinner"></span>
+                <span class="login-submit-btn__spinner" aria-hidden="true"></span>
                 Signing in…
               } @else {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10 17 15 12 10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                Sign In
+                Sign in
+                <eiq-icon name="lucideArrowRight" [size]="16" [strokeWidth]="2" anim="slide" />
               }
             </button>
           </form>
 
-          <!-- Divider -->
-          <div class="login-divider">
-            <div class="login-divider__line"></div>
-            <span class="login-divider__label">OR</span>
-            <div class="login-divider__line"></div>
-          </div>
+          <div class="login-divider"><span>or continue with</span></div>
 
-          <!-- Social Logins -->
           <div class="login-social">
             <button type="button" class="login-social-btn" (click)="loginWithGoogle()">
-              <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              Continue with Google
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Google
             </button>
             <button type="button" class="login-social-btn" (click)="loginWithGitHub()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-              Continue with GitHub
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
             </button>
           </div>
 
           <p class="login-signup-text">
-            Don't have an account?
-            <a routerLink="/auth/register" class="login-link">Create one free</a>
+            New to ExpenseIQ?
+            <a routerLink="/auth/register" class="login-link">Create a free account</a>
           </p>
         </div>
-      </div>
+      </main>
     </div>
   `,
   styles: [`
-    .login-root { display: flex; min-height: 100vh; width: 100%; background: var(--eiq-bg); }
-    .login-panel { width: 570px; flex-shrink: 0; background: oklch(0.18 0.06 259.815); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .login-panel__glow { position: absolute; border-radius: 50%; pointer-events: none; }
-    .login-panel__glow--tr { top: -80px; right: -80px; width: 320px; height: 320px; background: radial-gradient(ellipse at top right, oklch(0.45 0.18 259.815) 0%, transparent 60%); }
-    .login-panel__glow--bl { bottom: -60px; left: -60px; width: 256px; height: 256px; background: radial-gradient(ellipse at bottom left, oklch(0.35 0.12 220) 0%, transparent 55%); }
-    .login-panel__content { position: relative; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 48px; }
-    .login-panel__brand { display: flex; align-items: center; gap: 12px; }
-    .login-panel__brand-icon { width: 40px; height: 40px; background: var(--eiq-primary); border-radius: var(--eiq-radius-lg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(43, 127, 255, 0.4); }
-    .login-panel__brand-name { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
-    .login-panel__hero { display: flex; flex-direction: column; gap: 24px; }
-    .login-panel__headline { font-size: 36px; font-weight: 700; color: #fff; line-height: 1.2; letter-spacing: -0.02em; }
-    .login-panel__subheadline { font-size: 15px; color: oklch(0.75 0.04 259.815); line-height: 1.6; margin-top: 8px; }
-    .login-balance-card { backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--eiq-radius-xl); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-    .login-balance-card__top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .login-balance-card__label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.6); }
-    .login-balance-card__amount { font-size: 28px; font-weight: 700; color: #fff; margin-top: 4px; }
-    .login-balance-card__icon { width: 40px; height: 40px; background: var(--eiq-primary-40); border-radius: var(--eiq-radius-lg); display: flex; align-items: center; justify-content: center; }
-    .login-balance-card__stats { display: flex; gap: 16px; }
-    .login-balance-card__stat { flex: 1; background: rgba(255, 255, 255, 0.1); border-radius: var(--eiq-radius-lg); padding: 12px; }
-    .login-balance-card__stat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .login-balance-card__stat-icon { width: 20px; height: 20px; border-radius: var(--eiq-radius-full); display: flex; align-items: center; justify-content: center; }
-    .login-balance-card__stat-icon--income { background: oklch(0.6 0.118 184.704 / 0.3); color: oklch(0.6 0.118 184.704); }
-    .login-balance-card__stat-icon--expense { background: oklch(0.646 0.222 41.116 / 0.3); color: oklch(0.646 0.222 41.116); }
-    .login-balance-card__stat-label { font-size: 12px; color: rgba(255, 255, 255, 0.6); }
-    .login-balance-card__stat-value { font-size: 14px; font-weight: 600; color: #fff; }
-    .login-balance-card__sparkline { height: 56px; width: 100%; }
-    .login-categories { display: flex; gap: 12px; }
-    .login-category-pill { flex: 1; backdrop-filter: blur(4px); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: var(--eiq-radius-lg); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.7); }
-    .login-category-pill__icon { width: 32px; height: 32px; border-radius: var(--eiq-radius); display: flex; align-items: center; justify-content: center; }
-    .login-category-pill__icon--orange { background: oklch(0.646 0.222 41.116 / 0.3); color: oklch(0.828 0.189 84.429); }
-    .login-category-pill__icon--teal { background: oklch(0.6 0.118 184.704 / 0.3); color: oklch(0.6 0.118 184.704); }
-    .login-category-pill__icon--blue { background: var(--eiq-primary-12); color: var(--eiq-primary); }
-    .login-category-pill__icon--yellow { background: oklch(0.769 0.188 70.08 / 0.3); color: oklch(0.769 0.188 70.08); }
-    .login-social-proof { display: flex; align-items: center; gap: 12px; }
-    .login-social-proof__avatars { display: flex; }
-    .login-social-proof__avatar { width: 32px; height: 32px; border-radius: var(--eiq-radius-full); border: 2px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; margin-left: -8px; }
-    .login-social-proof__avatar:first-child { margin-left: 0; }
-    .login-social-proof__text { font-size: 13px; color: rgba(255, 255, 255, 0.6); }
-    .login-social-proof__text strong { color: #fff; }
-    .login-trust-badges { display: flex; gap: 24px; }
-    .login-trust-badge { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.6); }
-    .login-form-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px; background: var(--eiq-bg); position: relative; }
-    .login-form-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 32px; }
-    .login-form-header__title { font-size: 26px; font-weight: 600; color: var(--eiq-foreground); letter-spacing: -0.02em; }
-    .login-form-header__subtitle { font-size: 14px; color: var(--eiq-subtle); margin-top: 6px; }
-    .login-error-alert { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--eiq-red-10); border: 1px solid rgba(231, 0, 11, 0.2); border-radius: var(--eiq-radius); color: var(--eiq-red); font-size: 13px; }
-    .login-form { display: flex; flex-direction: column; gap: 20px; }
-    .login-field { display: flex; flex-direction: column; gap: 8px; }
-    .login-field__label { font-size: 14px; font-weight: 500; color: var(--eiq-foreground); }
-    .login-field__input-wrap { position: relative; }
-    .login-field__icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--eiq-subtle); pointer-events: none; }
-    .login-field__input { width: 100%; height: 44px; padding: 0 40px 0 40px; border: 1px solid var(--eiq-border); border-radius: var(--eiq-radius); font-size: 14px; color: var(--eiq-foreground); background: var(--eiq-input-bg); outline: none; transition: border-color var(--eiq-transition), box-shadow var(--eiq-transition); font-family: var(--eiq-font); }
-    .login-field__input:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px var(--eiq-primary-10); }
-    .login-field__input--error { border-color: var(--eiq-red); }
-    .login-field__input--error:focus { box-shadow: 0 0 0 3px var(--eiq-red-10); }
-    .login-field__input--padded-right { padding-right: 40px; }
-    .login-field__toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--eiq-subtle); display: flex; align-items: center; padding: 4px; }
-    .login-field__toggle:hover { color: var(--eiq-foreground); }
-    .login-field__error { font-size: 12px; color: var(--eiq-red); }
-    .login-form__row { display: flex; justify-content: space-between; align-items: center; }
+    .login-root {
+      display: flex;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      background: var(--eiq-bg);
+    }
+
+    /* ── Brand panel ── */
+    .login-panel {
+      width: 46%;
+      max-width: 620px;
+      flex-shrink: 0;
+      background: #0b0d14;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+    .login-panel__mesh { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+    .login-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; }
+    .login-orb--1 {
+      width: 420px; height: 420px; top: -100px; right: -80px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.6), transparent 70%);
+      animation: login-float 18s ease-in-out infinite;
+    }
+    .login-orb--2 {
+      width: 340px; height: 340px; bottom: -80px; left: -60px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.36), transparent 70%);
+      animation: login-float 22s ease-in-out infinite reverse;
+    }
+    @keyframes login-float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50%      { transform: translate3d(18px, -22px, 0) scale(1.07); }
+    }
+
+    .login-panel__content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 3rem;
+      height: 100%;
+      padding: 3rem;
+    }
+    .login-panel__brand { display: flex; align-items: center; gap: 0.75rem; }
+    .login-panel__brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4338ca);
+      border-radius: var(--eiq-radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.6);
+    }
+    .login-panel__brand-name {
+      font-size: 1.125rem; font-weight: 700; color: #fff; letter-spacing: -0.025em;
+    }
+    .login-panel__hero { display: flex; flex-direction: column; gap: 1.25rem; }
+    .login-panel__headline {
+      font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+      font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -0.03em;
+    }
+    .login-panel__subheadline {
+      font-size: 0.9375rem; color: #a6aec0; line-height: 1.65; max-width: 420px;
+    }
+    .login-panel__points {
+      list-style: none; margin: 0.5rem 0 0; padding: 0;
+      display: flex; flex-direction: column; gap: 0.625rem;
+      li {
+        display: flex; align-items: center; gap: 0.625rem;
+        font-size: 0.875rem; color: #cbd2e0;
+        svg { color: #34d399; flex-shrink: 0; }
+      }
+    }
+    .login-panel__trust { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .login-panel__trust-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; color: #8b94a8;
+      svg { color: #34d399; flex-shrink: 0; }
+    }
+
+    /* ── Form panel ── */
+    .login-form-panel {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem;
+      background: var(--eiq-bg);
+      position: relative;
+      min-width: 0;
+    }
+    .login-form-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1.75rem; }
+    .login-form-header__title {
+      font-size: 1.75rem; font-weight: 700; color: var(--eiq-foreground); letter-spacing: -0.028em;
+    }
+    .login-form-header__subtitle { font-size: 0.875rem; color: var(--eiq-muted); margin-top: 6px; }
+
+    .login-error-alert {
+      display: flex; align-items: center; gap: 0.625rem;
+      padding: 11px 14px;
+      background: var(--eiq-negative-soft);
+      border: 1px solid var(--eiq-negative-ring);
+      border-radius: var(--eiq-radius-sm);
+      color: var(--eiq-negative);
+      font-size: 0.8125rem;
+      svg { flex-shrink: 0; }
+    }
+
+    .login-form { display: flex; flex-direction: column; gap: 1.125rem; }
+    .login-field { display: flex; flex-direction: column; gap: 6px; }
+    .login-field__label { font-size: 0.8125rem; font-weight: 600; color: var(--eiq-foreground); }
+    .login-field__input-wrap { position: relative; display: flex; align-items: center; }
+    .login-field__icon {
+      position: absolute; left: 13px; color: var(--eiq-faint); pointer-events: none;
+    }
+    .login-field__input {
+      width: 100%; height: 46px;
+      padding: 0 14px 0 40px;
+      border: 1px solid var(--eiq-border-strong);
+      border-radius: var(--eiq-radius-sm);
+      font-size: 0.875rem;
+      color: var(--eiq-foreground);
+      background: var(--eiq-input-bg);
+      outline: none;
+      transition: border-color 160ms cubic-bezier(0.2,0,0.2,1), box-shadow 160ms;
+    }
+    .login-field__input--padded-right { padding-right: 44px; }
+    .login-field__input:focus { border-color: var(--eiq-primary); box-shadow: 0 0 0 3px var(--eiq-primary-ring); }
+    .login-field__input--error { border-color: var(--eiq-negative); }
+    .login-field__input--error:focus { box-shadow: 0 0 0 3px var(--eiq-negative-ring); }
+    .login-field__toggle {
+      position: absolute; right: 11px;
+      display: flex; align-items: center; padding: 7px;
+      color: var(--eiq-subtle); border-radius: var(--eiq-radius-xs);
+      transition: color 160ms, background 160ms;
+    }
+    .login-field__toggle:hover { color: var(--eiq-foreground); background: var(--eiq-hover); }
+    .login-field__error { font-size: 0.75rem; color: var(--eiq-negative); }
+
+    .login-form__row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .login-checkbox { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .login-checkbox__input { width: 14px; height: 14px; accent-color: var(--eiq-primary); cursor: pointer; }
-    .login-checkbox__label { font-size: 14px; color: var(--eiq-subtle); user-select: none; }
-    .login-link { font-size: 14px; font-weight: 500; color: var(--eiq-primary); }
+    .login-checkbox__input { width: 16px; height: 16px; accent-color: var(--eiq-primary); cursor: pointer; }
+    .login-checkbox__label { font-size: 0.8125rem; color: var(--eiq-muted); user-select: none; }
+    .login-link { font-size: 0.8125rem; font-weight: 600; color: var(--eiq-primary); }
     .login-link:hover { text-decoration: underline; }
-    .login-submit-btn { width: 100%; height: 44px; background: var(--eiq-primary); color: #fff; border-radius: var(--eiq-radius); font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--eiq-shadow-primary); transition: background var(--eiq-transition), opacity var(--eiq-transition); font-family: var(--eiq-font); }
-    .login-submit-btn:hover:not(:disabled) { background: var(--eiq-primary-dark); }
-    .login-submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-    .login-submit-btn__spinner { width: 18px; height: 18px; border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-    .login-divider { display: flex; align-items: center; gap: 16px; }
-    .login-divider__line { flex: 1; height: 1px; background: var(--eiq-border); }
-    .login-divider__label { font-size: 12px; font-weight: 500; color: var(--eiq-subtle); padding: 0 8px; }
-    .login-social { display: flex; flex-direction: column; gap: 12px; }
-    .login-social-btn { width: 100%; height: 44px; background: var(--eiq-surface); border: 1px solid var(--eiq-border); border-radius: var(--eiq-radius); font-size: 14px; font-weight: 500; color: var(--eiq-foreground); display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: var(--eiq-shadow-sm); transition: background var(--eiq-transition); font-family: var(--eiq-font); }
-    .login-social-btn:hover { background: var(--eiq-hover); }
-    .login-signup-text { text-align: center; font-size: 14px; color: var(--eiq-subtle); }
-    .login-theme-toggle { position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 9999px; border: 1px solid var(--eiq-border); background: var(--eiq-surface); color: var(--eiq-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--eiq-shadow-sm); transition: background 150ms ease, color 150ms ease, border-color 150ms ease; }
+
+    .login-submit-btn {
+      width: 100%; height: 46px;
+      background: var(--eiq-primary); color: #fff;
+      border-radius: var(--eiq-radius-sm);
+      font-size: 0.9375rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: var(--eiq-shadow-primary);
+      transition: background 160ms, opacity 160ms;
+    }
+    .login-submit-btn:hover:not(:disabled) { background: var(--eiq-primary-hover); }
+    .login-submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    .login-submit-btn__spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    .login-divider {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 0.75rem; color: var(--eiq-faint);
+      &::before, &::after {
+        content: ''; flex: 1; height: 1px; background: var(--eiq-border);
+      }
+    }
+    .login-social { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .login-social-btn {
+      height: 44px;
+      background: var(--eiq-surface);
+      border: 1px solid var(--eiq-border-strong);
+      border-radius: var(--eiq-radius-sm);
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--eiq-foreground);
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      transition: background 160ms, border-color 160ms;
+    }
+    .login-social-btn:hover { background: var(--eiq-hover); border-color: var(--eiq-faint); }
+    .login-signup-text { text-align: center; font-size: 0.8125rem; color: var(--eiq-muted); }
+
+    .login-theme-toggle {
+      position: absolute; top: 20px; right: 20px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--eiq-border);
+      background: var(--eiq-surface);
+      color: var(--eiq-muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 160ms, color 160ms;
+    }
     .login-theme-toggle:hover { background: var(--eiq-hover); color: var(--eiq-foreground); }
-    .login-theme-toggle svg { width: 18px; height: 18px; }
+
     @media (max-width: 1024px) {
       .login-panel { display: none; }
-      .login-form-panel { padding: 24px; }
+      .login-form-panel { padding: 2rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .login-social { grid-template-columns: 1fr; }
+      .login-form-header__title { font-size: 1.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .login-orb { animation: none; }
     }
   `],
 })

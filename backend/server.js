@@ -466,6 +466,10 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
 const FULL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+/** The seed dataset spans Jan–Aug of this year; the calendar cannot page beyond it. */
+const DATA_YEAR = 2025;
+const LAST_MONTH_IDX = FULL_MONTHS.length - 1;
+
 function getMonthIdx(dateStr) {
   const d = new Date(dateStr);
   return d.getMonth(); // 0=Jan..7=Aug
@@ -912,38 +916,40 @@ async function handleRequest(req, res) {
   }
 
   // ── Budget ──
-  if (req.method === 'GET' && pathname === '/api/budget') {
+if (req.method === 'GET' && pathname === '/api/budget') {
     const userPayload = authenticate(req, res);
     if (!userPayload) return;
     const store = readStore();
-    const completed = store.transactions.filter(t => t.status === 'completed' && t.type === 'expense');
-    const currentMonthTxs = completed.filter(t => getMonthIdx(t.date) === 7); // August
+    const monthParam = parseInt(url.searchParams.get('month') || '7', 10); // default August
+    const expenses = store.transactions.filter(t => t.status === 'completed' && t.type === 'expense');
 
-    const categoryBudgets = BUDGET_CATEGORIES.map(b => {
-      const spent = currentMonthTxs.filter(t => t.category === b.category).reduce((a, t) => a + t.amount, 0);
-      const progress = b.budget > 0 ? Math.round((spent / b.budget) * 100) : 0;
-      const remaining = Math.round((b.budget - spent) * 100) / 100;
-      let status = 'on-track';
-      if (progress >= 100) status = 'overspent';
-      else if (progress >= 80) status = 'warning';
-      return { category: b.category, icon: b.icon, iconBg: b.iconBg, budget: b.budget, spent: Math.round(spent * 100) / 100, progress, remaining, status };
+    /** Total spend per category for a given month. */
+    const spendForMonth = (idx) => {
+      const out = {};
+      expenses.filter(t => getMonthIdx(t.date) === idx).forEach(t => {
+        out[t.category] = (out[t.category] || 0) + t.amount;
+      });
+      return out;
+    };
+
+    // Current month plus the two preceding ones, so the client can derive a
+    // 3-month average suggestion and month-over-month rollover without extra calls.
+    const months = [0, 1, 2].map(offset => {
+      const index = monthParam - offset;
+      return {
+        index,
+        offset,
+        label: index >= 0 && index <= LAST_MONTH_IDX ? FULL_MONTHS[index] : null,
+        available: index >= 0 && index <= LAST_MONTH_IDX,
+        spentByCategory: index >= 0 && index <= LAST_MONTH_IDX ? spendForMonth(index) : {},
+      };
     });
 
-    const totalBudget = categoryBudgets.reduce((a, b) => a + b.budget, 0);
-    const totalSpent = categoryBudgets.reduce((a, b) => a + b.spent, 0);
-
     sendApi(req, res, 200, 'Budget loaded.', {
-      month: 'August 2025',
-      totals: { totalBudget, totalSpent, percentUsed: Math.round((totalSpent / totalBudget) * 100), remainingBudget: totalBudget - totalSpent, isLowBudget: (totalSpent / totalBudget) >= 0.75 },
-      categoryBudgets,
-      insights: [
-        { type: 'success', icon: '🎉', title: 'Great savings this month!', detail: 'You saved more than last month. Keep it up!' },
-        { type: 'warning', icon: '💡', title: 'Utilities spending high', detail: 'Summer AC costs are pushing utilities over budget.' },
-      ],
-      recommendations: [
-        { icon: '📉', title: 'Reduce Dining Out', detail: 'Consider cooking more at home to save on food expenses.' },
-        { icon: '🔄', title: 'Reallocate Fitness Budget', detail: 'You have unused budget in Fitness. Consider moving it to Entertainment.' },
-      ],
+      month: FULL_MONTHS[monthParam],
+      year: DATA_YEAR,
+      categories: BUDGET_CATEGORIES.map(c => ({ category: c.category, defaultLimit: c.budget, color: c.iconBg })),
+      months,
     });
     return;
   }
@@ -1051,6 +1057,7 @@ async function handleRequest(req, res) {
 
     sendApi(req, res, 200, 'Calendar loaded.', {
       month: FULL_MONTHS[monthParam],
+      year: DATA_YEAR,
       entryMap,
       summary: { totalIncome: Math.round(totalIncome), totalExpenses: Math.round(totalExpenses), netBalance: Math.round(totalIncome - totalExpenses) },
     });

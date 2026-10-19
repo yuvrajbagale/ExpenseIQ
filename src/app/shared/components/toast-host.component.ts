@@ -1,5 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { ToastService } from '../../core/services/toast.service';
+import { AppIconName } from '../icons/app-icons';
+import { IconComponent } from './icon.component';
+
+const TOAST_ICONS: Record<string, AppIconName> = {
+  success: 'lucideCircleCheck',
+  error: 'lucideCircleX',
+  warning: 'lucideTriangleAlert',
+  info: 'lucideCircleAlert',
+};
 
 /**
  * Renders the global toast stack. Mounted once in AppComponent so any
@@ -8,39 +17,13 @@ import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'eiq-toast-host',
   standalone: true,
+  imports: [IconComponent],
   template: `
     <div class="eiq-toast-host" role="region" aria-label="Notifications" aria-live="polite">
       @for (toast of toastService.toasts(); track toast.id) {
         <div class="eiq-toast" [class]="'eiq-toast--' + toast.kind" role="status">
           <span class="eiq-toast__icon">
-            @switch (toast.kind) {
-              @case ('success') {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              }
-              @case ('error') {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="15" y1="9" x2="9" y2="15" />
-                  <line x1="9" y1="9" x2="15" y2="15" />
-                </svg>
-              }
-              @case ('warning') {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-              }
-              @default {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="16" x2="12" y2="12" />
-                  <line x1="12" y1="8" x2="12.01" y2="8" />
-                </svg>
-              }
-            }
+            <eiq-icon [name]="iconFor(toast.kind)" [size]="16" [strokeWidth]="2.4" anim="pop" />
           </span>
           <span class="eiq-toast__msg">{{ toast.message }}</span>
           <button
@@ -48,10 +31,7 @@ import { ToastService } from '../../core/services/toast.service';
             class="eiq-toast__close"
             aria-label="Dismiss notification"
             (click)="toastService.dismiss(toast.id)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <eiq-icon name="lucideX" [size]="14" [strokeWidth]="2" anim="pop" />
           </button>
         </div>
       }
@@ -112,4 +92,8 @@ import { ToastService } from '../../core/services/toast.service';
 })
 export class ToastHostComponent {
   readonly toastService = inject(ToastService);
+
+  iconFor(kind: string): AppIconName {
+    return TOAST_ICONS[kind] ?? TOAST_ICONS['info'];
+  }
 }
