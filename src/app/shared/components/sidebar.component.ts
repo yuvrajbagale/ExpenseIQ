@@ -134,16 +134,18 @@ const BOTTOM_NAV: NavItem[] = [
       height: 26px;
       border-radius: 50%;
       background: var(--eiq-surface);
-      border: 1px solid var(--eiq-border-strong);
+      border: 1px solid transparent;
       color: var(--eiq-muted);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 2;
-      box-shadow: var(--eiq-shadow-sm);
-      transition: background 160ms ease, color 160ms ease, transform 320ms cubic-bezier(0.2, 0, 0.2, 1);
-      &:hover { background: var(--eiq-hover); color: var(--eiq-foreground); }
+      /* Edge-attached "knob" on the extruded rail — same Soft-UI look */
+      box-shadow: var(--eiq-neu-raised-sm);
+      transition: box-shadow 160ms ease, color 160ms ease, transform 320ms cubic-bezier(0.2, 0, 0.2, 1);
+      &:hover { box-shadow: var(--eiq-neu-raised); color: var(--eiq-primary); }
+      &:active { box-shadow: var(--eiq-neu-inset); }
     }
     :host-context(.eiq-app--rail) .eiq-sidebar__collapse {
       transform: rotate(180deg);

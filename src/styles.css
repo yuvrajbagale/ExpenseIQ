@@ -45,20 +45,20 @@
   --eiq-on-primary: #ffffff;
 
   /* ── Financial state (reserved: never decorative) ── */
-  --eiq-positive: #047857;
-  --eiq-positive-strong: #059669;
-  --eiq-positive-soft: #ecfdf5;
-  --eiq-positive-ring: rgba(5, 150, 105, 0.14);
+  --eiq-positive: #16876a;
+  --eiq-positive-strong: #11715a;
+  --eiq-positive-soft: #e5f3ee;
+  --eiq-positive-ring: rgba(22, 135, 106, 0.16);
 
-  --eiq-negative: #be123c;
-  --eiq-negative-strong: #e11d48;
-  --eiq-negative-soft: #fff1f2;
-  --eiq-negative-ring: rgba(225, 29, 72, 0.14);
+  --eiq-negative: #dc4c64;
+  --eiq-negative-strong: #c23a52;
+  --eiq-negative-soft: #fcedf0;
+  --eiq-negative-ring: rgba(220, 76, 100, 0.16);
 
-  --eiq-warning: #b45309;
-  --eiq-warning-strong: #f59e0b;
-  --eiq-warning-soft: #fffbeb;
-  --eiq-warning-ring: rgba(245, 158, 11, 0.16);
+  --eiq-warning: #d99124;
+  --eiq-warning-strong: #bd7e1a;
+  --eiq-warning-soft: #faf3e4;
+  --eiq-warning-ring: rgba(217, 145, 36, 0.2);
 
   --eiq-info: #0369a1;
   --eiq-info-strong: #0284c7;
@@ -78,8 +78,8 @@
   --eiq-red-12: var(--eiq-negative-soft);
   --eiq-orange: var(--eiq-warning);
   --eiq-orange-12: var(--eiq-warning-soft);
-  --eiq-orange-20: rgba(180, 83, 9, 0.2);
-  --eiq-orange-30: rgba(180, 83, 9, 0.3);
+  --eiq-orange-20: rgba(217, 145, 36, 0.2);
+  --eiq-orange-30: rgba(217, 145, 36, 0.3);
   --eiq-amber: var(--eiq-warning-strong);
   --eiq-amber-15: var(--eiq-warning-soft);
   --eiq-yellow: var(--eiq-warning-strong);
@@ -93,41 +93,41 @@
   --eiq-primary-20: rgba(79, 70, 229, 0.2);
   --eiq-primary-40: rgba(79, 70, 229, 0.4);
   --eiq-primary-dark: var(--eiq-primary-hover);
-  --eiq-green-20: rgba(4, 120, 87, 0.2);
+  --eiq-green-20: rgba(22, 135, 106, 0.2);
   --eiq-muted-bg: var(--eiq-row-hover);
 
-  /* ── Surfaces (layered: canvas → surface → raised → overlay) ── */
-  --eiq-bg: #f6f7f9;
-  --eiq-surface: #ffffff;
-  --eiq-surface-raised: #ffffff;
-  --eiq-surface-sunken: #f1f3f6;
-  --eiq-input-bg: #ffffff;
-  --eiq-sidebar-bg: #ffffff;
+  /* ── Surfaces (neumorphic: cards share the canvas tone; elevation via dual shadows) ── */
+  --eiq-bg: #eef2f7;
+  --eiq-surface: #eef2f7;
+  --eiq-surface-raised: #f3f6fb;
+  --eiq-surface-sunken: #e3e9f2;
+  --eiq-input-bg: #eef2f7;
+  --eiq-sidebar-bg: #eef2f7;
 
   /* ── Borders ── */
-  --eiq-border: #e4e7ec;
-  --eiq-border-strong: #d0d5dd;
-  --eiq-border-subtle: #eef0f3;
+  --eiq-border: #dce3ec;
+  --eiq-border-strong: #cbd4e2;
+  --eiq-border-subtle: #e3e9f2;
 
   /* ── Text ── */
-  --eiq-foreground: #101828;
-  --eiq-muted: #475467;
-  --eiq-subtle: #667085;
-  --eiq-faint: #98a2b3;
+  --eiq-foreground: #172033;
+  --eiq-muted: #687386;
+  --eiq-subtle: #7b8798;
+  --eiq-faint: #9aa4b5;
   --eiq-inverse: #ffffff;
 
   /* ── Interaction ── */
-  --eiq-hover: #f2f4f7;
-  --eiq-hover-strong: #eaecf0;
-  --eiq-active: #e4e7ec;
-  --eiq-overlay: rgba(16, 24, 40, 0.5);
-  --eiq-row-hover: #f9fafb;
-  --eiq-row-hover-tint: #f7f8fd;
-  --eiq-row-selected: #eef2ff;
-  --eiq-row-danger: #fff1f2;
-  --eiq-table-stripe: #fcfcfd;
-  --eiq-table-head: #f9fafb;
-  --eiq-track: #eceef1;
+  --eiq-hover: #e7edf5;
+  --eiq-hover-strong: #dfe6f0;
+  --eiq-active: #d6dfeb;
+  --eiq-overlay: rgba(23, 32, 51, 0.5);
+  --eiq-row-hover: #eaeff6;
+  --eiq-row-hover-tint: #eaedfb;
+  --eiq-row-selected: #e7ebfd;
+  --eiq-row-danger: #fbecf0;
+  --eiq-table-stripe: #f1f4f9;
+  --eiq-table-head: #e8edf5;
+  --eiq-track: #dbe2ee;
 
   /* ── Radii ── */
   --eiq-radius-xs: 6px;
@@ -146,6 +146,15 @@
   --eiq-shadow-md: 0 8px 24px -4px rgba(16, 24, 40, 0.1), 0 4px 8px -4px rgba(16, 24, 40, 0.05);
   --eiq-shadow-lg: 0 20px 48px -8px rgba(16, 24, 40, 0.16);
   --eiq-shadow-primary: 0 1px 2px rgba(79, 70, 229, 0.16), 0 6px 16px -4px rgba(79, 70, 229, 0.28);
+
+  /* ── Neumorphism (Soft UI) — light surface palette ── */
+  --eiq-neu-light: -6px -6px 14px rgba(255, 255, 255, 0.85);
+  --eiq-neu-dark: 6px 6px 14px rgba(163, 177, 198, 0.28);
+  --eiq-neu-raised: var(--eiq-neu-dark), var(--eiq-neu-light);
+  --eiq-neu-raised-sm: 4px 4px 9px rgba(163, 177, 198, 0.26), -4px -4px 9px rgba(255, 255, 255, 0.8);
+  --eiq-neu-raised-hover: 9px 9px 18px rgba(163, 177, 198, 0.35), -8px -8px 18px rgba(255, 255, 255, 0.95);
+  --eiq-neu-inset: inset 3px 3px 7px rgba(163, 177, 198, 0.25), inset -3px -3px 7px rgba(255, 255, 255, 0.75);
+  --eiq-neu-inset-focus: var(--eiq-neu-inset), 0 0 0 3px var(--eiq-primary-ring);
 
   /* ── Layout ── */
   --eiq-sidebar-w: 248px;
@@ -271,6 +280,15 @@
   --eiq-shadow-md: 0 10px 28px -6px rgba(0, 0, 0, 0.6);
   --eiq-shadow-lg: 0 24px 56px -12px rgba(0, 0, 0, 0.7);
   --eiq-shadow-primary: 0 6px 18px -4px rgba(99, 102, 241, 0.35);
+
+  /* Neumorphism on charcoal — shadows carry the elevation, never borders */
+  --eiq-neu-light: -6px -6px 16px rgba(255, 255, 255, 0.02);
+  --eiq-neu-dark: 8px 8px 18px rgba(0, 0, 0, 0.55);
+  --eiq-neu-raised: var(--eiq-neu-dark), var(--eiq-neu-light);
+  --eiq-neu-raised-sm: 4px 4px 10px rgba(0, 0, 0, 0.5), -3px -3px 10px rgba(255, 255, 255, 0.015);
+  --eiq-neu-raised-hover: 10px 10px 22px rgba(0, 0, 0, 0.65), -6px -6px 18px rgba(255, 255, 255, 0.03);
+  --eiq-neu-inset: inset 3px 3px 8px rgba(0, 0, 0, 0.45), inset -3px -3px 7px rgba(255, 255, 255, 0.02);
+  --eiq-neu-inset-focus: var(--eiq-neu-inset), 0 0 0 3px var(--eiq-primary-ring);
 }
 
 /* Dark-mode surfaces for component-scoped classes that live outside the token set */
@@ -283,8 +301,23 @@
   border-color: var(--eiq-border);
 }
 
+[data-theme="dark"] .eiq-sidebar {
+  border-color: transparent;
+  box-shadow:
+    10px 0 22px -10px rgba(0, 0, 0, 0.6),
+    2px 0 5px -2px rgba(0, 0, 0, 0.35);
+}
+
 [data-theme="dark"] .eiq-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238d97a6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .eiq-header {
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.55), 0 2px 5px -2px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .eiq-bottom-nav {
+  box-shadow: 0 -8px 18px -8px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme="dark"] .eiq-heatmap__scale-bar {
@@ -308,11 +341,11 @@
 }
 [data-theme="dark"] .login-social-btn {
   background: var(--eiq-surface);
-  border-color: var(--eiq-border);
+  border-color: transparent;
   color: var(--eiq-foreground);
 }
 [data-theme="dark"] .login-social-btn:hover {
-  background: var(--eiq-hover);
+  background: var(--eiq-surface);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -395,8 +428,8 @@ hr {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -404,7 +437,7 @@ hr {
 ::-webkit-scrollbar-thumb {
   background: var(--eiq-border-strong);
   border-radius: var(--eiq-radius-full);
-  border: 3px solid transparent;
+  border: 2px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -574,15 +607,30 @@ hr {
   bottom: 0;
   width: var(--eiq-sidebar-w);
   background: var(--eiq-sidebar-bg);
-  border-right: 1px solid var(--eiq-border);
+  /* Soft-UI: the rail reads as an extruded panel — a light cast falls
+     to the right of it instead of a hard 1px seam */
+  border-right: none;
+  box-shadow:
+    10px 0 22px -10px rgba(163, 177, 198, 0.45),
+    2px 0 5px -2px rgba(163, 177, 198, 0.22);
   display: flex;
   flex-direction: column;
   z-index: var(--eiq-z-sidebar);
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Premium nav rails hide the scrollbar — wheel/touch still scrolls */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   transition:
     width var(--eiq-transition-slow),
     transform var(--eiq-transition-slow);
+}
+.eiq-sidebar::-webkit-scrollbar,
+.eiq-sidebar::-webkit-scrollbar-thumb,
+.eiq-sidebar::-webkit-scrollbar-track {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .eiq-sidebar__brand {
@@ -687,8 +735,12 @@ hr {
   text-align: left;
 }
 .eiq-nav__item:hover {
-  background: var(--eiq-hover);
+  background: var(--eiq-surface);
+  box-shadow: var(--eiq-neu-raised-sm);
   color: var(--eiq-foreground);
+}
+.eiq-nav__item:active {
+  box-shadow: var(--eiq-neu-inset);
 }
 .eiq-nav__label {
   white-space: nowrap;
@@ -704,10 +756,10 @@ hr {
 }
 .eiq-nav__item--active,
 .eiq-sidebar__nav-item--active {
-  background: var(--eiq-primary-soft) !important;
+  background: var(--eiq-surface) !important;
   color: var(--eiq-primary) !important;
   font-weight: 600;
-  box-shadow: inset 2px 0 0 var(--eiq-primary);
+  box-shadow: var(--eiq-neu-inset), inset 2px 0 0 var(--eiq-primary) !important;
 }
 
 /* ── Collapsed rail ── */
@@ -779,7 +831,8 @@ hr {
   background: color-mix(in srgb, var(--eiq-surface) 92%, transparent);
   backdrop-filter: saturate(180%) blur(16px);
   -webkit-backdrop-filter: saturate(180%) blur(16px);
-  border-top: 1px solid var(--eiq-border);
+  border-top: 1px solid transparent;
+  box-shadow: 0 -6px 14px -8px rgba(163, 177, 198, 0.4);
   z-index: var(--eiq-z-header);
 }
 .eiq-bottom-nav__item {
@@ -821,10 +874,12 @@ hr {
   top: 0;
   z-index: var(--eiq-z-header);
   height: var(--eiq-header-h);
-  background: color-mix(in srgb, var(--eiq-surface) 82%, transparent);
+  background: color-mix(in srgb, var(--eiq-surface) 88%, transparent);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid var(--eiq-border);
+  border-bottom: 1px solid transparent;
+  /* Neu bar sits "above" the page — soft light cast downward, no hard seam */
+  box-shadow: 0 6px 14px -8px rgba(163, 177, 198, 0.45), 0 2px 4px -2px rgba(163, 177, 198, 0.3);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -853,6 +908,7 @@ hr {
   border: 1px solid transparent;
   border-radius: var(--eiq-radius);
   background: var(--eiq-surface-sunken);
+  box-shadow: var(--eiq-neu-inset);
   font-size: 0.875rem;
   color: var(--eiq-foreground);
   outline: none;
@@ -867,7 +923,7 @@ hr {
 .eiq-header__search-input:focus {
   background: var(--eiq-surface);
   border-color: var(--eiq-primary);
-  box-shadow: 0 0 0 3px var(--eiq-primary-ring);
+  box-shadow: var(--eiq-neu-inset-focus);
 }
 
 .eiq-header__actions {
@@ -1001,13 +1057,14 @@ hr {
 .eiq-btn--outline {
   background: var(--eiq-surface);
   color: var(--eiq-foreground);
-  border-color: var(--eiq-border-strong);
-  box-shadow: var(--eiq-shadow-xs);
+  border-color: transparent;
+  box-shadow: var(--eiq-neu-raised-sm);
 }
 .eiq-btn--ghost:hover:not(:disabled),
 .eiq-btn--outline:hover:not(:disabled) {
-  background: var(--eiq-hover);
-  border-color: var(--eiq-faint);
+  background: var(--eiq-surface);
+  border-color: transparent;
+  box-shadow: var(--eiq-neu-raised-hover);
 }
 
 .eiq-btn--sm {
@@ -1069,9 +1126,10 @@ hr {
   min-height: 40px;
   height: 40px;
   padding: 0 12px;
-  border: 1px solid var(--eiq-border-strong);
+  border: 1px solid transparent;
   border-radius: var(--eiq-radius-sm);
-  background: var(--eiq-input-bg);
+  background: var(--eiq-surface);
+  box-shadow: var(--eiq-neu-inset);
   font-size: 0.875rem;
   color: var(--eiq-foreground);
   outline: none;
@@ -1093,7 +1151,7 @@ hr {
 .eiq-input:focus,
 .eiq-textarea:focus {
   border-color: var(--eiq-primary);
-  box-shadow: 0 0 0 3px var(--eiq-primary-ring);
+  box-shadow: var(--eiq-neu-inset-focus);
 }
 .eiq-input[readonly],
 .eiq-input:disabled,
@@ -1118,7 +1176,7 @@ hr {
 }
 .eiq-select:focus {
   border-color: var(--eiq-primary);
-  box-shadow: 0 0 0 3px var(--eiq-primary-ring);
+  box-shadow: var(--eiq-neu-inset-focus);
 }
 .eiq-select--xs {
   height: 32px;
@@ -1162,8 +1220,8 @@ hr {
 .eiq-card {
   background: var(--eiq-surface);
   border-radius: var(--eiq-radius-lg);
-  border: 1px solid var(--eiq-border);
-  box-shadow: var(--eiq-shadow-sm);
+  border: 1px solid transparent;
+  box-shadow: var(--eiq-neu-raised);
   padding: 20px;
 }
 .eiq-card--interactive {
@@ -1174,8 +1232,8 @@ hr {
 }
 .eiq-card--interactive:hover {
   transform: translateY(-2px);
-  box-shadow: var(--eiq-shadow-md);
-  border-color: var(--eiq-border-strong);
+  box-shadow: var(--eiq-neu-raised-hover);
+  border-color: transparent;
 }
 
 .eiq-card__header {
@@ -1200,14 +1258,45 @@ hr {
   margin-top: 2px;
 }
 
+/* ─── 10b — NEUMORPHIC UTILITIES ─────────────────────────────────
+   Soft-UI helpers._raised = extruded surface, inset = pressed well.
+   Both are theme-aware through --eiq-neu-* tokens.
+   ═══════════════════════════════════════════════════════════════ */
+.eiq-neu {
+  background: var(--eiq-surface);
+  border: 1px solid transparent;
+  border-radius: var(--eiq-radius-lg);
+  box-shadow: var(--eiq-neu-raised);
+}
+.eiq-neu--sm {
+  border-radius: var(--eiq-radius-sm);
+  box-shadow: var(--eiq-neu-raised-sm);
+}
+.eiq-neu--inset {
+  background: var(--eiq-surface);
+  border-color: transparent;
+  box-shadow: var(--eiq-neu-inset);
+}
+.eiq-neu--lift {
+  transition: box-shadow var(--eiq-transition), transform var(--eiq-transition);
+}
+.eiq-neu--lift:hover {
+  box-shadow: var(--eiq-neu-raised-hover);
+  transform: translateY(-1px);
+}
+.eiq-neu--lift:active {
+  box-shadow: var(--eiq-neu-inset);
+  transform: translateY(0);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    11 — KPI CARDS
    ═══════════════════════════════════════════════════════════════ */
 .eiq-kpi-card {
   background: var(--eiq-surface);
   border-radius: var(--eiq-radius-lg);
-  border: 1px solid var(--eiq-border);
-  box-shadow: var(--eiq-shadow-sm);
+  border: 1px solid transparent;
+  box-shadow: var(--eiq-neu-raised);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -1221,8 +1310,8 @@ hr {
 }
 .eiq-kpi-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--eiq-shadow-md);
-  border-color: var(--eiq-border-strong);
+  box-shadow: var(--eiq-neu-raised-hover);
+  border-color: transparent;
 }
 
 .eiq-kpi-card__header {
@@ -1241,6 +1330,7 @@ hr {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: var(--eiq-neu-raised-sm);
 }
 .eiq-kpi-card__icon svg {
   width: 17px;
@@ -1861,6 +1951,7 @@ hr {
   height: 7px;
   border-radius: var(--eiq-radius-full);
   background: var(--eiq-track);
+  box-shadow: var(--eiq-neu-inset);
   overflow: hidden;
 }
 .eiq-progress-bar--thin {
@@ -1887,8 +1978,9 @@ hr {
   border-radius: var(--eiq-radius-full);
   font-size: 0.8125rem;
   font-weight: 600;
-  border: 1px solid var(--eiq-border-strong);
+  border: 1px solid transparent;
   background: var(--eiq-surface);
+  box-shadow: var(--eiq-neu-raised-sm);
   color: var(--eiq-muted);
   cursor: pointer;
   transition:
@@ -1897,7 +1989,8 @@ hr {
     border-color var(--eiq-transition);
 }
 .eiq-range-btn:hover {
-  background: var(--eiq-hover);
+  background: var(--eiq-surface);
+  box-shadow: var(--eiq-neu-raised-hover);
   color: var(--eiq-foreground);
 }
 .eiq-range-btn--active {
@@ -1914,8 +2007,9 @@ hr {
   width: 32px;
   height: 32px;
   border-radius: var(--eiq-radius-xs);
-  border: 1px solid var(--eiq-border-strong);
+  border: 1px solid transparent;
   background: var(--eiq-surface);
+  box-shadow: var(--eiq-neu-raised-sm);
   color: var(--eiq-muted);
   display: flex;
   align-items: center;
