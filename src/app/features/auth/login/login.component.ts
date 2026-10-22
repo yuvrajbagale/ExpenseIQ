@@ -14,6 +14,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { IconComponent } from '../../../shared/components/icon.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -176,6 +177,31 @@ import { IconComponent } from '../../../shared/components/icon.component';
               }
             </button>
           </form>
+
+          @if (demoAccount; as demo) {
+            <div class="login-demo">
+              <div class="login-demo__head">
+                <span class="login-demo__tag">
+                  <eiq-icon name="lucideZap" [size]="12" [strokeWidth]="2.4" anim="pop" />
+                  Demo
+                </span>
+                <span class="login-demo__hint">Live seeded data — no signup needed</span>
+              </div>
+              <div class="login-demo__creds">
+                <code>{{ demo.email }}</code>
+                <span class="login-demo__sep">/</span>
+                <code>{{ demo.password }}</code>
+              </div>
+              <button
+                type="button"
+                class="login-demo__btn"
+                (click)="loginWithDemo()"
+                [disabled]="authService.isLoading()">
+                Use demo account
+                <eiq-icon name="lucideArrowRight" [size]="15" [strokeWidth]="2" anim="slide" />
+              </button>
+            </div>
+          }
 
           <div class="login-divider"><span>or continue with</span></div>
 
@@ -372,6 +398,55 @@ import { IconComponent } from '../../../shared/components/icon.component';
         content: ''; flex: 1; height: 1px; background: var(--eiq-border);
       }
     }
+
+    /* ── Demo shortcut ── */
+    .login-demo {
+      display: flex; flex-direction: column; gap: 0.625rem;
+      padding: 0.875rem;
+      border: 1px dashed var(--eiq-border-strong);
+      border-radius: var(--eiq-radius);
+      background: var(--eiq-primary-softer);
+    }
+    .login-demo__head { display: flex; align-items: center; gap: 8px; }
+    .login-demo__tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px;
+      border-radius: var(--eiq-radius-full);
+      background: var(--eiq-primary-soft);
+      color: var(--eiq-primary);
+      font-size: 0.6875rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .login-demo__hint { font-size: 0.75rem; color: var(--eiq-muted); }
+    .login-demo__creds {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      font-size: 0.75rem; color: var(--eiq-faint);
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.75rem; color: var(--eiq-foreground);
+        background: var(--eiq-surface);
+        border: 1px solid var(--eiq-border);
+        border-radius: var(--eiq-radius-xs);
+        padding: 2px 6px;
+      }
+    }
+    .login-demo__sep { color: var(--eiq-faint); }
+    .login-demo__btn {
+      height: 38px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: var(--eiq-surface);
+      border: 1px solid var(--eiq-border-strong);
+      border-radius: var(--eiq-radius-sm);
+      color: var(--eiq-foreground);
+      font-size: 0.8125rem; font-weight: 600;
+      transition: background 160ms, border-color 160ms, color 160ms;
+    }
+    .login-demo__btn:hover:not(:disabled) {
+      background: var(--eiq-surface-raised);
+      border-color: var(--eiq-primary);
+      color: var(--eiq-primary);
+    }
+    .login-demo__btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .login-social { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .login-social-btn {
       height: 44px;
@@ -422,6 +497,15 @@ export class LoginComponent implements OnInit {
   showPassword = signal(false);
   submitted = signal(false);
 
+  /**
+   * Credentials for the seeded demo account. Mirrors `DEMO_USER` in
+   * `backend/server.js`, which only seeds it outside production — so the
+   * shortcut is hidden in production builds.
+   */
+  protected readonly demoAccount = environment.production
+    ? null
+    : { email: 'demo@expenseiq.com', password: 'Demo@12345' };
+
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -446,6 +530,17 @@ export class LoginComponent implements OnInit {
       next: () => {},
       error: () => {},
     });
+  }
+
+  /** Fills the form with the demo credentials and signs in straight away. */
+  loginWithDemo(): void {
+    if (!this.demoAccount) return;
+    this.loginForm.patchValue({
+      email: this.demoAccount.email,
+      password: this.demoAccount.password,
+    });
+    this.submitted.set(false);
+    this.onSubmit();
   }
 
   loginWithGitHub(): void {

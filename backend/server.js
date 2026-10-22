@@ -308,6 +308,36 @@ const bcrypt = require('bcryptjs');
 async function hashPassword(password) { return bcrypt.hash(password, 12); }
 async function verifyPassword(password, hash) { return bcrypt.compare(password, hash); }
 
+// ─── Demo User ────────────────────────────────────────────────────────────────
+
+const DEMO_USER = {
+  email: 'demo@expenseiq.com',
+  password: 'Demo@12345',
+  name: 'Demo User',
+  initials: 'DU',
+};
+
+/**
+ * Guarantees a ready-to-use demo account so the app can be opened without
+ * registering first. Idempotent (keyed on email) and disabled in production
+ * or when SEED_DEMO_USER=false.
+ */
+async function ensureDemoUser() {
+  if (process.env.NODE_ENV === 'production' || process.env.SEED_DEMO_USER === 'false') return null;
+  const store = readStore();
+  if (store.users.some(u => u.email === DEMO_USER.email)) return null;
+  store.users.push({
+    id: randomUUID(),
+    email: DEMO_USER.email,
+    password: await hashPassword(DEMO_USER.password),
+    name: DEMO_USER.name,
+    initials: DEMO_USER.initials,
+    createdAt: new Date().toISOString(),
+  });
+  writeStore(store);
+  return DEMO_USER.email;
+}
+
 // ─── Security Headers ────────────────────────────────────────────────────────
 
 function securityHeaders(req) {
@@ -1101,9 +1131,11 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   ensureDataFile();
+  const demoEmail = await ensureDemoUser();
   console.log(`ExpenseIQ API running at http://localhost:${PORT}/api`);
   console.log(`Seed data: ${seedTransactions.length} transactions (Jan-Aug 2025)`);
   console.log(`Security: JWT auth, HttpOnly cookies, CSRF, rate limiting, input validation`);
+  if (demoEmail) console.log(`Demo account: ${demoEmail} / ${DEMO_USER.password}`);
 });
