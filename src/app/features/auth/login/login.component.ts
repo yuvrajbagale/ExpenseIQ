@@ -1,5 +1,8 @@
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
+  OnDestroy,
   OnInit,
   inject,
   signal,
@@ -15,6 +18,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { IconComponent } from '../../../shared/components/icon.component';
 import { environment } from '../../../../environments/environment';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-login',
@@ -29,8 +33,37 @@ import { environment } from '../../../../environments/environment';
           <span class="login-orb login-orb--2"></span>
         </div>
 
+        <!-- Floating social-proof chips (GSAP choreographed) -->
+        <div class="login-chip login-chip--1" aria-hidden="true" data-anim-chip>
+          <span class="login-chip__icon login-chip__icon--green">
+            <eiq-icon name="lucideTrendingUp" [size]="16" [strokeWidth]="2.2" />
+          </span>
+          <span class="login-chip__text">
+            <strong>Savings +12.4%</strong>
+            <span>vs last month</span>
+          </span>
+        </div>
+        <div class="login-chip login-chip--2" aria-hidden="true" data-anim-chip>
+          <span class="login-chip__icon login-chip__icon--indigo">
+            <eiq-icon name="lucideZap" [size]="16" [strokeWidth]="2.2" />
+          </span>
+          <span class="login-chip__text">
+            <strong>Auto-categorized</strong>
+            <span>every transaction</span>
+          </span>
+        </div>
+        <div class="login-chip login-chip--3" aria-hidden="true" data-anim-chip>
+          <span class="login-chip__icon login-chip__icon--amber">
+            <eiq-icon name="lucideBell" [size]="16" [strokeWidth]="2.2" />
+          </span>
+          <span class="login-chip__text">
+            <strong>Budget alerts</strong>
+            <span>always on time</span>
+          </span>
+        </div>
+
         <div class="login-panel__content">
-          <div class="login-panel__brand">
+          <div class="login-panel__brand" data-anim-brand>
             <span class="login-panel__brand-icon" aria-hidden="true">
               <eiq-icon name="lucideWallet" [size]="19" [strokeWidth]="2" />
             </span>
@@ -38,8 +71,14 @@ import { environment } from '../../../../environments/environment';
           </div>
 
           <div class="login-panel__hero">
-            <h2 class="login-panel__headline">Take control of your finances</h2>
-            <p class="login-panel__subheadline">
+            <h2 class="login-panel__headline" data-anim-headline>
+              <span class="login-word">Take</span>
+              <span class="login-word">control</span>
+              <span class="login-word">of</span>
+              <span class="login-word">your</span>
+              <span class="login-word">finances</span>
+            </h2>
+            <p class="login-panel__subheadline" data-anim-copy>
               One place for transactions, budgets, recurring costs and savings goals — with numbers you can actually read.
             </p>
 
@@ -91,7 +130,7 @@ import { environment } from '../../../../environments/environment';
         </button>
 
         <div class="login-form-container">
-          <header class="login-form-header">
+          <header class="login-form-header" data-anim>
             <h1 class="login-form-header__title">Welcome back</h1>
             <p class="login-form-header__subtitle">Sign in to continue to your dashboard</p>
           </header>
@@ -104,7 +143,7 @@ import { environment } from '../../../../environments/environment';
           }
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
-            <div class="login-field">
+            <div class="login-field" data-anim>
               <label class="login-field__label" for="email">Email address</label>
               <div class="login-field__input-wrap">
                 <eiq-icon class="login-field__icon" name="lucideMail" [size]="16" [strokeWidth]="1.8" />
@@ -126,7 +165,7 @@ import { environment } from '../../../../environments/environment';
               }
             </div>
 
-            <div class="login-field">
+            <div class="login-field" data-anim>
               <label class="login-field__label" for="password">Password</label>
               <div class="login-field__input-wrap">
                 <eiq-icon class="login-field__icon" name="lucideLock" [size]="16" [strokeWidth]="1.8" />
@@ -159,7 +198,7 @@ import { environment } from '../../../../environments/environment';
               }
             </div>
 
-            <div class="login-form__row">
+            <div class="login-form__row" data-anim>
               <label class="login-checkbox">
                 <input formControlName="rememberMe" type="checkbox" class="login-checkbox__input" />
                 <span class="login-checkbox__label">Keep me signed in</span>
@@ -167,7 +206,7 @@ import { environment } from '../../../../environments/environment';
               <a routerLink="/auth/forgot-password" class="login-link">Forgot password?</a>
             </div>
 
-            <button type="submit" class="login-submit-btn" [disabled]="authService.isLoading()">
+            <button type="submit" class="login-submit-btn" data-anim [disabled]="authService.isLoading()">
               @if (authService.isLoading()) {
                 <span class="login-submit-btn__spinner" aria-hidden="true"></span>
                 Signing in…
@@ -179,7 +218,7 @@ import { environment } from '../../../../environments/environment';
           </form>
 
           @if (demoAccount; as demo) {
-            <div class="login-demo">
+            <div class="login-demo" data-anim>
               <div class="login-demo__head">
                 <span class="login-demo__tag">
                   <eiq-icon name="lucideZap" [size]="12" [strokeWidth]="2.4" anim="pop" />
@@ -203,9 +242,9 @@ import { environment } from '../../../../environments/environment';
             </div>
           }
 
-          <div class="login-divider"><span>or continue with</span></div>
+          <div class="login-divider" data-anim><span>or continue with</span></div>
 
-          <div class="login-social">
+          <div class="login-social" data-anim>
             <button type="button" class="login-social-btn" (click)="loginWithGoogle()">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
               Google
@@ -216,7 +255,7 @@ import { environment } from '../../../../environments/environment';
             </button>
           </div>
 
-          <p class="login-signup-text">
+          <p class="login-signup-text" data-anim>
             New to ExpenseIQ?
             <a routerLink="/auth/register" class="login-link">Create a free account</a>
           </p>
@@ -261,6 +300,41 @@ import { environment } from '../../../../environments/environment';
       0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
       50%      { transform: translate3d(18px, -22px, 0) scale(1.07); }
     }
+
+    /* ── Floating social-proof chips (glassmorphism on the dark panel) ── */
+    .login-chip {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+      z-index: 3;
+      will-change: transform;
+    }
+    .login-chip--1 { top: 17%; right: 5%; }
+    .login-chip--2 { top: 46%; right: 10%; }
+    .login-chip--3 { bottom: 21%; right: 6%; }
+    .login-chip__icon {
+      width: 30px; height: 30px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .login-chip__icon--green  { background: rgba(52, 211, 153, 0.14); color: #34d399; }
+    .login-chip__icon--indigo { background: rgba(129, 140, 248, 0.16); color: #a5b4fc; }
+    .login-chip__icon--amber  { background: rgba(251, 191, 36, 0.14); color: #fbbf24; }
+    .login-chip__text { display: flex; flex-direction: column; line-height: 1.25; }
+    .login-chip__text strong { font-size: 0.78125rem; font-weight: 650; color: #fff; letter-spacing: -0.01em; white-space: nowrap; }
+    .login-chip__text span { font-size: 0.6875rem; color: #8b94a8; }
+
+    /* Word-by-word headline reveal targets */
+    .login-word { display: inline-block; will-change: transform; }
 
     .login-panel__content {
       position: relative;
@@ -355,6 +429,9 @@ import { environment } from '../../../../environments/environment';
     }
     .login-field__input--padded-right { padding-right: 44px; }
     .login-field__input:focus { border-color: var(--eiq-primary); box-shadow: var(--eiq-neu-inset-focus); }
+    /* Instant south-Asian-style micro-feedback: label + icon tint on focus */
+    .login-field:focus-within .login-field__label,
+    .login-field:focus-within .login-field__icon { color: var(--eiq-primary); }
     .login-field__input--error { border-color: var(--eiq-negative); }
     .login-field__input--error:focus { box-shadow: var(--eiq-neu-inset), 0 0 0 3px var(--eiq-negative-ring); }
     .login-field__toggle {
@@ -380,9 +457,26 @@ import { environment } from '../../../../environments/environment';
       font-size: 0.9375rem; font-weight: 600;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       box-shadow: var(--eiq-shadow-primary);
-      transition: background 160ms, opacity 160ms;
+      position: relative;
+      overflow: hidden;
+      transition: background 160ms, opacity 160ms, transform 120ms;
+    }
+    /* Shimmer sweep across the CTA on hover */
+    .login-submit-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -65%;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+      transform: skewX(-18deg);
+      transition: left 560ms cubic-bezier(0.33, 1, 0.68, 1);
+      pointer-events: none;
     }
     .login-submit-btn:hover:not(:disabled) { background: var(--eiq-primary-hover); }
+    .login-submit-btn:hover:not(:disabled)::after { left: 125%; }
+    .login-submit-btn:active:not(:disabled) { transform: scale(0.985); }
     .login-submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
     .login-submit-btn__spinner {
       width: 17px; height: 17px;
@@ -478,10 +572,15 @@ import { environment } from '../../../../environments/environment';
       transition: box-shadow 160ms, color 160ms;
     }
     .login-theme-toggle:hover { box-shadow: var(--eiq-neu-raised-hover); color: var(--eiq-foreground); }
+    .login-theme-toggle:active { transform: scale(0.92); }
 
     @media (max-width: 1024px) {
       .login-panel { display: none; }
       .login-form-panel { padding: 2rem 1.5rem; }
+    }
+    /* Chips live on the brand panel — drop them before they crowd the copy */
+    @media (max-width: 1360px) {
+      .login-chip { display: none; }
     }
     @media (max-width: 480px) {
       .login-social { grid-template-columns: 1fr; }
@@ -489,18 +588,25 @@ import { environment } from '../../../../environments/environment';
     }
     @media (prefers-reduced-motion: reduce) {
       .login-orb { animation: none; }
+      .login-submit-btn::after { display: none; }
     }
   `],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly authService = inject(AuthService);
   protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly host = inject(ElementRef);
 
   loginForm!: FormGroup;
   showPassword = signal(false);
   submitted = signal(false);
+
+  /** Live GSAP tweens/timelines — all killed in ngOnDestroy. */
+  private readonly activeGsapAnimations: Array<gsap.core.Animation> = [];
+  private orbParallaxHandler?: (event: MouseEvent) => void;
+  private orbPanel?: HTMLElement;
 
   /**
    * Credentials for the seeded demo account. Mirrors `DEMO_USER` in
@@ -517,6 +623,80 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false],
     });
+  }
+
+  /** GSAP entrance choreography + ambient motion (skipped for reduced-motion users). */
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const root = this.host.nativeElement as HTMLElement;
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } });
+    this.activeGsapAnimations.push(tl);
+
+    tl.from(root.querySelectorAll('[data-anim-brand]'), { x: -26, opacity: 0 }, 0)
+      .from(root.querySelectorAll('.login-word'), {
+        yPercent: 130,
+        opacity: 0,
+        rotate: 6,
+        stagger: 0.055,
+        duration: 0.55,
+      }, 0.12)
+      .from(root.querySelectorAll('[data-anim-copy]'), { y: 16, opacity: 0 }, 0.42)
+      .from(root.querySelectorAll('.login-panel__points li'), { x: -20, opacity: 0, stagger: 0.07 }, 0.5)
+      .from(root.querySelectorAll('[data-anim]'), { y: 24, opacity: 0, stagger: 0.075 }, 0.24)
+      .from(root.querySelector('.login-theme-toggle'), {
+        scale: 0,
+        rotation: -140,
+        duration: 0.5,
+        ease: 'back.out(2.2)',
+      }, 0.5)
+      .from(root.querySelectorAll('[data-anim-chip]'), {
+        scale: 0.55,
+        opacity: 0,
+        stagger: 0.14,
+        duration: 0.65,
+        ease: 'back.out(1.8)',
+      }, 0.95);
+
+    // Ambient chip bobbing — offset so the three never sync up
+    root.querySelectorAll<HTMLElement>('[data-anim-chip]').forEach((chip, i) => {
+      this.activeGsapAnimations.push(
+        gsap.to(chip, {
+          y: i % 2 === 0 ? -11 : 9,
+          duration: 2.6 + i * 0.35,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: 1.5 + i * 0.4,
+        }),
+      );
+    });
+
+    // Orb parallax — the mesh leans toward the cursor
+    const panel = root.querySelector<HTMLElement>('.login-panel');
+    const mesh = root.querySelector<HTMLElement>('.login-panel__mesh');
+    if (panel && mesh) {
+      const orbX = gsap.quickTo(mesh, 'x', { duration: 1.4, ease: 'power3.out' });
+      const orbY = gsap.quickTo(mesh, 'y', { duration: 1.4, ease: 'power3.out' });
+      this.orbPanel = panel;
+      this.orbParallaxHandler = (event: MouseEvent) => {
+        const rect = panel.getBoundingClientRect();
+        orbX(((event.clientX - rect.left) / rect.width - 0.5) * 28);
+        orbY(((event.clientY - rect.top) / rect.height - 0.5) * 24);
+      };
+      panel.addEventListener('mousemove', this.orbParallaxHandler);
+    }
+  }
+
+  /** Stops every ambient/entrance tween so nothing leaks past navigation. */
+  ngOnDestroy(): void {
+    this.activeGsapAnimations.forEach((animation) => animation.kill());
+    this.activeGsapAnimations.length = 0;
+    if (this.orbPanel && this.orbParallaxHandler) {
+      this.orbPanel.removeEventListener('mousemove', this.orbParallaxHandler);
+    }
+    gsap.killTweensOf((this.host.nativeElement as HTMLElement).querySelectorAll('[class*="login-chip"], .login-panel__mesh'));
   }
 
   onSubmit(): void {
