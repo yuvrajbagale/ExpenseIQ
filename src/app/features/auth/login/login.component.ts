@@ -17,7 +17,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { IconComponent } from '../../../shared/components/icon.component';
-import { environment } from '../../../../environments/environment';
 import gsap from 'gsap';
 
 @Component({
@@ -610,12 +609,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Credentials for the seeded demo account. Mirrors `DEMO_USER` in
-   * `backend/server.js`, which only seeds it outside production — so the
-   * shortcut is hidden in production builds.
+   * `backend/server.js`, which seeds it on every environment unless
+   * `SEED_DEMO_USER=false`.
    */
-  protected readonly demoAccount = environment.production
-    ? null
-    : { email: 'demo@expenseiq.com', password: 'Demo@12345' };
+  protected readonly demoAccount = {
+    email: 'demo@expenseiq.com',
+    password: 'Demo@12345',
+  };
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({

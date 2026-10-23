@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 // ─── Configuration ───────────────────────────────────────────────────────────
 
 const PORT = Number(process.env.PORT || 5000);
-const DATA_FILE = path.join(__dirname, 'data.json');
+const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data.json');
 const JWT_SECRET = process.env.JWT_SECRET || 'expenseiq-dev-secret-change-in-production';
 const JWT_EXPIRES_IN = '24h';
 const REFRESH_EXPIRES_IN = '7d';
@@ -319,11 +319,11 @@ const DEMO_USER = {
 
 /**
  * Guarantees a ready-to-use demo account so the app can be opened without
- * registering first. Idempotent (keyed on email) and disabled in production
- * or when SEED_DEMO_USER=false.
+ * registering first. Idempotent (keyed on email) and disabled when
+ * SEED_DEMO_USER=false.
  */
 async function ensureDemoUser() {
-  if (process.env.NODE_ENV === 'production' || process.env.SEED_DEMO_USER === 'false') return null;
+  if (process.env.SEED_DEMO_USER === 'false') return null;
   const store = readStore();
   if (store.users.some(u => u.email === DEMO_USER.email)) return null;
   store.users.push({
